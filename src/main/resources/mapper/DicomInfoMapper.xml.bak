@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.hanglok.mapper.DicomInfoMapper">
+
+    <resultMap id="simpleDicomInfoMap" type="cn.hanglok.dto.SimpleSeriesOutDto">
+        <id property="seriesId" column="id" />
+        <result property="institutionName" column="institution_name" />
+        <result property="patientId" column="patient_id" />
+        <result property="patientName" column="patient_name" />
+        <result property="patientSex" column="patient_sex" />
+        <result property="patientAge" column="patient_age" />
+        <result property="modality" column="modality" />
+        <result property="sliceThickness" column="slice_thickness" />
+        <result property="createdAt" column="created_at" />
+    </resultMap>
+
+    <select id="getSimpleDicomInfo" resultMap="simpleDicomInfoMap">
+        SELECT image_series.id, institution.institution_name, institution_patient.patient_id,
+               institution_patient.patient_name, institution_patient.patient_sex, image_series.patient_age,
+               image_series.modality, image_series.modality, image_series.slice_thickness,
+               image_series.created_at
+        FROM institution
+            LEFT JOIN institution_patient ON institution.id = institution_patient.institution_id
+            LEFT JOIN image_studies ON institution_patient.id = image_studies.patient_id
+            LEFT JOIN image_series ON image_studies.id = image_series.study_id
+        WHERE 1 = 1
+        <if test="institutionId != null">
+            AND institution_id = #{institutionId}
+        </if>
+        <if test="modality != null">
+            AND modality = #{modality}
+        </if>
+        <if test="patientSex != null">
+            AND patient_sex = #{patientSex}
+        </if>
+        ORDER BY image_series.updated_at desc
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+    
+    <select id="getModality" resultType="java.lang.String">
+        SELECT DISTINCT modality FROM image_series
+    </select>
+
+
+</mapper>
