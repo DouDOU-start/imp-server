@@ -16,7 +16,8 @@ import java.util.List;
  */
 public interface ImageSeriesMapper extends BaseMapper<ImageSeries> {
 
-    List<SimpleSeriesOutDto> getSimpleSeriesList(Long institutionId, String modality, String patientSex, String sliceRange, int pageSize, int offset);
+    List<SimpleSeriesOutDto> getSimpleSeriesList(String keyword, Long[] institutionIds, String[] modality, Double[] sliceRange, Long[] bodyPartIds,
+                                                 String patientSex, Long[] organIds, Long[] scanTypeIds, int pageSize, int offset);
 
     List<String> getModality();
 

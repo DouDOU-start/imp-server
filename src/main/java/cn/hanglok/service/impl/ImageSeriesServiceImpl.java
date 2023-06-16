@@ -25,8 +25,21 @@ public class ImageSeriesServiceImpl extends ServiceImpl<ImageSeriesMapper, Image
     ImageSeriesMapper imageSeriesMapper;
 
     @Override
-    public List<SimpleSeriesOutDto> getSimpleSeriesList(Long institutionId, String modality, String patientSex, String sliceRange, int currentPage, int pageSize) {
-        return imageSeriesMapper.getSimpleSeriesList(institutionId, modality, patientSex, sliceRange, pageSize, (currentPage - 1) * pageSize);
+    public List<SimpleSeriesOutDto> getSimpleSeriesList(String keyword, Long[] institutionIds, String[] modality, Double[] sliceRange, Long[] bodyPartIds,
+                                                        String patientSex, Long[] organIds, Long[] scanTypeIds, int currentPage, int pageSize) {
+
+        return imageSeriesMapper.getSimpleSeriesList(
+                keyword,
+                institutionIds,
+                modality,
+                sliceRange,
+                bodyPartIds,
+                patientSex,
+                organIds,
+                scanTypeIds,
+                pageSize,
+                (currentPage - 1) * pageSize
+        );
     }
 
     @Override

@@ -24,14 +24,42 @@
         LEFT JOIN image_studies ON institution_patient.id = image_studies.patient_id
         LEFT JOIN image_series ON image_studies.id = image_series.study_id
         WHERE 1 = 1
-        <if test="institutionId != null">
-            AND institution_id = #{institutionId}
+        <if test="keyword != null">
+          AND (institution_patient.patient_id LIKE CONCAT('%', #{keyword}, '%') OR patient_name LIKE CONCAT('%', #{keyword}, '%'))
+        </if>
+        <if test="institutionIds != null">
+            AND institution_id in(
+                <foreach collection="institutionIds" item="institutionId" index="index" separator="," >
+                    #{institutionId, jdbcType=INTEGER}
+                </foreach>
+            )
         </if>
         <if test="modality != null">
-            AND modality = #{modality}
+            AND modality in(
+            <foreach collection="modality" item="item" index="index" separator="," >
+                #{item, jdbcType=INTEGER}
+            </foreach>
+            )
+        </if>
+        <if test="sliceRange != null">
+            AND slice_thickness BETWEEN #{sliceRange[0]} AND #{sliceRange[1]}
         </if>
         <if test="patientSex != null">
             AND patient_sex = #{patientSex}
+        </if>
+        <if test="bodyPartIds != null">
+            AND body_part_id in(
+            <foreach collection="bodyPartIds" item="bodyPartId" index="index" separator="," >
+                #{bodyPartId, jdbcType=INTEGER}
+            </foreach>
+            )
+        </if>
+        <if test="scanTypeIds != null">
+            AND scan_type_id in(
+            <foreach collection="scanTypeIds" item="scanTypeId" index="index" separator="," >
+                #{scanTypeId, jdbcType=INTEGER}
+            </foreach>
+            )
         </if>
         ORDER BY image_series.updated_at desc
         LIMIT #{pageSize} OFFSET #{offset}
