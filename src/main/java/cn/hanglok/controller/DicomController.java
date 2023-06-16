@@ -83,9 +83,7 @@ public class DicomController {
     @GetMapping("/institution")
     public List<InstitutionDto> getInstitution() {
         return new ArrayList<>() {{
-            institutionService.getInstitutionList().forEach(entity -> {
-                add(ConvertUtils.entityToDto(entity, Institution.class, InstitutionDto.class));
-            });
+            institutionService.getInstitutionList().forEach(entity -> add(ConvertUtils.entityToDto(entity, Institution.class, InstitutionDto.class)));
         }};
     }
 
