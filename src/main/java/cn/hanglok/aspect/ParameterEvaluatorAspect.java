@@ -2,8 +2,11 @@ package cn.hanglok.aspect;
 
 import cn.hanglok.exception.ResponseException;
 import cn.hanglok.util.ConditionEvaluator;
+import jakarta.servlet.http.HttpServletRequest;
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -19,9 +22,11 @@ import java.util.Arrays;
 @Component
 public class ParameterEvaluatorAspect {
 
-    @Before(value = "execution(* cn.hanglok.controller.DicomController.getSimpleDicomList(String, int, int)) && args(patientSex, currentPage, pageSize)",
-            argNames = "patientSex, currentPage, pageSize")
-    public void getSimpleDicomList(String patientSex, int currentPage, int pageSize) {
+    @Before(value = "execution(* cn.hanglok.controller.DicomController.getSimpleSeriesList(String, Long[], String[], Double[], Long[], String, Long[], Long[], int, int)) && " +
+            "args(keyword, institutionIds, modality, sliceRange, bodyPartIds, patientSex, organIds, scanTypeIds, currentPage, pageSize)",
+            argNames = "keyword, institutionIds, modality, sliceRange, bodyPartIds, patientSex, organIds, scanTypeIds, currentPage, pageSize")
+    public void getSimpleSeriesList(String keyword, Long[] institutionIds, String[] modality, Double[] sliceRange, Long[] bodyPartIds,
+                                   String patientSex, Long[] organIds, Long[] scanTypeIds, int currentPage, int pageSize) {
 
         // 创建组合校验
         ConditionEvaluator.Composite composite = new ConditionEvaluator.Composite() {{
@@ -29,6 +34,9 @@ public class ParameterEvaluatorAspect {
             // 性别校验
             addComponent(new ConditionEvaluator.Leaf(patientSex == null ||
                     Arrays.asList(new String[]{"F", "M"}).contains(patientSex)));
+
+            // 切片范围校验
+            addComponent(new ConditionEvaluator.Leaf(sliceRange == null || (sliceRange.length == 2 && sliceRange[0] <= sliceRange[1])));
 
             // 页码校验
             addComponent(new ConditionEvaluator.Leaf(currentPage > 0 && pageSize > 0 ));
