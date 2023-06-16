@@ -19,7 +19,7 @@ import java.util.Enumeration;
 @Component
 public class MyAspect {
 
-    @Before("execution (* com.example.demo.controller.*.*(..)) && args(.., request)")
+    @Before("execution (* cn.hanglok.controller.*.*(..)) && args(.., request)")
     public void captureRequestHeaders(JoinPoint joinPoint, HttpServletRequest request) {
 //        String userAgent = request.getHeader("User-Agent");
 //        String authorizationHeader = request.getHeader("Authorization");
@@ -34,7 +34,7 @@ public class MyAspect {
         }
     }
 
-    @Before("execution (* com.example.demo.controller.*.*(..)) && args(.., request)")
+    @Before("execution (* cn.hanglok.controller.*.*(..)) && args(.., request)")
     public void getClientIp(HttpServletRequest request) {
         String ipAddress = request.getHeader("X-Forwarded-For");
         if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
