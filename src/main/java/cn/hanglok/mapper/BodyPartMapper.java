@@ -11,7 +11,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @author Allen
  * @since 2023-06-07
  */
-@Deprecated
 public interface BodyPartMapper extends BaseMapper<BodyPart> {
 
 }

@@ -11,10 +11,10 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 @EnableAspectJAutoProxy
 @SpringBootApplication
 @MapperScan("cn.hanglok.mapper")
-public class ImmpApplication {
+public class ImpApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(ImmpApplication.class, args);
+        SpringApplication.run(ImpApplication.class, args);
     }
 
 }

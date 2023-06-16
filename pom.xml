@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>cn.hanglok</groupId>
-    <artifactId>immp</artifactId>
+    <artifactId>imp</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>Image management platform</name>
     <description>Image management platform</description>

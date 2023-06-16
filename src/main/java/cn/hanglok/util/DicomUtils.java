@@ -1,7 +1,6 @@
 package cn.hanglok.util;
 
 import cn.hanglok.dto.*;
-import com.alibaba.fastjson.JSON;
 import io.micrometer.common.util.StringUtils;
 import org.dcm4che3.data.Attributes;
 import org.dcm4che3.data.Tag;
@@ -14,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
