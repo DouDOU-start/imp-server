@@ -45,6 +45,21 @@
   - [ ] 身体检查部位管理，新增、修改、删除，获取身体检查部位列表；
 
 - 文件模块：
+
+  > 文件存储目录树：
+  > ```
+  > | |——dicom
+  > | | |——institution_name
+  > | | | |——patient_id
+  > | | | | |——studies_uid
+  > | | | | | |——series_uid
+  > | | | | | | |——instance_number.dcm
+  > | |——label
+  > | | |——series_id.nii or series_id.nii.gz
+  > | |——labelBak
+  > | | |——series_id.nii or series_id.nii.gz
+  > ```
+
   - [x] 上传DICOM文件，数据入库；
   - [ ] 下载DICOM文件；
   - [ ] 上传标注文件(nii格式)；
@@ -52,6 +67,9 @@
   - 下载影像文件包:
     - [ ] 单个影像包格式，影像包zip -> [ DICOM文件夹 -> [ DICOM1, DICOM2, ... ] ，标注文件 ]
     - [ ] 批量影像包格式，影像包.zip -> [ DICOM文件夹 -> [ series1 -> [ DICOM1, DICOM2, ... ], series2, ... ]，标注文件夹 -> [ nii1, nii2, ... ] ]
+  - 标签文件回收站
+    - [ ] 定时清理回收站标签文件
+    - [ ] 回收站标签文件恢复
 
 - 工具模块：
   - [x] 校验DICOM文件、解析DICOM文件、修复DICOM文件中文乱码
