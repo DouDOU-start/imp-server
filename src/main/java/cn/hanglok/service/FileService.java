@@ -15,4 +15,5 @@ import java.io.File;
  */
 public interface FileService {
     DicomInfoDto uploadDicom(File file);
+    boolean uploadLabel(MultipartFile file, String seriesId);
 }

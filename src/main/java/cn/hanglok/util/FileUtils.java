@@ -20,6 +20,11 @@ public class FileUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(FileUtils.class);
 
+    /**
+     * multipartFile转File
+     * @param multipartFile multipartFile
+     * @return File
+     */
     public static File convertTempFile(MultipartFile multipartFile) {
         File tempFile;
         try {
