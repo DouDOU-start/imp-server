@@ -11,7 +11,9 @@ import com.baomidou.mybatisplus.generator.fill.Column;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.File;
 import java.sql.Types;
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -27,9 +29,9 @@ import java.util.List;
 public class MybatisPlusGeneratorTest {
 
     // MP生成代码指定目录
-    private final String outDir = System.getProperty("user.dir") + "\\src\\main\\java";
+    private final String outDir = System.getProperty("user.dir") + MessageFormat.format("{0}src{0}main{0}java", File.separator);
     // MP生成xmp文件指定目录
-    private final String xmlOutDir = System.getProperty("user.dir") + "\\src\\main\\resources\\mapper";
+    private final String xmlOutDir = System.getProperty("user.dir") + MessageFormat.format("{0}src{0}main{0}resources{0}mapper", File.separator);
 
     /**
      * 快速生成
@@ -88,7 +90,7 @@ public class MybatisPlusGeneratorTest {
                         // 使用Lombok注解
                         .enableLombok()
                         // 开启文件覆盖模式，谨慎使用
-//                        .enableFileOverride()
+                        .enableFileOverride()
                         .addTableFills(
                                 new Column("create_time", FieldFill.INSERT)
                         ).build())
