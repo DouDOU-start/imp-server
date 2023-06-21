@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 192.168.1.123
+ Source Server         : 127.0.0.1
  Source Server Type    : MySQL
  Source Server Version : 80033 (8.0.33)
- Source Host           : 192.168.1.123:3366
+ Source Host           : 127.0.0.1:3366
  Source Schema         : IMP
 
  Target Server Type    : MySQL
  Target Server Version : 80033 (8.0.33)
  File Encoding         : 65001
 
- Date: 21/06/2023 15:10:59
+ Date: 21/06/2023 16:32:59
 */
 
 SET NAMES utf8mb4;
@@ -119,18 +119,18 @@ CREATE TABLE `image_scan_type` (
 DROP TABLE IF EXISTS `image_series`;
 CREATE TABLE `image_series` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '自增 id',
-  `series_number` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '系列号（单个设备唯一）',
-  `series_uid` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '系列uid',
-  `series_description` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '系列描述',
-  `modality` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '模态',
-  `scan_type_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '-1' COMMENT '扫描类型 id（多选，用英文逗号分隔）',
-  `body_part_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '-1' COMMENT '身体部位 id（多选，用英文逗号分隔）',
-  `pixel_spacing` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '像素间距',
+  `series_number` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '系列号（单个设备唯一）',
+  `series_uid` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '系列uid',
+  `series_description` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '系列描述',
+  `modality` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '模态',
+  `scan_type_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '扫描类型 id（多选，用英文逗号分隔）',
+  `body_part_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '身体部位 id（多选，用英文逗号分隔）',
+  `pixel_spacing` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '像素间距',
   `slice_thickness` double NOT NULL COMMENT '切片厚度',
   `row` int NOT NULL COMMENT '行',
   `columns` int NOT NULL COMMENT '列',
   `instance_num` int NOT NULL DEFAULT '0' COMMENT '实例数',
-  `patient_age` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '影像患者年龄',
+  `patient_age` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '-1' COMMENT '影像患者年龄',
   `series_at` timestamp NULL DEFAULT NULL COMMENT '系列创建时间',
   `study_id` bigint NOT NULL COMMENT '研究 id',
   `created_at` timestamp NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间',
