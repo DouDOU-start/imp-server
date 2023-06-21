@@ -67,5 +67,5 @@ public class ImageLabel implements Serializable {
     /**
      * 修改人
      */
-    private Long updator;
+    private Long updater;
 }

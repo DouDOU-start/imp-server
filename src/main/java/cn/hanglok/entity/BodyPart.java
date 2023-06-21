@@ -52,5 +52,5 @@ public class BodyPart implements Serializable {
     /**
      * 修改人
      */
-    private Long updator;
+    private Long updater;
 }
