@@ -45,7 +45,7 @@ public class FileServiceImpl implements FileService {
         if (null != dicomInfo) {
             String uploadFileDir = FileConfig.dicomLocation +
                     File.separator + dicomInfo.getInstitution().getInstitutionName() +
-                    File.separator + dicomInfo.getInstitutionPatient().getPatientId() +
+                    File.separator + dicomInfo.getInstitutionPatient().getPatientNumber() +
                     File.separator + dicomInfo.getImageStudies().getStudyUid() +
                     File.separator + dicomInfo.getImageStudies().getImageSeries().getSeriesUid();
 

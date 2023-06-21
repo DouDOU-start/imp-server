@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 public class SimpleSeriesOutDto {
     private Long seriesId;
     private String institutionName;
-    private String patientId;
+    private String patientNumber;
     private String patientName;
     private String patientSex;
     private String patientAge;

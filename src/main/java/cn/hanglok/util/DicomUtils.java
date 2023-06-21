@@ -76,7 +76,7 @@ public class DicomUtils {
 
             // 设置患者属性
             setInstitutionPatient(new InstitutionPatientDto() {{
-                setPatientId(finalAttr.getString(Tag.PatientID));
+                setPatientNumber(finalAttr.getString(Tag.PatientID));
                 setPatientName(finalAttr.getString(Tag.PatientName));
                 setPatientSex(finalAttr.getString(Tag.PatientSex));
             }});

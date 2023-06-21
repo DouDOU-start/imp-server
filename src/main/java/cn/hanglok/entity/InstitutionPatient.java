@@ -14,7 +14,7 @@ import lombok.Setter;
  * </p>
  *
  * @author Allen
- * @since 2023-06-12
+ * @since 2023-06-21
  */
 @Getter
 @Setter
@@ -32,7 +32,7 @@ public class InstitutionPatient implements Serializable {
     /**
      * 患者 id
      */
-    private String patientId;
+    private String patientNumber;
 
     /**
      * 患者姓名

@@ -5,7 +5,7 @@
     <resultMap id="simpleDicomInfoMap" type="cn.hanglok.dto.SimpleSeriesOutDto">
         <id property="seriesId" column="id" />
         <result property="institutionName" column="institution_name" />
-        <result property="patientId" column="patient_id" />
+        <result property="patientNumber" column="patient_number" />
         <result property="patientName" column="patient_name" />
         <result property="patientSex" column="patient_sex" />
         <result property="patientAge" column="patient_age" />
@@ -15,7 +15,7 @@
     </resultMap>
 
     <select id="getSimpleSeriesList" resultMap="simpleDicomInfoMap">
-        SELECT image_series.id, institution.institution_name, institution_patient.patient_id,
+        SELECT image_series.id, institution.institution_name, institution_patient.patient_number,
         institution_patient.patient_name, institution_patient.patient_sex, image_series.patient_age,
         image_series.modality, image_series.modality, image_series.slice_thickness,
         image_series.created_at
@@ -25,7 +25,7 @@
         LEFT JOIN image_series ON image_studies.id = image_series.study_id
         WHERE 1 = 1
         <if test="keyword != null">
-          AND (institution_patient.patient_id LIKE CONCAT('%', #{keyword}, '%') OR patient_name LIKE CONCAT('%', #{keyword}, '%'))
+          AND (institution_patient.patient_number LIKE CONCAT('%', #{keyword}, '%') OR patient_name LIKE CONCAT('%', #{keyword}, '%'))
         </if>
         <if test="institutionIds != null">
             AND institution_id in(
