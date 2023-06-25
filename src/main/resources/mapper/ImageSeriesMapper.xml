@@ -14,11 +14,16 @@
         <result property="createdAt" column="created_at" />
     </resultMap>
 
-    <select id="getSimpleSeriesList" resultMap="simpleDicomInfoMap">
-        SELECT image_series.id, institution.institution_name, institution_patient.patient_number,
+    <sql id="SimpleSeriesList" >
+        image_series.id, institution.institution_name, institution_patient.patient_number,
         institution_patient.patient_name, institution_patient.patient_sex, image_series.patient_age,
-        image_series.modality, image_series.modality, image_series.slice_thickness,
+        image_series.modality, image_series.slice_thickness,
         image_series.created_at
+    </sql>
+
+    <select id="getSimpleSeriesList" resultMap="simpleDicomInfoMap">
+        SELECT
+        <include refid="SimpleSeriesList" />
         FROM institution
         LEFT JOIN institution_patient ON institution.id = institution_patient.institution_id
         LEFT JOIN image_studies ON institution_patient.id = image_studies.patient_id
@@ -63,7 +68,6 @@
             )
         </if>
         ORDER BY image_series.updated_at desc
-        LIMIT #{pageSize} OFFSET #{offset}
     </select>
 
     <select id="getModality" resultType="java.lang.String">

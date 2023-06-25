@@ -4,6 +4,8 @@ import cn.hanglok.dto.*;
 import cn.hanglok.entity.*;
 import cn.hanglok.mapper.*;
 import cn.hanglok.service.IImageSeriesService;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,7 +27,7 @@ public class ImageSeriesServiceImpl extends ServiceImpl<ImageSeriesMapper, Image
     ImageSeriesMapper imageSeriesMapper;
 
     @Override
-    public List<SimpleSeriesOutDto> getSimpleSeriesList(String keyword, Long[] institutionIds, String[] modality, Double[] sliceRange, Long[] bodyPartIds,
+    public IPage<SimpleSeriesOutDto> getSimpleSeriesList(String keyword, Long[] institutionIds, String[] modality, Double[] sliceRange, Long[] bodyPartIds,
                                                         String patientSex, Long[] organIds, Long[] scanTypeIds, int currentPage, int pageSize) {
 
         return imageSeriesMapper.getSimpleSeriesList(
@@ -37,8 +39,9 @@ public class ImageSeriesServiceImpl extends ServiceImpl<ImageSeriesMapper, Image
                 patientSex,
                 organIds,
                 scanTypeIds,
-                pageSize,
-                (currentPage - 1) * pageSize
+                new Page<>(currentPage, pageSize) {{
+                    setOptimizeCountSql(false);
+                }}
         );
     }
 

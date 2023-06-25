@@ -7,6 +7,7 @@ import cn.hanglok.entity.Institution;
 import cn.hanglok.service.IImageSeriesService;
 import cn.hanglok.service.IInstitutionService;
 import cn.hanglok.util.ConvertUtils;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -52,16 +53,16 @@ public class DicomController {
             @Parameter(name = "pageSize",description = "页面大小", in = ParameterIn.QUERY),
     })
     @GetMapping
-    public List<SimpleSeriesOutDto> getSimpleSeriesList(@RequestParam(required = false) String keyword,
-                                                        @RequestParam(required = false) Long[] institutionIds,
-                                                        @RequestParam(required = false) String[] modality,
-                                                        @RequestParam(required = false) Double[] sliceRange,
-                                                        @RequestParam(required = false) Long[] bodyPartIds,
-                                                        @RequestParam(required = false) String patientSex,
-                                                        @RequestParam(required = false) Long[] organIds,
-                                                        @RequestParam(required = false) Long[] scanTypeIds,
-                                                        @RequestParam int currentPage,
-                                                        @RequestParam int pageSize) {
+    public IPage<SimpleSeriesOutDto> getSimpleSeriesList(@RequestParam(required = false) String keyword,
+                                                         @RequestParam(required = false) Long[] institutionIds,
+                                                         @RequestParam(required = false) String[] modality,
+                                                         @RequestParam(required = false) Double[] sliceRange,
+                                                         @RequestParam(required = false) Long[] bodyPartIds,
+                                                         @RequestParam(required = false) String patientSex,
+                                                         @RequestParam(required = false) Long[] organIds,
+                                                         @RequestParam(required = false) Long[] scanTypeIds,
+                                                         @RequestParam int currentPage,
+                                                         @RequestParam int pageSize) {
 
         return iImageSeriesService.getSimpleSeriesList(
                 keyword,
