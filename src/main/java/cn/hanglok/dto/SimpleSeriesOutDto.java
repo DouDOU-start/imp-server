@@ -21,6 +21,5 @@ public class SimpleSeriesOutDto {
     private String patientAge;
     private String modality;
     private Double sliceThickness;
-//    private String bodyPart;
     private LocalDateTime createdAt;
 }
