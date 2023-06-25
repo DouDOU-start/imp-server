@@ -51,7 +51,7 @@ public class DicomServiceImpl implements DicomService {
 
         // 判断患者是否存在
         InstitutionPatient patient = institutionPatientMapper.selectOne(new QueryWrapper<>() {{
-            eq("patient_id", dicomInfo.getInstitutionPatient().getPatientNumber());
+            eq("patient_number", dicomInfo.getInstitutionPatient().getPatientNumber());
             eq("institution_id", finalInstitution.getId());
         }});
 
