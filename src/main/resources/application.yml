@@ -4,7 +4,7 @@ spring:
       max-file-size: 500MB
       max-request-size: 500MB
   datasource:
-    url: jdbc:mysql://192.168.1.123:3366/IMP
+    url: jdbc:mysql://127.0.0.1:3366/IMP
     username: root
     password: hanglok8888
     driver-class-name: com.mysql.cj.jdbc.Driver
