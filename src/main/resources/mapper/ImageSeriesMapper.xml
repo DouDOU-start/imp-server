@@ -23,6 +23,7 @@
         LEFT JOIN institution_patient ON institution.id = institution_patient.institution_id
         LEFT JOIN image_studies ON institution_patient.id = image_studies.patient_id
         LEFT JOIN image_series ON image_studies.id = image_series.study_id
+        LEFt JOIN image_label ON image_series.id = image_label.series_id
         WHERE 1 = 1
         <if test="keyword != null">
           AND (institution_patient.patient_number LIKE CONCAT('%', #{keyword}, '%') OR patient_name LIKE CONCAT('%', #{keyword}, '%'))
