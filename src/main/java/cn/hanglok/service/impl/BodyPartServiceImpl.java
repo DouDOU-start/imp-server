@@ -25,7 +25,7 @@ public class BodyPartServiceImpl extends ServiceImpl<BodyPartMapper, BodyPart> i
     BodyPartMapper bodyPartMapper;
 
     @Override
-    public int AddBodyPart(BodyPart bodyPartDto) {
+    public int addBodyPart(BodyPart bodyPartDto) {
 
         if (null != bodyPartDto.getId()) {
             return -1;

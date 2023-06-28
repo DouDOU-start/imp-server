@@ -33,7 +33,7 @@ import java.util.List;
 public class DicomController {
 
     @Autowired
-    IImageSeriesService iImageSeriesService;
+    IImageSeriesService imageSeriesService;
 
     @Autowired
     IInstitutionService institutionService;
@@ -64,7 +64,7 @@ public class DicomController {
                                                          @RequestParam int currentPage,
                                                          @RequestParam int pageSize) {
 
-        return iImageSeriesService.getSimpleSeriesList(
+        return imageSeriesService.getSimpleSeriesList(
                 keyword,
                 institutionIds,
                 modality,
@@ -92,6 +92,6 @@ public class DicomController {
     @Operation(summary = "获取模态信息列表")
     @GetMapping("/modality")
     public List<String> getModality() {
-        return iImageSeriesService.getModality();
+        return imageSeriesService.getModality();
     }
 }

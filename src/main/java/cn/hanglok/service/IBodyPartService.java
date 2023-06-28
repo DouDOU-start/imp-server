@@ -13,7 +13,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IBodyPartService extends IService<BodyPart> {
 
-    int AddBodyPart(BodyPart bodyPartDto);
+    int addBodyPart(BodyPart bodyPartDto);
 
     int modifyBodyPart(BodyPart bodyPartDto);
 
