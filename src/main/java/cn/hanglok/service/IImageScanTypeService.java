@@ -13,4 +13,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IImageScanTypeService extends IService<ImageScanType> {
 
+    int addScanType(ImageScanType imageScanTypeDto);
+
+    int modifyScanType(ImageScanType imageScanTypeDto);
+
+    int delScanType(Long id);
 }

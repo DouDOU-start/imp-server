@@ -3,10 +3,13 @@ package cn.hanglok.controller;
 import cn.hanglok.config.AuthorConfig;
 import cn.hanglok.dto.BodyPartDto;
 import cn.hanglok.dto.HumanOrganDto;
+import cn.hanglok.dto.ImageScanTypeDto;
 import cn.hanglok.entity.BodyPart;
 import cn.hanglok.entity.HumanOrgan;
+import cn.hanglok.entity.ImageScanType;
 import cn.hanglok.service.IBodyPartService;
 import cn.hanglok.service.IHumanOrganService;
+import cn.hanglok.service.IImageScanTypeService;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -35,6 +38,9 @@ public class DimensionController {
 
     @Autowired
     IHumanOrganService humanOrganService;
+
+    @Autowired
+    IImageScanTypeService imageScanTypeService;
 
     @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
     @Operation(summary = "新增身体检查部位")
@@ -92,6 +98,35 @@ public class DimensionController {
     @DeleteMapping("/humanOrgan/{id}")
     public int delHumanOrgan(@PathVariable long id) {
         return humanOrganService.delHumanOrgan(id);
+    }
+
+    @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
+    @Operation(summary = "新增扫描类型")
+    @PostMapping("/scanType")
+    public int addScanType(@RequestBody ImageScanTypeDto imageScanType) {
+        return imageScanTypeService.addScanType(imageScanType);
+    }
+
+    @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
+    @Operation(summary = "获取扫描类型")
+    @GetMapping("/scanType")
+    public List<ImageScanType> getScanType() {
+        return imageScanTypeService.list();
+    }
+
+    @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
+    @Operation(summary = "修改扫描类型")
+    @PutMapping("/scanType")
+    public int modifyScanType(@RequestBody ImageScanTypeDto imageScanType) {
+        return imageScanTypeService.modifyScanType(imageScanType);
+    }
+
+    @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
+    @Parameters(@Parameter(name = "id", description = "扫描类型 id", in = ParameterIn.PATH))
+    @Operation(summary = "删除扫描类型")
+    @DeleteMapping("/scanType/{id}")
+    public int delScanType(@PathVariable long id) {
+        return imageScanTypeService.delScanType(id);
     }
 
 }

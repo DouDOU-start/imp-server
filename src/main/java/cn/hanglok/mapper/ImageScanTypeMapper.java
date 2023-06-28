@@ -12,5 +12,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @since 2023-06-07
  */
 public interface ImageScanTypeMapper extends BaseMapper<ImageScanType> {
-
+    int updateScanTypeName(ImageScanType imageScanType);
 }
