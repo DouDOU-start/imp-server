@@ -1,6 +1,5 @@
 package cn.hanglok.service;
 
-import cn.hanglok.dto.BodyPartDto;
 import cn.hanglok.entity.BodyPart;
 import com.baomidou.mybatisplus.extension.service.IService;
 
