@@ -13,4 +13,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IHumanOrganService extends IService<HumanOrgan> {
 
+    int addHumanOrgan(HumanOrgan humanOrgan);
+
+    int modifyHumanOrgan(HumanOrgan humanOrgan);
+
+    int delHumanOrgan(Long id);
 }

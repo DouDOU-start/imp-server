@@ -2,8 +2,11 @@ package cn.hanglok.controller;
 
 import cn.hanglok.config.AuthorConfig;
 import cn.hanglok.dto.BodyPartDto;
+import cn.hanglok.dto.HumanOrganDto;
 import cn.hanglok.entity.BodyPart;
+import cn.hanglok.entity.HumanOrgan;
 import cn.hanglok.service.IBodyPartService;
+import cn.hanglok.service.IHumanOrganService;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -30,11 +33,14 @@ public class DimensionController {
     @Autowired
     IBodyPartService bodyPartService;
 
+    @Autowired
+    IHumanOrganService humanOrganService;
+
     @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
     @Operation(summary = "新增身体检查部位")
     @PostMapping("/bodyPart")
-    public int AddBodyPart(@RequestBody BodyPartDto bodyPart) {
-        return bodyPartService.AddBodyPart(bodyPart);
+    public int addBodyPart(@RequestBody BodyPartDto bodyPart) {
+        return bodyPartService.addBodyPart(bodyPart);
     }
 
     @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
@@ -58,4 +64,34 @@ public class DimensionController {
     public int delBodyPart(@PathVariable long id) {
         return bodyPartService.delBodyPart(id);
     }
+
+    @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
+    @Operation(summary = "新增器官")
+    @PostMapping("/humanOrgan")
+    public int addHumanOrgan(@RequestBody HumanOrganDto humanOrgan) {
+        return humanOrganService.addHumanOrgan(humanOrgan);
+    }
+
+    @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
+    @Operation(summary = "获取器官")
+    @GetMapping("/humanOrgan")
+    public List<HumanOrgan> getHumanOrgan() {
+        return humanOrganService.list();
+    }
+
+    @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
+    @Operation(summary = "修改器官")
+    @PutMapping("/humanOrgan")
+    public int modifyHumanOrgan(@RequestBody HumanOrganDto humanOrgan) {
+        return humanOrganService.modifyHumanOrgan(humanOrgan);
+    }
+
+    @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
+    @Parameters(@Parameter(name = "id", description = "器官 id", in = ParameterIn.PATH))
+    @Operation(summary = "删除器官")
+    @DeleteMapping("/humanOrgan/{id}")
+    public int delHumanOrgan(@PathVariable long id) {
+        return humanOrganService.delHumanOrgan(id);
+    }
+
 }

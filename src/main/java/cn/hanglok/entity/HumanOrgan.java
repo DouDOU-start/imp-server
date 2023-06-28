@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -27,11 +29,13 @@ public class HumanOrgan implements Serializable {
      * 自增 id
      */
     @TableId(value = "id", type = IdType.AUTO)
+    @Schema(description = "id（新增操作时不填，修改操作时必填）")
     private Long id;
 
     /**
      * 器官名称
      */
+    @Schema(description = "器官名称", requiredMode = Schema.RequiredMode.REQUIRED)
     private String organName;
 
     /**
