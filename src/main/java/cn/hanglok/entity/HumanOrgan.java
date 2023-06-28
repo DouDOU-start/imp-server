@@ -41,20 +41,24 @@ public class HumanOrgan implements Serializable {
     /**
      * 创建时间
      */
+    @Schema(description = "创建时间")
     private LocalDateTime createdAt;
 
     /**
      * 修改时间
      */
+    @Schema(description = "修改时间")
     private LocalDateTime updatedAt;
 
     /**
      * 创建人
      */
+    @Schema(description = "创建人 id", defaultValue = "-1")
     private Long creator;
 
     /**
      * 修改人
      */
+    @Schema(description = "修改人 id", defaultValue = "-1")
     private Long updater;
 }
