@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * <p>
@@ -38,10 +39,19 @@ public class HumanOrganServiceImpl extends ServiceImpl<HumanOrganMapper, HumanOr
     }
 
     @Override
-    public int modifyHumanOrgan(HumanOrgan humanOrgan) {
-        humanOrgan.setUpdatedAt(LocalDateTime.now());
-        humanOrgan.setUpdater(99L);
-        return humanOrganMapper.updateOrganName(humanOrgan);
+    public int modifyHumanOrgan(HumanOrgan humanOrganDto) {
+
+        HumanOrgan humanOrgan = humanOrganMapper.selectOne(new QueryWrapper<>() {{
+            eq("organ_name", humanOrganDto.getOrganName());
+        }});
+
+        if (null != humanOrgan && ! Objects.equals(humanOrgan.getId(), humanOrganDto.getId())) {
+            return -1;
+        }
+
+        humanOrganDto.setUpdatedAt(LocalDateTime.now());
+        humanOrganDto.setUpdater(99L);
+        return humanOrganMapper.updateOrganName(humanOrganDto);
     }
 
     @Override

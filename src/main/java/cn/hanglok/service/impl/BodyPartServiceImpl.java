@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /**
  * <p>
@@ -41,6 +42,15 @@ public class BodyPartServiceImpl extends ServiceImpl<BodyPartMapper, BodyPart> i
 
     @Override
     public int modifyBodyPart(BodyPart bodyPartDto) {
+
+        BodyPart bodyPart = bodyPartMapper.selectOne(new QueryWrapper<>() {{
+            eq("body_name", bodyPartDto.getBodyName());
+        }});
+
+        if (null != bodyPart && ! Objects.equals(bodyPart.getId(), bodyPartDto.getId())) {
+            return -1;
+        }
+
         bodyPartDto.setUpdatedAt(LocalDateTime.now());
         bodyPartDto.setUpdater(99L);
         return bodyPartMapper.updateBodyName(bodyPartDto);
