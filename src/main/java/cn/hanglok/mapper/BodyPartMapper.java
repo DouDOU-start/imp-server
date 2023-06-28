@@ -12,5 +12,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @since 2023-06-07
  */
 public interface BodyPartMapper extends BaseMapper<BodyPart> {
-
+    int updateBodyName(BodyPart bodyPart);
 }

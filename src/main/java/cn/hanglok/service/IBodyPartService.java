@@ -1,5 +1,6 @@
 package cn.hanglok.service;
 
+import cn.hanglok.dto.BodyPartDto;
 import cn.hanglok.entity.BodyPart;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -12,5 +13,11 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2023-06-07
  */
 public interface IBodyPartService extends IService<BodyPart> {
+
+    int AddBodyPart(BodyPart bodyPartDto);
+
+    int modifyBodyPart(BodyPart bodyPartDto);
+
+    int delBodyPart(long id);
 
 }
