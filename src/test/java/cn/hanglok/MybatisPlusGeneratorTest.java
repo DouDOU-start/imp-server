@@ -90,7 +90,7 @@ public class MybatisPlusGeneratorTest {
                         // 使用Lombok注解
                         .enableLombok()
                         // 开启文件覆盖模式，谨慎使用
-                        .enableFileOverride()
+                        // .enableFileOverride()
                         .addTableFills(
                                 new Column("create_time", FieldFill.INSERT)
                         ).build())
@@ -101,8 +101,18 @@ public class MybatisPlusGeneratorTest {
                  */
                 .templateEngine(new FreemarkerTemplateEngine())
                 .templateConfig(config -> {
-                    // 禁用生成Controller
+                    // 禁用生成controller
                     config.disable(TemplateType.CONTROLLER);
+                    // 禁用生成xml
+                    config.disable(TemplateType.XML);
+                    // 禁用生成entity
+//                    config.disable(TemplateType.ENTITY);
+                    // 禁用生成mapper
+                    config.disable(TemplateType.MAPPER);
+                    // 禁用生成service
+                    config.disable(TemplateType.SERVICE);
+                    // 禁用生成impl
+                    config.disable(TemplateType.SERVICE_IMPL);
                 })
                 .execute();
     }
