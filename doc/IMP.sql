@@ -65,6 +65,18 @@ CREATE TABLE `human_organ` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=DYNAMIC COMMENT='器官表';
 
 -- ----------------------------
+-- Table structure for label_organ
+-- ----------------------------
+DROP TABLE IF EXISTS `label_organ`;
+CREATE TABLE `label_organ` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '自增 id',
+  `label_id` bigint NOT NULL COMMENT '标签 id',
+  `organ_id` bigint NOT NULL COMMENT '器官 id',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `label_id` (`label_id`,`organ_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='标签对应器官表';
+
+-- ----------------------------
 -- Table structure for image_instances
 -- ----------------------------
 DROP TABLE IF EXISTS `image_instances`;
@@ -89,7 +101,6 @@ CREATE TABLE `image_instances` (
 DROP TABLE IF EXISTS `image_label`;
 CREATE TABLE `image_label` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '自增 id',
-  `organ_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '-1' COMMENT '器官 id（多选，用英文逗号分隔）',
   `file_name` varchar(50) NOT NULL COMMENT '文件名',
   `file_location` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '文件路径',
   `series_id` bigint NOT NULL COMMENT '系列 id',

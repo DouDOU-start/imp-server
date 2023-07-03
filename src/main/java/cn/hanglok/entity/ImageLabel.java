@@ -14,7 +14,7 @@ import lombok.Setter;
  * </p>
  *
  * @author Allen
- * @since 2023-06-07
+ * @since 2023-06-29
  */
 @Getter
 @Setter
@@ -30,19 +30,14 @@ public class ImageLabel implements Serializable {
     private Long id;
 
     /**
-     * 器官 id（多选，用英文逗号分隔）
+     * 文件名
      */
-    private String organId;
+    private String fileName;
 
     /**
      * 文件路径
      */
     private String fileLocation;
-
-    /**
-     * 文件存储类型
-     */
-    private String fileStorageType;
 
     /**
      * 系列 id
