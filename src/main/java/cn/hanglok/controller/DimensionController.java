@@ -4,12 +4,13 @@ import cn.hanglok.config.AuthorConfig;
 import cn.hanglok.dto.BodyPartDto;
 import cn.hanglok.dto.HumanOrganDto;
 import cn.hanglok.dto.ImageScanTypeDto;
+import cn.hanglok.dto.InstitutionDto;
 import cn.hanglok.entity.BodyPart;
 import cn.hanglok.entity.HumanOrgan;
 import cn.hanglok.entity.ImageScanType;
-import cn.hanglok.service.IBodyPartService;
-import cn.hanglok.service.IHumanOrganService;
-import cn.hanglok.service.IImageScanTypeService;
+import cn.hanglok.entity.Institution;
+import cn.hanglok.service.*;
+import cn.hanglok.util.ConvertUtils;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -19,6 +20,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -34,6 +36,12 @@ import java.util.List;
 public class DimensionController {
 
     @Autowired
+    IInstitutionService institutionService;
+
+    @Autowired
+    IImageSeriesService imageSeriesService;
+
+    @Autowired
     IBodyPartService bodyPartService;
 
     @Autowired
@@ -41,6 +49,22 @@ public class DimensionController {
 
     @Autowired
     IImageScanTypeService imageScanTypeService;
+
+    @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
+    @Operation(summary = "获取机构信息列表")
+    @GetMapping("/institution")
+    public List<InstitutionDto> getInstitution() {
+        return new ArrayList<>() {{
+            institutionService.getInstitutionList().forEach(entity -> add(ConvertUtils.entityToDto(entity, Institution.class, InstitutionDto.class)));
+        }};
+    }
+
+    @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
+    @Operation(summary = "获取模态信息列表")
+    @GetMapping("/modality")
+    public List<String> getModality() {
+        return imageSeriesService.getModality();
+    }
 
     @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
     @Operation(summary = "新增身体检查部位")
