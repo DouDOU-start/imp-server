@@ -3,46 +3,71 @@
 <mapper namespace="cn.hanglok.mapper.ImageSeriesMapper">
 
     <resultMap id="simpleDicomInfoMap" type="cn.hanglok.dto.SimpleSeriesOutDto">
-        <id property="seriesId" column="id" />
-        <result property="institutionName" column="institution_name" />
-        <result property="patientNumber" column="patient_number" />
-        <result property="patientName" column="patient_name" />
-        <result property="patientSex" column="patient_sex" />
-        <result property="patientAge" column="patient_age" />
-        <result property="modality" column="modality" />
-        <result property="sliceThickness" column="slice_thickness" />
-        <result property="createdAt" column="created_at" />
+        <id property="seriesId" column="id"/>
+        <result property="institutionName" column="institution_name"/>
+        <result property="patientNumber" column="patient_number"/>
+        <result property="patientName" column="patient_name"/>
+        <result property="patientSex" column="patient_sex"/>
+        <result property="patientAge" column="patient_age"/>
+        <result property="modality" column="modality"/>
+        <result property="sliceThickness" column="slice_thickness"/>
+        <result property="bodyPart" column="body_part"/>
+        <result property="createdAt" column="created_at"/>
     </resultMap>
 
-    <sql id="SimpleSeriesList" >
-        image_series.id, institution.institution_name, institution_patient.patient_number,
-        institution_patient.patient_name, institution_patient.patient_sex, image_series.patient_age,
-        image_series.modality, image_series.slice_thickness,
-        image_series.created_at
+    <sql id="SimpleSeriesList">
+        image_series.id,
+	    image_series.series_description,
+	    institution.institution_name,
+	    institution_patient.patient_number,
+	    institution_patient.patient_name,
+	    institution_patient.patient_sex,
+	    image_series.patient_age,
+	    image_series.modality,
+	    image_series.slice_thickness,
+	    image_series.created_at,
+	    GROUP_CONCAT( human_organ.organ_name SEPARATOR ', ' ) as body_part
     </sql>
 
     <select id="getSimpleSeriesList" resultMap="simpleDicomInfoMap">
         SELECT
-        <include refid="SimpleSeriesList" />
+        <include refid="SimpleSeriesList"/>
         FROM institution
         LEFT JOIN institution_patient ON institution.id = institution_patient.institution_id
         LEFT JOIN image_studies ON institution_patient.id = image_studies.patient_id
         LEFT JOIN image_series ON image_studies.id = image_series.study_id
-        LEFt JOIN image_label ON image_series.id = image_label.series_id
+        LEFT JOIN image_label ON image_series.id = image_label.series_id
+        LEFT JOIN label_organ ON image_label.id = label_organ.label_id
+        LEFT JOIN human_organ ON label_organ.organ_id = human_organ.id
         WHERE 1 = 1
-        <if test="keyword != null">
-          AND (institution_patient.patient_number LIKE CONCAT('%', #{keyword}, '%') OR patient_name LIKE CONCAT('%', #{keyword}, '%'))
+        <if test="organIds != null">
+            AND image_series.id IN (
+            <foreach collection="organIds" item="organId" separator="INTERSECT">
+                SELECT image_series.id
+                FROM
+                image_series
+                LEFT JOIN image_label ON image_series.id = image_label.series_id
+                LEFT JOIN label_organ ON image_label.id = label_organ.label_id
+                LEFT JOIN human_organ ON label_organ.organ_id = human_organ.id
+                where organ_id = #{organId}
+                GROUP BY image_series.id, human_organ.id
+            </foreach>
+            )
         </if>
+        <!--        <if test="keyword != null">-->
+        <!--            AND (institution_patient.patient_number LIKE CONCAT('%', #{keyword}, '%') OR patient_name LIKE CONCAT('%',-->
+        <!--            #{keyword}, '%'))-->
+        <!--        </if>-->
         <if test="institutionIds != null">
             AND institution_id in(
-                <foreach collection="institutionIds" item="institutionId" index="index" separator="," >
-                    #{institutionId, jdbcType=INTEGER}
-                </foreach>
+            <foreach collection="institutionIds" item="institutionId" index="index" separator=",">
+                #{institutionId, jdbcType=INTEGER}
+            </foreach>
             )
         </if>
         <if test="modality != null">
             AND modality in(
-            <foreach collection="modality" item="item" index="index" separator="," >
+            <foreach collection="modality" item="item" index="index" separator=",">
                 #{item, jdbcType=INTEGER}
             </foreach>
             )
@@ -55,23 +80,26 @@
         </if>
         <if test="bodyPartIds != null">
             AND body_part_id in(
-            <foreach collection="bodyPartIds" item="bodyPartId" index="index" separator="," >
+            <foreach collection="bodyPartIds" item="bodyPartId" index="index" separator=",">
                 #{bodyPartId, jdbcType=INTEGER}
             </foreach>
             )
         </if>
         <if test="scanTypeIds != null">
             AND scan_type_id in(
-            <foreach collection="scanTypeIds" item="scanTypeId" index="index" separator="," >
+            <foreach collection="scanTypeIds" item="scanTypeId" index="index" separator=",">
                 #{scanTypeId, jdbcType=INTEGER}
             </foreach>
             )
         </if>
+        GROUP BY image_series.id, institution.institution_name, institution_patient.patient_number,
+        institution_patient.patient_name, institution_patient.patient_sex
         ORDER BY image_series.updated_at desc
     </select>
 
     <select id="getModality" resultType="java.lang.String">
-        SELECT DISTINCT modality FROM image_series
+        SELECT DISTINCT modality
+        FROM image_series
     </select>
 
 </mapper>
