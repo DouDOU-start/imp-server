@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
  * @author Allen
  * @version 1.0
  * @className SimpleDicomInfoInDto
- * @description TODO
+ * @description 响应系列简要信息
  * @date 2023/6/12 9:41
  */
 @Data
@@ -21,5 +21,6 @@ public class SimpleSeriesOutDto {
     private String patientAge;
     private String modality;
     private Double sliceThickness;
+    private String bodyPart;
     private LocalDateTime createdAt;
 }
