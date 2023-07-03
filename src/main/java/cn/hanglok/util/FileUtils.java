@@ -66,4 +66,18 @@ public class FileUtils {
         }
     }
 
+    /**
+     * 创建目录
+     * @param pathName 目录地址
+     */
+    public static void mkdir(String pathName) {
+        File file = new File(pathName);
+        if (! file.exists()) {
+            logger.info(String.format("目录`%s`不存在，创建目录", pathName));
+            if (file.mkdirs()) {
+                logger.info(String.format("目录`%s`创建成功", pathName));
+            }
+        }
+    }
+
 }
