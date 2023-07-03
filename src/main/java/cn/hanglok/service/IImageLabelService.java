@@ -13,4 +13,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IImageLabelService extends IService<ImageLabel> {
 
+    int saveOrUpdateLabel(ImageLabel imageLabel);
+
 }
