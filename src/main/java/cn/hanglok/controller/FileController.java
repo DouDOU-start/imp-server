@@ -5,6 +5,9 @@ import cn.hanglok.service.FileService;
 import cn.hanglok.util.DicomUtils;
 import cn.hanglok.util.FileUtils;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -45,6 +48,7 @@ public class FileController {
     }
 
     @Operation(summary = "上传标注文件")
+    @Parameters(@Parameter(name = "seriesId", description = "系列 id", in = ParameterIn.PATH))
     @PostMapping("/label/{seriesId}")
     public boolean uploadLabel(@RequestParam MultipartFile file, @PathVariable("seriesId") String seriesId) {
         return fileService.uploadLabel(file, seriesId);
