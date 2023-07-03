@@ -2,10 +2,14 @@ package cn.hanglok.service.impl;
 
 import cn.hanglok.config.FileConfig;
 import cn.hanglok.dto.DicomInfoDto;
+import cn.hanglok.entity.ImageLabel;
+import cn.hanglok.entity.ImageSeries;
+import cn.hanglok.mapper.ImageSeriesMapper;
 import cn.hanglok.service.DicomService;
 import cn.hanglok.service.FileService;
 import cn.hanglok.service.IImageLabelService;
 import cn.hanglok.util.DicomUtils;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +18,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 /**
  * @author Allen
@@ -35,6 +41,9 @@ public class FileServiceImpl implements FileService {
 
     @Autowired
     IImageLabelService imageLabelService;
+
+    @Autowired
+    ImageSeriesMapper imageSeriesMapper;
 
     @Override
     public DicomInfoDto uploadDicom(File file) {
@@ -73,23 +82,39 @@ public class FileServiceImpl implements FileService {
             return false;
         }
 
-        try {
+        ImageSeries imageSeries = imageSeriesMapper.selectOne(new QueryWrapper<>() {{
+            eq("id", seriesId);
+        }});
 
-            File dir = new File(FileConfig.labelLocation);
-            if ( !dir.exists()) {
-                dir.mkdirs();
-            }
+        if (null == imageSeries) {
+            return false;
+        }
+
+        try {
 
             String fileName = file.getOriginalFilename();
             if (null != fileName) {
-                // 备份覆盖标签文件移动到回收站
-//                File[] files = dir.listFiles((dir1, name) -> name.substring(0, name.indexOf(".")).equals(seriesId));
-//                for (File bakFile: files) {
-//                    Files.move(bakFile.toPath(), )
-//                }
-                file.transferTo(new File(FileConfig.labelLocation + File.separator + seriesId + fileName.substring(fileName.indexOf("."))));
 
-//                imageLabelService.saveOrUpdate();
+                // 备份覆盖标签文件移动到回收站
+                File[] files = new File(FileConfig.labelLocation)
+                        .listFiles((dir1, name) -> name.substring(0, name.indexOf(".")).equals(seriesId));
+                for (File bakFile : files) {
+                    Files.move(
+                            bakFile.toPath(),
+                            new File(FileConfig.labelBakLocation + File.separator + bakFile.getName()).toPath(),
+                            StandardCopyOption.REPLACE_EXISTING
+                    );
+                }
+
+                // 保存文件到本地
+                String fileLocation = FileConfig.labelLocation + File.separator + seriesId + fileName.substring(fileName.indexOf("."));
+                file.transferTo(new File(fileLocation));
+
+                imageLabelService.saveOrUpdateLabel(new ImageLabel() {{
+                    setFileName(fileName);
+                    setFileLocation(fileLocation);
+                    setSeriesId(Long.valueOf(seriesId));
+                }});
 
                 return true;
             }
