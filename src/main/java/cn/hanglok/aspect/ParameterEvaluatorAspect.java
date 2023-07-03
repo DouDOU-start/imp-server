@@ -19,7 +19,7 @@ import java.util.Arrays;
 @Component
 public class ParameterEvaluatorAspect {
 
-    @Before(value = "execution(* cn.hanglok.controller.DicomController.getSimpleSeriesList(String, Long[], String[], Double[], Long[], String, Long[], Long[], int, int)) && " +
+    @Before(value = "execution(* cn.hanglok.controller.ImpController.getSimpleSeriesList(String, Long[], String[], Double[], Long[], String, Long[], Long[], int, int)) && " +
             "args(keyword, institutionIds, modality, sliceRange, bodyPartIds, patientSex, organIds, scanTypeIds, currentPage, pageSize)",
             argNames = "keyword, institutionIds, modality, sliceRange, bodyPartIds, patientSex, organIds, scanTypeIds, currentPage, pageSize")
     public void getSimpleSeriesList(String keyword, Long[] institutionIds, String[] modality, Double[] sliceRange, Long[] bodyPartIds,

@@ -1,12 +1,10 @@
 package cn.hanglok.controller;
 
 import cn.hanglok.config.AuthorConfig;
-import cn.hanglok.dto.InstitutionDto;
+import cn.hanglok.dto.ModifyLabelOrganDto;
 import cn.hanglok.dto.SimpleSeriesOutDto;
-import cn.hanglok.entity.Institution;
 import cn.hanglok.service.IImageSeriesService;
-import cn.hanglok.service.IInstitutionService;
-import cn.hanglok.util.ConvertUtils;
+import cn.hanglok.service.ILabelOrganService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,26 +15,23 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * @author Allen
  * @version 1.0
- * @className DicomController
- * @description Dicom模块控制器类
+ * @className ImpController
+ * @description 影像模块控制器类
  * @date 2023/6/9 16:35
  */
-@Tag(name = "1.0 DICOM模块")
+@Tag(name = "1.0 影像模块")
 @RestController
-@RequestMapping("/dicom")
-public class DicomController {
+@RequestMapping("/imp")
+public class ImpController {
 
     @Autowired
     IImageSeriesService imageSeriesService;
 
     @Autowired
-    IInstitutionService institutionService;
+    ILabelOrganService labelOrganService;
 
     @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
     @Operation(summary = "获取系列简要信息列表")
@@ -52,7 +47,7 @@ public class DicomController {
             @Parameter(name = "currentPage",description = "分页当前页", in = ParameterIn.QUERY),
             @Parameter(name = "pageSize",description = "页面大小", in = ParameterIn.QUERY),
     })
-    @GetMapping
+    @GetMapping("/series")
     public IPage<SimpleSeriesOutDto> getSimpleSeriesList(@RequestParam(required = false) String keyword,
                                                          @RequestParam(required = false) Long[] institutionIds,
                                                          @RequestParam(required = false) String[] modality,
@@ -80,18 +75,11 @@ public class DicomController {
     }
 
     @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
-    @Operation(summary = "获取机构信息列表")
-    @GetMapping("/institution")
-    public List<InstitutionDto> getInstitution() {
-        return new ArrayList<>() {{
-            institutionService.getInstitutionList().forEach(entity -> add(ConvertUtils.entityToDto(entity, Institution.class, InstitutionDto.class)));
-        }};
+    @Operation(summary = "修改标签器官")
+    @PutMapping("/LabelOrgan")
+    public int modifyLabelOrgan(@RequestBody ModifyLabelOrganDto modifyLabelOrganDto) {
+        return labelOrganService.modifyLabelOrgan(modifyLabelOrganDto);
     }
 
-    @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
-    @Operation(summary = "获取模态信息列表")
-    @GetMapping("/modality")
-    public List<String> getModality() {
-        return imageSeriesService.getModality();
-    }
+
 }
