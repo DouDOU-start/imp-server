@@ -34,7 +34,7 @@ public class LabelOrganServiceImpl extends ServiceImpl<LabelOrganMapper, LabelOr
         AtomicInteger success = new AtomicInteger();
         modifyLabelOrgan.getOperates().forEach(op -> {
             switch (op.getOp()) {
-                case ADD:
+                case ADD -> {
                     try {
                         int insert = labelOrganMapper.insert(new LabelOrgan() {{
                             setLabelId(modifyLabelOrgan.getLabelId());
@@ -46,8 +46,8 @@ public class LabelOrganServiceImpl extends ServiceImpl<LabelOrganMapper, LabelOr
                     } catch (Exception e) {
                         logger.error("新增标签器官异常：" + op);
                     }
-                    break;
-                case DEL:
+                }
+                case DEL -> {
                     int delete = labelOrganMapper.delete(new QueryWrapper<>() {{
                         eq("label_id", modifyLabelOrgan.getLabelId());
                         eq("organ_id", op.getOrganId());
@@ -55,10 +55,9 @@ public class LabelOrganServiceImpl extends ServiceImpl<LabelOrganMapper, LabelOr
                     if (1 == delete) {
                         success.getAndIncrement();
                     }
-                    break;
-                default:
-                    break;
-
+                }
+                default -> {
+                }
             }
         });
 
