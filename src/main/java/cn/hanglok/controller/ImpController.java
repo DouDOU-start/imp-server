@@ -78,9 +78,8 @@ public class ImpController {
     @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
     @Operation(summary = "修改标签器官")
     @PutMapping("/LabelOrgan")
-    public int modifyLabelOrgan(@RequestBody ModifyLabelOrganDto modifyLabelOrganDto) {
-        return labelOrganService.modifyLabelOrgan(modifyLabelOrganDto);
+    public Res<Integer> modifyLabelOrgan(@RequestBody ModifyLabelOrganDto modifyLabelOrganDto) {
+        return Res.ok(labelOrganService.modifyLabelOrgan(modifyLabelOrganDto));
     }
-
 
 }

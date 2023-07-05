@@ -63,95 +63,95 @@ public class DimensionController {
     @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
     @Operation(summary = "获取模态信息列表")
     @GetMapping("/modality")
-    public List<String> getModality() {
-        return imageSeriesService.getModality();
+    public Res<List<String>> getModality() {
+        return Res.ok(imageSeriesService.getModality());
     }
 
     @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
     @Operation(summary = "新增身体检查部位")
     @PostMapping("/bodyPart")
-    public int addBodyPart(@RequestBody BodyPartDto bodyPart) {
-        return bodyPartService.addBodyPart(bodyPart);
+    public Res<Integer> addBodyPart(@RequestBody BodyPartDto bodyPart) {
+        return Res.ok(bodyPartService.addBodyPart(bodyPart));
     }
 
     @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
     @Operation(summary = "获取身体检查部位")
     @GetMapping("/bodyPart")
-    public List<BodyPart> getBodyPart() {
-        return bodyPartService.list();
+    public Res<List<BodyPart>> getBodyPart() {
+        return Res.ok(bodyPartService.list());
     }
 
     @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
     @Operation(summary = "修改身体检查部位")
     @PutMapping("/bodyPart")
-    public int modifyBodyPart(@RequestBody BodyPartDto bodyPart) {
-        return bodyPartService.modifyBodyPart(bodyPart);
+    public Res<Integer> modifyBodyPart(@RequestBody BodyPartDto bodyPart) {
+        return Res.ok(bodyPartService.modifyBodyPart(bodyPart));
     }
 
     @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
     @Parameters(@Parameter(name = "id", description = "身体检查部位 id", in = ParameterIn.PATH))
     @Operation(summary = "删除身体检查部位")
     @DeleteMapping("/bodyPart/{id}")
-    public int delBodyPart(@PathVariable long id) {
-        return bodyPartService.delBodyPart(id);
+    public Res<Integer> delBodyPart(@PathVariable long id) {
+        return Res.ok(bodyPartService.delBodyPart(id));
     }
 
     @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
     @Operation(summary = "新增器官")
     @PostMapping("/humanOrgan")
-    public int addHumanOrgan(@RequestBody HumanOrganDto humanOrgan) {
-        return humanOrganService.addHumanOrgan(humanOrgan);
+    public Res<Integer> addHumanOrgan(@RequestBody HumanOrganDto humanOrgan) {
+        return Res.ok(humanOrganService.addHumanOrgan(humanOrgan));
     }
 
     @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
     @Operation(summary = "获取器官")
     @GetMapping("/humanOrgan")
-    public List<HumanOrgan> getHumanOrgan() {
-        return humanOrganService.list();
+    public Res<List<HumanOrgan>> getHumanOrgan() {
+        return Res.ok(humanOrganService.list());
     }
 
     @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
     @Operation(summary = "修改器官")
     @PutMapping("/humanOrgan")
-    public int modifyHumanOrgan(@RequestBody HumanOrganDto humanOrgan) {
-        return humanOrganService.modifyHumanOrgan(humanOrgan);
+    public Res<Integer> modifyHumanOrgan(@RequestBody HumanOrganDto humanOrgan) {
+        return Res.ok(humanOrganService.modifyHumanOrgan(humanOrgan));
     }
 
     @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
     @Parameters(@Parameter(name = "id", description = "器官 id", in = ParameterIn.PATH))
     @Operation(summary = "删除器官")
     @DeleteMapping("/humanOrgan/{id}")
-    public int delHumanOrgan(@PathVariable long id) {
-        return humanOrganService.delHumanOrgan(id);
+    public Res<Integer> delHumanOrgan(@PathVariable long id) {
+        return Res.ok(humanOrganService.delHumanOrgan(id));
     }
 
     @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
     @Operation(summary = "新增扫描类型")
     @PostMapping("/scanType")
-    public int addScanType(@RequestBody ImageScanTypeDto imageScanType) {
-        return imageScanTypeService.addScanType(imageScanType);
+    public Res<Integer> addScanType(@RequestBody ImageScanTypeDto imageScanType) {
+        return Res.ok(imageScanTypeService.addScanType(imageScanType));
     }
 
     @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
     @Operation(summary = "获取扫描类型")
     @GetMapping("/scanType")
-    public List<ImageScanType> getScanType() {
-        return imageScanTypeService.list();
+    public Res<List<ImageScanType>> getScanType() {
+        return Res.ok(imageScanTypeService.list());
     }
 
     @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
     @Operation(summary = "修改扫描类型")
     @PutMapping("/scanType")
-    public int modifyScanType(@RequestBody ImageScanTypeDto imageScanType) {
-        return imageScanTypeService.modifyScanType(imageScanType);
+    public Res<Integer> modifyScanType(@RequestBody ImageScanTypeDto imageScanType) {
+        return Res.ok(imageScanTypeService.modifyScanType(imageScanType));
     }
 
     @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
     @Parameters(@Parameter(name = "id", description = "扫描类型 id", in = ParameterIn.PATH))
     @Operation(summary = "删除扫描类型")
     @DeleteMapping("/scanType/{id}")
-    public int delScanType(@PathVariable long id) {
-        return imageScanTypeService.delScanType(id);
+    public Res<Integer> delScanType(@PathVariable long id) {
+        return Res.ok(imageScanTypeService.delScanType(id));
     }
 
 }

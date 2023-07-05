@@ -2,7 +2,6 @@ package cn.hanglok.controller;
 
 import cn.hanglok.dto.DicomInfoDto;
 import cn.hanglok.entity.res.Res;
-import cn.hanglok.entity.res.ResCode;
 import cn.hanglok.service.FileService;
 import cn.hanglok.util.DicomUtils;
 import cn.hanglok.util.FileUtils;
@@ -56,8 +55,8 @@ public class FileController {
     @Operation(summary = "上传标注文件")
     @Parameters(@Parameter(name = "seriesId", description = "系列 id", in = ParameterIn.PATH))
     @PostMapping("/label/{seriesId}")
-    public boolean uploadLabel(@RequestParam MultipartFile file, @PathVariable("seriesId") String seriesId) {
-        return fileService.uploadLabel(file, seriesId);
+    public Res<Boolean> uploadLabel(@RequestParam MultipartFile file, @PathVariable("seriesId") String seriesId) {
+        return Res.ok(fileService.uploadLabel(file, seriesId));
     }
 
 //    @PostMapping("/upload")
