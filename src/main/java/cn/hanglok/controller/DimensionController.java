@@ -9,6 +9,7 @@ import cn.hanglok.entity.BodyPart;
 import cn.hanglok.entity.HumanOrgan;
 import cn.hanglok.entity.ImageScanType;
 import cn.hanglok.entity.Institution;
+import cn.hanglok.entity.res.Res;
 import cn.hanglok.service.*;
 import cn.hanglok.util.ConvertUtils;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
@@ -53,10 +54,10 @@ public class DimensionController {
     @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
     @Operation(summary = "获取机构信息列表")
     @GetMapping("/institution")
-    public List<InstitutionDto> getInstitution() {
-        return new ArrayList<>() {{
+    public Res<List<InstitutionDto>> getInstitution() {
+        return Res.ok(new ArrayList<>() {{
             institutionService.getInstitutionList().forEach(entity -> add(ConvertUtils.entityToDto(entity, Institution.class, InstitutionDto.class)));
-        }};
+        }});
     }
 
     @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
