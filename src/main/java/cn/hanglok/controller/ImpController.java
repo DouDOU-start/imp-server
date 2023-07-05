@@ -3,6 +3,7 @@ package cn.hanglok.controller;
 import cn.hanglok.config.AuthorConfig;
 import cn.hanglok.dto.ModifyLabelOrganDto;
 import cn.hanglok.dto.SimpleSeriesOutDto;
+import cn.hanglok.entity.res.Res;
 import cn.hanglok.service.IImageSeriesService;
 import cn.hanglok.service.ILabelOrganService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -48,18 +49,18 @@ public class ImpController {
             @Parameter(name = "pageSize",description = "页面大小", in = ParameterIn.QUERY),
     })
     @GetMapping("/series")
-    public IPage<SimpleSeriesOutDto> getSimpleSeriesList(@RequestParam(required = false) String keyword,
-                                                         @RequestParam(required = false) Long[] institutionIds,
-                                                         @RequestParam(required = false) String[] modality,
-                                                         @RequestParam(required = false) Double[] sliceRange,
-                                                         @RequestParam(required = false) Long[] bodyPartIds,
-                                                         @RequestParam(required = false) String patientSex,
-                                                         @RequestParam(required = false) Long[] organIds,
-                                                         @RequestParam(required = false) Long[] scanTypeIds,
-                                                         @RequestParam int currentPage,
-                                                         @RequestParam int pageSize) {
+    public Res<IPage<SimpleSeriesOutDto>> getSimpleSeriesList(@RequestParam(required = false) String keyword,
+                                                              @RequestParam(required = false) Long[] institutionIds,
+                                                              @RequestParam(required = false) String[] modality,
+                                                              @RequestParam(required = false) Double[] sliceRange,
+                                                              @RequestParam(required = false) Long[] bodyPartIds,
+                                                              @RequestParam(required = false) String patientSex,
+                                                              @RequestParam(required = false) Long[] organIds,
+                                                              @RequestParam(required = false) Long[] scanTypeIds,
+                                                              @RequestParam int currentPage,
+                                                              @RequestParam int pageSize) {
 
-        return imageSeriesService.getSimpleSeriesList(
+        return Res.ok(imageSeriesService.getSimpleSeriesList(
                 keyword,
                 institutionIds,
                 modality,
@@ -70,7 +71,7 @@ public class ImpController {
                 scanTypeIds,
                 currentPage,
                 pageSize
-        );
+        ));
 
     }
 
