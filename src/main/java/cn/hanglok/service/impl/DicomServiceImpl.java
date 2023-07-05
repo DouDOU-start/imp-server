@@ -1,11 +1,7 @@
 package cn.hanglok.service.impl;
 
 import cn.hanglok.dto.*;
-import cn.hanglok.entity.*;
-import cn.hanglok.mapper.*;
-import cn.hanglok.service.DicomService;
-import cn.hanglok.util.ConvertUtils;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import cn.hanglok.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,104 +16,39 @@ import org.springframework.stereotype.Service;
 public class DicomServiceImpl implements DicomService {
 
     @Autowired
-    InstitutionMapper institutionMapper;
+    IInstitutionService institutionService;
 
     @Autowired
-    InstitutionPatientMapper institutionPatientMapper;
+    IInstitutionPatientService institutionPatientService;
 
     @Autowired
-    ImageStudiesMapper imageStudiesMapper;
+    IImageStudiesService imageStudiesService;
 
     @Autowired
-    ImageSeriesMapper imageSeriesMapper;
+    IImageSeriesService imageSeriesService;
 
     @Autowired
-    ImageInstancesMapper imageInstancesMapper;
+    IImageInstancesService imageInstancesService;
 
     @Override
     public DicomInfoDto save(DicomInfoDto dicomInfo) {
 
-        // 判断机构是否存在
-        Institution institution = institutionMapper.selectOne(new QueryWrapper<>() {{
-            eq("institution_name", dicomInfo.getInstitution().getInstitutionName());
-        }});
+        // 添加机构信息
+        institutionService.addInstitution(dicomInfo);
 
-        if (institution == null) {
-            institutionMapper.insert(dicomInfo.getInstitution());
-            institution = dicomInfo.getInstitution();
-        }
+        // 添加医院患者信息
+        institutionPatientService.addPatient(dicomInfo);
 
-        Institution finalInstitution = institution;
+        // 添加研究信息
+        imageStudiesService.addStudies(dicomInfo);
 
-        // 判断患者是否存在
-        InstitutionPatient patient = institutionPatientMapper.selectOne(new QueryWrapper<>() {{
-            eq("patient_number", dicomInfo.getInstitutionPatient().getPatientNumber());
-            eq("institution_id", finalInstitution.getId());
-        }});
+        // 添加系列信息
+        imageSeriesService.addImageSeries(dicomInfo);
 
-        if (patient == null) {
-            dicomInfo.getInstitutionPatient().setInstitutionId(institution.getId());
-            institutionPatientMapper.insert(dicomInfo.getInstitutionPatient());
-            patient = dicomInfo.getInstitutionPatient();
-        }
+        // 添加实例信息
+        imageInstancesService.addInstances(dicomInfo);
 
-        // 判断研究是否存在
-        ImageStudies studies = imageStudiesMapper.selectOne(new QueryWrapper<>() {{
-            eq("study_uid", dicomInfo.getImageStudies().getStudyUid());
-        }});
-
-        if (studies == null) {
-            dicomInfo.getImageStudies().setPatientId(patient.getId());
-            imageStudiesMapper.insert(dicomInfo.getImageStudies());
-            studies = dicomInfo.getImageStudies();
-        }
-
-        // 判断系列是否存在
-//        ImageStudies finalStudies = studies;
-        ImageSeries series = imageSeriesMapper.selectOne(new QueryWrapper<>() {{
-            eq("series_uid", dicomInfo.getImageStudies().getImageSeries().getSeriesUid());
-        }});
-
-        if (series == null) {
-            dicomInfo.getImageStudies().getImageSeries().setStudyId(studies.getId());
-            imageSeriesMapper.insert(dicomInfo.getImageStudies().getImageSeries());
-            series = dicomInfo.getImageStudies().getImageSeries();
-        }
-
-        // 判断实例是否存在
-        ImageSeries finalSeries = series;
-        ImageInstances instances = imageInstancesMapper.selectOne(new QueryWrapper<>() {{
-            eq("instance_number", dicomInfo.getImageStudies().getImageSeries().getImageInstance().getInstanceNumber());
-            eq("series_id", finalSeries.getId());
-        }});
-
-        if (instances == null) {
-            dicomInfo.getImageStudies().getImageSeries().getImageInstance().setSeriesId(series.getId());
-            imageInstancesMapper.insert(dicomInfo.getImageStudies().getImageSeries().getImageInstance());
-            instances = dicomInfo.getImageStudies().getImageSeries().getImageInstance();
-        }
-
-
-
-        DicomInfoDto finalDicomInfo = new DicomInfoDto();
-
-        // 设置机构属性
-        finalDicomInfo.setInstitution(ConvertUtils.entityToDto(institution, Institution.class, InstitutionDto.class));
-
-        // 设置患者属性
-        finalDicomInfo.setInstitutionPatient(ConvertUtils.entityToDto(patient, InstitutionPatient.class, InstitutionPatientDto.class));
-
-        ImageStudiesDto imageStudies = ConvertUtils.entityToDto(studies, ImageStudies.class, ImageStudiesDto.class);
-        ImageSeriesDto imageSeries = ConvertUtils.entityToDto(series, ImageSeries.class, ImageSeriesDto.class);
-
-        // 设置实例属性
-        imageSeries.setImageInstance(ConvertUtils.entityToDto(instances, ImageInstances.class, ImageInstanceDto.class));
-        // 设置系列属性
-        imageStudies.setImageSeries(imageSeries);
-        // 设置研究属性
-        finalDicomInfo.setImageStudies(imageStudies);
-
-        return finalDicomInfo;
+        return dicomInfo;
 
     }
 

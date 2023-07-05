@@ -1,5 +1,6 @@
 package cn.hanglok.service;
 
+import cn.hanglok.dto.DicomInfoDto;
 import cn.hanglok.entity.InstitutionPatient;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -13,4 +14,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IInstitutionPatientService extends IService<InstitutionPatient> {
 
+    void addPatient(DicomInfoDto dicomInfo);
 }

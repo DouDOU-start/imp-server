@@ -4,6 +4,8 @@ import cn.hanglok.dto.*;
 import cn.hanglok.entity.*;
 import cn.hanglok.mapper.*;
 import cn.hanglok.service.IImageSeriesService;
+import cn.hanglok.util.ConvertUtils;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -25,6 +27,23 @@ public class ImageSeriesServiceImpl extends ServiceImpl<ImageSeriesMapper, Image
 
     @Autowired
     ImageSeriesMapper imageSeriesMapper;
+
+    @Override
+    public synchronized void addImageSeries(DicomInfoDto dicomInfo) {
+        ImageSeries series = imageSeriesMapper.selectOne(new QueryWrapper<>() {{
+            eq("series_uid", dicomInfo.getImageStudies().getImageSeries().getSeriesUid());
+        }});
+
+        if (series == null) {
+            dicomInfo.getImageStudies().getImageSeries().setStudyId(dicomInfo.getImageStudies().getId());
+            imageSeriesMapper.insert(dicomInfo.getImageStudies().getImageSeries());
+            series = dicomInfo.getImageStudies().getImageSeries();
+        }
+
+        ImageSeriesDto imageSeriesDto = ConvertUtils.entityToDto(series, ImageSeries.class, ImageSeriesDto.class);
+        imageSeriesDto.setImageInstance(dicomInfo.getImageStudies().getImageSeries().getImageInstance());
+        dicomInfo.getImageStudies().setImageSeries(imageSeriesDto);
+    }
 
     @Override
     public IPage<SimpleSeriesOutDto> getSimpleSeriesList(String keyword, Long[] institutionIds, String[] modality, Double[] sliceRange, Long[] bodyPartIds,

@@ -1,5 +1,6 @@
 package cn.hanglok.service;
 
+import cn.hanglok.dto.DicomInfoDto;
 import cn.hanglok.entity.Institution;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -14,5 +15,9 @@ import java.util.List;
  * @since 2023-06-07
  */
 public interface IInstitutionService extends IService<Institution> {
+
+    void addInstitution(DicomInfoDto dicomInfo);
+
     List<Institution> getInstitutionList();
+
 }

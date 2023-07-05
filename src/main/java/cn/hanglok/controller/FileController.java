@@ -1,6 +1,8 @@
 package cn.hanglok.controller;
 
 import cn.hanglok.dto.DicomInfoDto;
+import cn.hanglok.entity.res.Res;
+import cn.hanglok.entity.res.ResCode;
 import cn.hanglok.service.FileService;
 import cn.hanglok.util.DicomUtils;
 import cn.hanglok.util.FileUtils;
@@ -32,7 +34,7 @@ public class FileController {
 
     @Operation(summary = "上传DICOM文件")
     @PostMapping("/dicom")
-    public DicomInfoDto uploadDicom(@RequestParam MultipartFile file) {
+    public Res<DicomInfoDto> uploadDicom(@RequestParam MultipartFile file) {
 
         File tempFile = FileUtils.convertTempFile(file);
 
@@ -44,7 +46,11 @@ public class FileController {
 
         tempFile.delete();
 
-        return dicomInfoDto;
+        if (null == dicomInfoDto) {
+            return Res.entity(400, "请上保证DICOM文件的准确性！", null);
+        }
+
+        return Res.ok(dicomInfoDto);
     }
 
     @Operation(summary = "上传标注文件")

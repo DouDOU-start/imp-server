@@ -1,5 +1,6 @@
 package cn.hanglok.service;
 
+import cn.hanglok.dto.DicomInfoDto;
 import cn.hanglok.dto.SimpleSeriesOutDto;
 import cn.hanglok.entity.ImageSeries;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -16,6 +17,9 @@ import java.util.List;
  * @since 2023-06-07
  */
 public interface IImageSeriesService extends IService<ImageSeries> {
+
+    void addImageSeries(DicomInfoDto dicomInfo);
+
     IPage<SimpleSeriesOutDto> getSimpleSeriesList(String keyword, Long[] institutionId, String[] modality, Double[] sliceRange, Long[] bodyPartIds,
                                                   String patientSex, Long[] organIds, Long[] scanTypeIds, int currentPage, int pageSize);
 
