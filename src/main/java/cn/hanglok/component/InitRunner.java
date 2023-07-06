@@ -24,5 +24,6 @@ public class InitRunner implements ApplicationRunner {
         FileUtils.mkdir(FileConfig.dicomLocation);
         FileUtils.mkdir(FileConfig.labelLocation);
         FileUtils.mkdir(FileConfig.labelBakLocation);
+        FileUtils.mkdir(FileConfig.tmpLocation);
     }
 }

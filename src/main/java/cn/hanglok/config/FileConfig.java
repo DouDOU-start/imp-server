@@ -19,10 +19,13 @@ public class FileConfig {
     public static String labelLocation;
     public static String labelBakLocation;
 
+    public static String tmpLocation;
+
     public void setLocation(String location) {
         FileConfig.dicomLocation = location + File.separator + "dicom";
         FileConfig.labelLocation = location + File.separator + "label";
         FileConfig.labelBakLocation = location + File.separator + "labelBak";
+        FileConfig.tmpLocation = location + File.separator + "tmp";
     }
 
 }
