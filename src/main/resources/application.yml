@@ -62,5 +62,5 @@ mybatis-plus:
 
 immp:
   file:
-    location: /Users/allen/imp-upload
+    location: /Users/allen/imp-fileDir
 
