@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -57,6 +58,13 @@ public class FileController {
     @PostMapping("/label/{seriesId}")
     public Res<Boolean> uploadLabel(@RequestParam MultipartFile file, @PathVariable("seriesId") String seriesId) {
         return Res.ok(fileService.uploadLabel(file, seriesId));
+    }
+
+    @Operation(summary = "下载影像系列文件包")
+    @Parameters(@Parameter(name = "seriesId", description = "系列 id", in = ParameterIn.PATH))
+    @GetMapping("/series/{seriesId}")
+    public void downloadSeries(HttpServletResponse response, @PathVariable("seriesId") String seriesId) {
+        fileService.downloadSeries(response, seriesId);
     }
 
 //    @PostMapping("/upload")

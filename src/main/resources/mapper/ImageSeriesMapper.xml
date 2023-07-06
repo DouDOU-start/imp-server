@@ -102,4 +102,30 @@
         FROM image_series
     </select>
 
+    <resultMap id="seriesTreeMap" type="cn.hanglok.entity.SeriesTree">
+        <result property="institutionName" column="institution_name"/>
+        <result property="patientNumber" column="patient_number"/>
+        <result property="studyUid" column="study_uid"/>
+        <result property="seriesUid" column="series_uid"/>
+    </resultMap>
+
+    <sql id="seriesTree">
+        institution_name
+        ,
+        patient_number,
+        study_uid,
+        series_uid
+    </sql>
+
+    <select id="getTree" resultMap="seriesTreeMap">
+        SELECT
+        <include refid="seriesTree"/>
+        FROM
+        institution
+        LEFT JOIN institution_patient ON institution.id = institution_patient.institution_id
+        LEFT JOIN image_studies ON institution_patient.id = image_studies.patient_id
+        LEFT JOIN image_series ON image_studies.id = image_series.study_id
+        WHERE image_series.id = #{seriesId}
+    </select>
+
 </mapper>

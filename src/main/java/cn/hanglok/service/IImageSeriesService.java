@@ -3,6 +3,7 @@ package cn.hanglok.service;
 import cn.hanglok.dto.DicomInfoDto;
 import cn.hanglok.dto.SimpleSeriesOutDto;
 import cn.hanglok.entity.ImageSeries;
+import cn.hanglok.entity.SeriesTree;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -24,4 +25,6 @@ public interface IImageSeriesService extends IService<ImageSeries> {
                                                   String patientSex, Long[] organIds, Long[] scanTypeIds, int currentPage, int pageSize);
 
     List<String> getModality();
+
+    SeriesTree getTree(Long seriesId);
 }

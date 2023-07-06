@@ -2,6 +2,7 @@ package cn.hanglok.mapper;
 
 import cn.hanglok.dto.SimpleSeriesOutDto;
 import cn.hanglok.entity.ImageSeries;
+import cn.hanglok.entity.SeriesTree;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -22,5 +23,7 @@ public interface ImageSeriesMapper extends BaseMapper<ImageSeries> {
                                                   String patientSex, Long[] organIds, Long[] scanTypeIds, Page<SimpleSeriesOutDto> page);
 
     List<String> getModality();
+
+    SeriesTree getTree(Long seriesId);
 
 }

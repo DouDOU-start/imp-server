@@ -4,20 +4,22 @@ import cn.hanglok.config.FileConfig;
 import cn.hanglok.dto.DicomInfoDto;
 import cn.hanglok.entity.ImageLabel;
 import cn.hanglok.entity.ImageSeries;
+import cn.hanglok.entity.SeriesTree;
 import cn.hanglok.mapper.ImageSeriesMapper;
 import cn.hanglok.service.DicomService;
 import cn.hanglok.service.FileService;
 import cn.hanglok.service.IImageLabelService;
 import cn.hanglok.util.DicomUtils;
+import cn.hanglok.util.FileUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
@@ -122,5 +124,82 @@ public class FileServiceImpl implements FileService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public void downloadSeries(HttpServletResponse response, String seriesId) {
+
+        response.reset();
+        response.setContentType("application/octet-stream");
+        response.setHeader("Content-disposition", "attachment;filename=" + seriesId + "_"
+                + System.currentTimeMillis() + ".zip");
+
+        File file;
+        try {
+            file = new File(zipSeries(Long.valueOf(seriesId)));
+        } catch (FileNotFoundException e) {
+            logger.error("找不到系列影像数据", e);
+            return;
+        }
+
+        // 从文件读到servlet response输出流中
+        try (FileInputStream inputStream = new FileInputStream(file)) {
+            byte[] b = new byte[1024];
+            int len;
+            while ((len = inputStream.read(b)) > 0) {
+                response.getOutputStream().write(b, 0, len);
+            }
+        } catch (IOException e) {
+            logger.error("response输出流失败", e);
+        }
+    }
+
+    public String zipSeries(Long seriesId) throws FileNotFoundException {
+
+        SeriesTree seriesTree = imageSeriesMapper.getTree(seriesId);
+        if (null == seriesTree) {
+            return null;
+        }
+
+        String sourcePath = FileConfig.dicomLocation + seriesTree;
+
+        if (!new File(sourcePath).exists()) {
+            logger.error("系列影像路径不存在");
+            return null;
+        }
+
+        // 创建临时目录
+        File file;
+        while (true) {
+            file = new File(FileConfig.tmpLocation + File.separator + System.currentTimeMillis());
+            if (!file.exists()) {
+                file.mkdirs();
+                break;
+            }
+        }
+
+        // 复制DICOM文件
+        FileUtils.copyFolder(sourcePath, file.getAbsolutePath() + File.separator + "dicom");
+
+        // 复制标注文件
+        File[] files = new File(FileConfig.labelLocation).listFiles((dir1, name) ->
+                name.substring(0, name.indexOf(".")).equals(String.valueOf(seriesId)));
+
+        for (File labelFile : files) {
+            FileUtils.copyFile(
+                    labelFile,
+                    new File(file.getAbsolutePath() + File.separator + labelFile.getName())
+            );
+        }
+
+        // 压缩影像数据
+        String zipFilePath = FileConfig.tmpLocation + File.separator + seriesId + ".zip";
+        FileUtils.toZip(
+                file.getAbsolutePath(),
+                new FileOutputStream(zipFilePath),
+                true
+        );
+
+        return zipFilePath;
     }
 }

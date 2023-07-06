@@ -1,8 +1,11 @@
 package cn.hanglok.service.impl;
 
-import cn.hanglok.dto.*;
-import cn.hanglok.entity.*;
-import cn.hanglok.mapper.*;
+import cn.hanglok.dto.DicomInfoDto;
+import cn.hanglok.dto.ImageSeriesDto;
+import cn.hanglok.dto.SimpleSeriesOutDto;
+import cn.hanglok.entity.ImageSeries;
+import cn.hanglok.entity.SeriesTree;
+import cn.hanglok.mapper.ImageSeriesMapper;
 import cn.hanglok.service.IImageSeriesService;
 import cn.hanglok.util.ConvertUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -67,5 +70,10 @@ public class ImageSeriesServiceImpl extends ServiceImpl<ImageSeriesMapper, Image
     @Override
     public List<String> getModality() {
         return imageSeriesMapper.getModality();
+    }
+
+    @Override
+    public SeriesTree getTree(Long seriesId) {
+        return imageSeriesMapper.getTree(seriesId);
     }
 }
