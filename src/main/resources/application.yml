@@ -63,4 +63,4 @@ mybatis-plus:
 immp:
   file:
     location: /Users/allen/imp-fileDir
-
+    buffSize: 16

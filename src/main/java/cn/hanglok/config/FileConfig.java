@@ -21,11 +21,17 @@ public class FileConfig {
 
     public static String tmpLocation;
 
+    public static int buffSize;
+
     public void setLocation(String location) {
         FileConfig.dicomLocation = location + File.separator + "dicom";
         FileConfig.labelLocation = location + File.separator + "label";
         FileConfig.labelBakLocation = location + File.separator + "labelBak";
         FileConfig.tmpLocation = location + File.separator + "tmp";
+    }
+
+    public void setBuffSize(int buffSize) {
+        FileConfig.buffSize = buffSize;
     }
 
 }
