@@ -129,11 +129,6 @@ public class FileServiceImpl implements FileService {
     @Override
     public void downloadSeries(HttpServletResponse response, String seriesId) {
 
-        response.reset();
-        response.setContentType("application/octet-stream");
-        response.setHeader("Content-disposition", "attachment;filename=" + seriesId + "_"
-                + System.currentTimeMillis() + ".zip");
-
         File file;
         try {
             file = new File(zipSeries(Long.valueOf(seriesId)));
@@ -142,13 +137,20 @@ public class FileServiceImpl implements FileService {
             return;
         }
 
+        response.reset();
+        response.setContentType("application/octet-stream");
+        response.setHeader("Content-disposition", "attachment;filename=" + seriesId + "_"
+                + System.currentTimeMillis() + ".zip");
+        response.setHeader("Content-Length", String.valueOf(file.length()));
+
         // 从文件读到servlet response输出流中
         try (FileInputStream inputStream = new FileInputStream(file)) {
-            byte[] b = new byte[1024];
+            byte[] b = new byte[FileConfig.buffSize];
             int len;
             while ((len = inputStream.read(b)) > 0) {
                 response.getOutputStream().write(b, 0, len);
             }
+            response.getOutputStream().flush();
         } catch (IOException e) {
             logger.error("response输出流失败", e);
         }
