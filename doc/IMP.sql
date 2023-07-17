@@ -37,15 +37,15 @@ CREATE TABLE `body_part` (
 -- Table structure for dictionary
 -- ----------------------------
 DROP TABLE IF EXISTS `dictionary`;
-CREATE TABLE `dictionary` (
-  `id` int NOT NULL COMMENT '自增 id',
-  `name` varchar(50) NOT NULL COMMENT '字典名',
-  `value` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '属性（用英文逗号分隔）',
-  `created_at` timestamp NOT NULL COMMENT '创建时间',
-  `updated_at` timestamp NOT NULL COMMENT '修改时间',
-  `creator` bigint NOT NULL DEFAULT '-1' COMMENT '创建人',
-  `updater` bigint NOT NULL DEFAULT '-1' COMMENT '修改人',
-  PRIMARY KEY (`id`)
+CREATE TABLE `dictionary`(
+                             `id`         bigint                                                        NOT NULL COMMENT '自增 id',
+                             `name`       varchar(50)                                                   NOT NULL COMMENT '字典名',
+                             `value`      varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '属性（用英文逗号分隔）',
+                             `created_at` timestamp                                                     NOT NULL COMMENT '创建时间',
+                             `updated_at` timestamp                                                     NOT NULL COMMENT '修改时间',
+                             `creator`    bigint                                                        NOT NULL DEFAULT '-1' COMMENT '创建人',
+                             `updater`    bigint                                                        NOT NULL DEFAULT '-1' COMMENT '修改人',
+                             PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='字典表';
 
 -- ----------------------------
@@ -68,23 +68,69 @@ CREATE TABLE `human_organ` (
 -- Table structure for label_organ
 -- ----------------------------
 DROP TABLE IF EXISTS `label_organ`;
-CREATE TABLE `label_organ` (
-  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '自增 id',
-  `label_id` bigint NOT NULL COMMENT '标签 id',
-  `organ_id` bigint NOT NULL COMMENT '器官 id',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `label_id` (`label_id`,`organ_id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='标签对应器官表';
+CREATE TABLE `label_organ`
+(
+    `id`         bigint    NOT NULL AUTO_INCREMENT COMMENT '自增 id',
+    `label_id`   bigint    NOT NULL COMMENT '标签 id',
+    `organ_id`   bigint    NOT NULL COMMENT '器官 id',
+    `created_at` timestamp NOT NULL COMMENT '创建时间',
+    `updated_at` timestamp NOT NULL COMMENT '修改时间',
+    `creator`    bigint    NOT NULL DEFAULT '-1' COMMENT '创建人',
+    `updater`    bigint    NOT NULL DEFAULT '-1' COMMENT '修改人',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `label_id` (`label_id`, `organ_id`) USING BTREE
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_0900_ai_ci COMMENT ='标签对应器官表';
+
+-- ----------------------------
+-- Table structure for series_body_part
+-- ----------------------------
+DROP TABLE IF EXISTS `series_body_part`;
+CREATE TABLE `series_body_part`
+(
+    `id`           bigint    NOT NULL AUTO_INCREMENT COMMENT '自增 id',
+    `series_id`    bigint    NOT NULL COMMENT '系列 id',
+    `body_part_id` bigint    NOT NULL COMMENT '身体检查部位 id',
+    `created_at`   timestamp NOT NULL COMMENT '创建时间',
+    `updated_at`   timestamp NOT NULL COMMENT '修改时间',
+    `creator`      bigint    NOT NULL DEFAULT '-1' COMMENT '创建人',
+    `updater`      bigint    NOT NULL DEFAULT '-1' COMMENT '修改人',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `series_id` (`series_id`, `body_part_id`) USING BTREE
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_0900_ai_ci COMMENT ='系列对应身体部位表';
+
+-- ----------------------------
+-- Table structure for series_scan_type
+-- ----------------------------
+DROP TABLE IF EXISTS `series_scan_type`;
+CREATE TABLE `series_scan_type`
+(
+    `id`           bigint    NOT NULL AUTO_INCREMENT COMMENT '自增 id',
+    `series_id`    bigint    NOT NULL COMMENT '系列 id',
+    `scan_type_id` bigint    NOT NULL COMMENT '扫描类型 id',
+    `created_at`   timestamp NOT NULL COMMENT '创建时间',
+    `updated_at`   timestamp NOT NULL COMMENT '修改时间',
+    `creator`      bigint    NOT NULL DEFAULT '-1' COMMENT '创建人',
+    `updater`      bigint    NOT NULL DEFAULT '-1' COMMENT '修改人',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `series_id` (`series_id`, `scan_type_id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_0900_ai_ci COMMENT ='系列对应扫描类型表';
 
 -- ----------------------------
 -- Table structure for image_instances
 -- ----------------------------
 DROP TABLE IF EXISTS `image_instances`;
-CREATE TABLE `image_instances` (
-  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '自增 id',
-  `instance_number` int NOT NULL COMMENT '实例号',
-  `instance_uid` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '实例 uid',
-  `slice_location` double NOT NULL COMMENT '切片位置',
+CREATE TABLE `image_instances`
+(
+    `id`              bigint                                                        NOT NULL AUTO_INCREMENT COMMENT '自增 id',
+    `instance_number` int                                                           NOT NULL COMMENT '实例号',
+    `instance_uid`    varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '实例 uid',
+    `slice_location`  double                                                        NOT NULL COMMENT '切片位置',
   `instance_at` timestamp NULL DEFAULT NULL COMMENT '实例创建时间',
   `series_id` bigint NOT NULL COMMENT '系列 id',
   `created_at` timestamp NOT NULL COMMENT '创建时间',
@@ -138,8 +184,6 @@ CREATE TABLE `image_series` (
   `series_uid` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '系列uid',
   `series_description` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '系列描述',
   `modality` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '模态',
-  `scan_type_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '扫描类型 id（多选，用英文逗号分隔）',
-  `body_part_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '身体部位 id（多选，用英文逗号分隔）',
   `pixel_spacing` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '像素间距',
   `slice_thickness` double NOT NULL COMMENT '切片厚度',
   `row` int NOT NULL COMMENT '行',
