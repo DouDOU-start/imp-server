@@ -1,6 +1,6 @@
 package cn.hanglok.service.impl;
 
-import cn.hanglok.dto.*;
+import cn.hanglok.dto.DicomInfoDto;
 import cn.hanglok.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,6 +30,9 @@ public class DicomServiceImpl implements DicomService {
     @Autowired
     IImageInstancesService imageInstancesService;
 
+    @Autowired
+    IDictionaryService dictionaryService;
+
     @Override
     public DicomInfoDto save(DicomInfoDto dicomInfo) {
 
@@ -47,6 +50,9 @@ public class DicomServiceImpl implements DicomService {
 
         // 添加实例信息
         imageInstancesService.addInstances(dicomInfo);
+
+        // 更新字典
+        dictionaryService.updateModality();
 
         return dicomInfo;
 

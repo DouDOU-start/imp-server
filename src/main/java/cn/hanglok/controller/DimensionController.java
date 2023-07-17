@@ -40,9 +40,6 @@ public class DimensionController {
     IInstitutionService institutionService;
 
     @Autowired
-    IImageSeriesService imageSeriesService;
-
-    @Autowired
     IBodyPartService bodyPartService;
 
     @Autowired
@@ -50,6 +47,9 @@ public class DimensionController {
 
     @Autowired
     IImageScanTypeService imageScanTypeService;
+
+    @Autowired
+    IDictionaryService dictionaryService;
 
     @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
     @Operation(summary = "获取机构信息列表")
@@ -64,7 +64,7 @@ public class DimensionController {
     @Operation(summary = "获取模态信息列表")
     @GetMapping("/modality")
     public Res<List<String>> getModality() {
-        return Res.ok(imageSeriesService.getModality());
+        return Res.ok(dictionaryService.getModality());
     }
 
     @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
