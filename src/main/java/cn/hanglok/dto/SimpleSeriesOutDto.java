@@ -22,5 +22,6 @@ public class SimpleSeriesOutDto {
     private String modality;
     private Double sliceThickness;
     private String bodyPart;
+    private String scanType;
     private LocalDateTime createdAt;
 }

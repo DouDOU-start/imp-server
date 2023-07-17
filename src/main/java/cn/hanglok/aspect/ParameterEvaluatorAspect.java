@@ -33,7 +33,7 @@ public class ParameterEvaluatorAspect {
                     Arrays.asList(new String[]{"F", "M"}).contains(patientSex)));
 
             // 切片范围校验
-            addComponent(new ConditionEvaluator.Leaf(sliceRange == null || (sliceRange.length == 2 && sliceRange[0] <= sliceRange[1])));
+            addComponent(new ConditionEvaluator.Leaf(sliceRange == null || sliceRange.length == 1 || (sliceRange.length == 2 && sliceRange[0] <= sliceRange[1])));
 
             // 页码校验
             addComponent(new ConditionEvaluator.Leaf(currentPage > 0 && pageSize > 0 ));

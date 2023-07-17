@@ -18,7 +18,6 @@ import java.time.LocalDateTime;
 public class ImageSeriesDto extends ImageSeries {
     private ImageInstanceDto imageInstance;
 
-
     public ImageSeriesDto() {
         setCreatedAt(LocalDateTime.now());
         setUpdatedAt(LocalDateTime.now());

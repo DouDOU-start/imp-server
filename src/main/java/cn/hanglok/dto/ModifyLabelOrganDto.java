@@ -18,21 +18,15 @@ public class ModifyLabelOrganDto {
     @Schema(description = "标签 id")
     private Long labelId;
 
+
     @Schema(description = "操作")
-    private List<Operate> operates;
+    private List<LabelOrganOP> operates;
 
     @Data
-    public static class Operate {
-
-        private OP op;
-
+    public static class LabelOrganOP {
+        private Operate op;
         @Schema(description = "器官 id")
         private String organId;
-    }
-
-    public enum OP {
-        ADD,
-        DEL
     }
 
 }

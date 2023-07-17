@@ -4,10 +4,11 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import java.io.Serializable;
-import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -46,19 +47,9 @@ public class ImageSeries implements Serializable {
     private String seriesDescription;
 
     /**
-     * 扫描类型 id
-     */
-    private Long scanTypeId;
-
-    /**
      * 模态
      */
     private String modality;
-
-    /**
-     * 身体部位 id
-     */
-    private Long bodyPartId;
 
     /**
      * 像素间距

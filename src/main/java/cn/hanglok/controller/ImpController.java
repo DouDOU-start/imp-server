@@ -2,10 +2,14 @@ package cn.hanglok.controller;
 
 import cn.hanglok.config.AuthorConfig;
 import cn.hanglok.dto.ModifyLabelOrganDto;
+import cn.hanglok.dto.ModifySeriesBodyPartDto;
+import cn.hanglok.dto.ModifySeriesScanTypeDto;
 import cn.hanglok.dto.SimpleSeriesOutDto;
 import cn.hanglok.entity.res.Res;
 import cn.hanglok.service.IImageSeriesService;
 import cn.hanglok.service.ILabelOrganService;
+import cn.hanglok.service.ISeriesBodyPartService;
+import cn.hanglok.service.ISeriesScanTypeService;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,15 +38,21 @@ public class ImpController {
     @Autowired
     ILabelOrganService labelOrganService;
 
+    @Autowired
+    ISeriesBodyPartService seriesBodyPartService;
+
+    @Autowired
+    ISeriesScanTypeService seriesScanTypeService;
+
     @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
     @Operation(summary = "获取系列简要信息列表")
     @Parameters({
             @Parameter(name = "keyword", description = "关键字", in = ParameterIn.QUERY),
-            @Parameter(name = "institutionIds",description = "机构ID（可多选）", in = ParameterIn.QUERY, example = "2,3,15"),
-            @Parameter(name = "modality",description = "模态过滤(可多选)", in = ParameterIn.QUERY, example = "CT,MRI"),
-            @Parameter(name = "sliceRange",description = "切片厚度范围", in = ParameterIn.QUERY, example = "0.625,3"),
-            @Parameter(name = "bodyPartIds",description = "身体检查部位ID(可多选)", in = ParameterIn.QUERY, example = "2,3,15"),
-            @Parameter(name = "patientSex",description = "患者性别过滤，男：`M`，女：`F`", in = ParameterIn.QUERY),
+            @Parameter(name = "institutionIds", description = "机构ID（可多选）", in = ParameterIn.QUERY, example = "2,3,15"),
+            @Parameter(name = "modality", description = "模态过滤(可多选)", in = ParameterIn.QUERY, example = "CT,MRI"),
+            @Parameter(name = "sliceRange", description = "切片厚度范围", in = ParameterIn.QUERY, example = "0.625,3"),
+            @Parameter(name = "bodyPartIds", description = "身体检查部位ID(可多选)", in = ParameterIn.QUERY, example = "2,3,15"),
+            @Parameter(name = "patientSex", description = "患者性别过滤，男：`M`，女：`F`", in = ParameterIn.QUERY),
             @Parameter(name = "organIds",description = "器官ID(可多选)", in = ParameterIn.QUERY, example = "2,3,15"),
             @Parameter(name = "scanTypeIds",description = "扫描类型ID(可多选)", in = ParameterIn.QUERY, example = "2,3,15"),
             @Parameter(name = "currentPage",description = "分页当前页", in = ParameterIn.QUERY),
@@ -77,9 +87,23 @@ public class ImpController {
 
     @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
     @Operation(summary = "修改标签器官")
-    @PutMapping("/LabelOrgan")
+    @PutMapping("/labelOrgan")
     public Res<Integer> modifyLabelOrgan(@RequestBody ModifyLabelOrganDto modifyLabelOrganDto) {
         return Res.ok(labelOrganService.modifyLabelOrgan(modifyLabelOrganDto));
+    }
+
+    @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
+    @Operation(summary = "修改系列身体检查部位")
+    @PutMapping("/bodyPart")
+    public Res<Integer> modifyBodyPart(@RequestBody ModifySeriesBodyPartDto modifyLabelOrganDto) {
+        return Res.ok(seriesBodyPartService.modifyBodyPart(modifyLabelOrganDto));
+    }
+
+    @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
+    @Operation(summary = "修改系列扫描类型")
+    @PutMapping("/scanType")
+    public Res<Integer> modifyScanType(@RequestBody ModifySeriesScanTypeDto modifySeriesScanTypeDto) {
+        return Res.ok(seriesScanTypeService.modifyScanType(modifySeriesScanTypeDto));
     }
 
 }
