@@ -67,6 +67,12 @@ public class FileController {
         fileService.downloadSeries(response, seriesId);
     }
 
+    @Operation(summary = "下载DICOM文件图片")
+    @GetMapping("/jpg/{instanceId}")
+    public void downloadInstanceJpg(HttpServletResponse response, @PathVariable("instanceId") String instanceId) {
+        fileService.downloadInstanceJpg(response, instanceId);
+    }
+
 //    @PostMapping("/upload")
 //    public ResponseEntity<String> uploadFile(@RequestParam MultipartFile file,
 //                                             @RequestParam String fileName,

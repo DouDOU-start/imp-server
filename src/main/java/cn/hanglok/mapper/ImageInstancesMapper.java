@@ -1,6 +1,7 @@
 package cn.hanglok.mapper;
 
 import cn.hanglok.entity.ImageInstances;
+import cn.hanglok.entity.InstanceLocation;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
@@ -12,5 +13,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @since 2023-06-07
  */
 public interface ImageInstancesMapper extends BaseMapper<ImageInstances> {
-
+    InstanceLocation getInstanceLocation(String instanceId);
 }

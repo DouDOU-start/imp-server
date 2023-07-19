@@ -20,4 +20,6 @@ public interface FileService {
     boolean uploadLabel(MultipartFile file, String seriesId);
 
     void downloadSeries(HttpServletResponse response, String seriesId);
+
+    void downloadInstanceJpg(HttpServletResponse response, String instanceId);
 }

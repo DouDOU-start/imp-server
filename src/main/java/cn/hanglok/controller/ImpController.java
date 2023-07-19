@@ -5,11 +5,9 @@ import cn.hanglok.dto.ModifyLabelOrganDto;
 import cn.hanglok.dto.ModifySeriesBodyPartDto;
 import cn.hanglok.dto.ModifySeriesScanTypeDto;
 import cn.hanglok.dto.SimpleSeriesOutDto;
+import cn.hanglok.entity.ImageInstances;
 import cn.hanglok.entity.res.Res;
-import cn.hanglok.service.IImageSeriesService;
-import cn.hanglok.service.ILabelOrganService;
-import cn.hanglok.service.ISeriesBodyPartService;
-import cn.hanglok.service.ISeriesScanTypeService;
+import cn.hanglok.service.*;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,6 +17,8 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @author Allen
@@ -43,6 +43,9 @@ public class ImpController {
 
     @Autowired
     ISeriesScanTypeService seriesScanTypeService;
+
+    @Autowired
+    IImageInstancesService imageInstancesService;
 
     @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
     @Operation(summary = "获取系列简要信息列表")
@@ -83,6 +86,11 @@ public class ImpController {
                 pageSize
         ));
 
+    }
+
+    @GetMapping("instance/{seriesId}")
+    public Res<List<ImageInstances>> getSeriesInstance(@PathVariable String seriesId) {
+        return Res.ok(imageInstancesService.getInstances(seriesId));
     }
 
     @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)

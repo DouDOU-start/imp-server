@@ -8,6 +8,7 @@ import cn.hanglok.entity.SeriesTree;
 import cn.hanglok.mapper.ImageSeriesMapper;
 import cn.hanglok.service.DicomService;
 import cn.hanglok.service.FileService;
+import cn.hanglok.service.IImageInstancesService;
 import cn.hanglok.service.IImageLabelService;
 import cn.hanglok.util.DicomUtils;
 import cn.hanglok.util.FileUtils;
@@ -19,7 +20,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
@@ -46,6 +50,9 @@ public class FileServiceImpl implements FileService {
 
     @Autowired
     ImageSeriesMapper imageSeriesMapper;
+
+    @Autowired
+    IImageInstancesService imageInstancesService;
 
     @Override
     public DicomInfoDto uploadDicom(File file) {
@@ -137,23 +144,15 @@ public class FileServiceImpl implements FileService {
             return;
         }
 
-        response.reset();
-        response.setContentType("application/octet-stream");
-        response.setHeader("Content-disposition", "attachment;filename=" + seriesId + "_"
-                + System.currentTimeMillis() + ".zip");
-        response.setHeader("Content-Length", String.valueOf(file.length()));
+        FileUtils.resFlush(response, file, seriesId + ".zip");
 
-        // 从文件读到servlet response输出流中
-        try (FileInputStream inputStream = new FileInputStream(file)) {
-            byte[] b = new byte[FileConfig.buffSize];
-            int len;
-            while ((len = inputStream.read(b)) > 0) {
-                response.getOutputStream().write(b, 0, len);
-            }
-            response.getOutputStream().flush();
-        } catch (IOException e) {
-            logger.error("response输出流失败", e);
-        }
+    }
+
+    @Override
+    public void downloadInstanceJpg(HttpServletResponse response, String instanceId) {
+        String location = imageInstancesService.getLocation(instanceId);
+        File jpg = DicomUtils.toJpg(new File(location));
+        FileUtils.resFlush(response, jpg, jpg.getName());
     }
 
     public String zipSeries(Long seriesId) throws FileNotFoundException {

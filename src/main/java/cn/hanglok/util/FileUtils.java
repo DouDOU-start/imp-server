@@ -1,5 +1,7 @@
 package cn.hanglok.util;
 
+import cn.hanglok.config.FileConfig;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
@@ -231,6 +233,26 @@ public class FileUtils {
             outputChannel.transferFrom(inputChannel, 0, inputChannel.size());
         } catch (IOException e) {
             logger.error("复制文件发生异常", e);
+        }
+    }
+
+    public static void resFlush(HttpServletResponse response, File file, String fileName) {
+        response.reset();
+        response.setContentType("application/octet-stream");
+        response.setHeader("Content-disposition", "attachment;filename=" + fileName.split("\\.")[0] + "_"
+                + System.currentTimeMillis() + "." + fileName.split("\\.")[1]);
+        response.setHeader("Content-Length", String.valueOf(file.length()));
+
+        // 从文件读到servlet response输出流中
+        try (FileInputStream inputStream = new FileInputStream(file)) {
+            byte[] b = new byte[FileConfig.buffSize];
+            int len;
+            while ((len = inputStream.read(b)) > 0) {
+                response.getOutputStream().write(b, 0, len);
+            }
+            response.getOutputStream().flush();
+        } catch (IOException e) {
+            logger.error("response输出流失败", e);
         }
     }
 

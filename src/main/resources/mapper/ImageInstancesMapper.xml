@@ -2,4 +2,31 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.hanglok.mapper.ImageInstancesMapper">
 
+    <resultMap id="instanceLocationMap" type="cn.hanglok.entity.InstanceLocation">
+        <result property="institutionName" column="institution_name"/>
+        <result property="patientNumber" column="patient_number"/>
+        <result property="studyUid" column="study_uid"/>
+        <result property="seriesUid" column="series_uid"/>
+        <result property="instanceNumber" column="instance_number"/>
+    </resultMap>
+
+    <sql id="InstanceLocationList">
+        institution.institution_name,
+        institution_patient.patient_number,
+        image_studies.study_uid,
+        image_series.series_uid,
+        image_instances.instance_number
+    </sql>
+
+    <select id="getInstanceLocation" resultMap="instanceLocationMap">
+        SELECT
+        <include refid="InstanceLocationList"/>
+        FROM institution
+        LEFT JOIN institution_patient ON institution.id = institution_patient.institution_id
+        LEFT JOIN image_studies ON institution_patient.id = image_studies.patient_id
+        LEFT JOIN image_series ON image_studies.id = image_series.study_id
+        LEFT JOIN image_instances ON image_series.id = image_instances.series_id
+        where image_instances.id = #{instanceId}
+    </select>
+
 </mapper>
