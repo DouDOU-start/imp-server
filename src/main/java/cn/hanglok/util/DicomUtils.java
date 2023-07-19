@@ -5,11 +5,16 @@ import io.micrometer.common.util.StringUtils;
 import org.dcm4che3.data.Attributes;
 import org.dcm4che3.data.Tag;
 import org.dcm4che3.data.VR;
+import org.dcm4che3.imageio.plugins.dcm.DicomImageReadParam;
 import org.dcm4che3.io.DicomInputStream;
 import org.dcm4che3.io.DicomOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -17,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.Iterator;
 
 /**
  * @author Allen
@@ -90,17 +96,6 @@ public class DicomUtils {
                 if (null != date) {
                     setStudyAt(LocalDateTime.ofInstant(date.toInstant(), zoneId));
                 }
-//                try {
-//                    String studyDate = finalAttr.getString(Tag.StudyDate) + finalAttr.getString(Tag.StudyTime);
-//                    Date date;
-//                    if (! studyDate.contains("null")) {
-//                        date = format.parse(studyDate);
-//                        setStudyAt(LocalDateTime.ofInstant(date.toInstant(), zoneId));
-//                    }
-//                } catch (ParseException e) {
-//                    logger.error("研究创建时间解析失败！");
-//                    throw new RuntimeException(e);
-//                }
 
                 // 设置系列属性
                 setImageSeries(new ImageSeriesDto() {{
@@ -116,17 +111,6 @@ public class DicomUtils {
                     if (null != date) {
                         setSeriesAt(LocalDateTime.ofInstant(date.toInstant(), zoneId));
                     }
-//                    try {
-//                        String seriesDate = finalAttr.getString(Tag.SeriesDate) + finalAttr.getString(Tag.SeriesTime);
-//                        Date date;
-//                        if (! seriesDate.contains("null")) {
-//                            date = format.parse(seriesDate);
-//                            setSeriesAt(LocalDateTime.ofInstant(date.toInstant(), zoneId));
-//                        }
-//                    } catch (ParseException e) {
-//                        logger.error("系列创建时间解析失败！");
-//                        throw new RuntimeException(e);
-//                    }
                     setPatientAge(finalAttr.getString(Tag.PatientAge));
 
                     // 设置实例属性
@@ -209,6 +193,42 @@ public class DicomUtils {
             e.printStackTrace();
         }
         return false;
+    }
+
+
+    /**
+     * dicom文件转 Jpg 格式
+     *
+     * @param dicomFile dicom文件
+     * @return Jpg文件
+     */
+    public static File toJpg(File dicomFile) {
+        ImageInputStream iis;
+        try {
+            iis = ImageIO.createImageInputStream(dicomFile);
+            // 获取DICOM图像读取器
+            Iterator<ImageReader> readers = ImageIO.getImageReadersByFormatName("DICOM");
+            ImageReader reader = readers.next();
+
+            // 设置读取参数
+            DicomImageReadParam param = (DicomImageReadParam) reader.getDefaultReadParam();
+
+            // 读取DICOM文件
+            reader.setInput(iis, false);
+            BufferedImage image = reader.read(0, param);
+
+            // 将图像保存为文件
+            File outputFile = File.createTempFile("prefix", ".jpg");
+            ImageIO.write(image, "jpg", outputFile);
+
+            // 关闭流和读取器
+            reader.dispose();
+            iis.close();
+
+            return outputFile;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
