@@ -2,10 +2,10 @@ package cn.hanglok.service.impl;
 
 import cn.hanglok.dto.DicomInfoDto;
 import cn.hanglok.dto.ImageSeriesDto;
+import cn.hanglok.dto.SeriesDetailOutDto;
 import cn.hanglok.dto.SimpleSeriesOutDto;
-import cn.hanglok.entity.ImageSeries;
-import cn.hanglok.entity.SeriesTree;
-import cn.hanglok.mapper.ImageSeriesMapper;
+import cn.hanglok.entity.*;
+import cn.hanglok.mapper.*;
 import cn.hanglok.service.IImageSeriesService;
 import cn.hanglok.util.ConvertUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -30,6 +30,18 @@ public class ImageSeriesServiceImpl extends ServiceImpl<ImageSeriesMapper, Image
 
     @Autowired
     ImageSeriesMapper imageSeriesMapper;
+
+    @Autowired
+    ImageStudiesMapper imageStudiesMapper;
+
+    @Autowired
+    InstitutionPatientMapper institutionPatientMapper;
+
+    @Autowired
+    InstitutionMapper institutionMapper;
+
+    @Autowired
+    ImageInstancesMapper imageInstancesMapper;
 
     @Override
     public synchronized void addImageSeries(DicomInfoDto dicomInfo) {
@@ -75,5 +87,37 @@ public class ImageSeriesServiceImpl extends ServiceImpl<ImageSeriesMapper, Image
     @Override
     public SeriesTree getTree(Long seriesId) {
         return imageSeriesMapper.getTree(seriesId);
+    }
+
+    @Override
+    public SeriesDetailOutDto getSeriesDetail(String seriesId) {
+        ImageSeries series = imageSeriesMapper.selectOne(new QueryWrapper<>() {{
+            eq("id", seriesId);
+        }});
+        ImageStudies studies = imageStudiesMapper.selectOne(new QueryWrapper<>() {{
+            eq("id", series.getStudyId());
+        }});
+        InstitutionPatient patient = institutionPatientMapper.selectOne(new QueryWrapper<>() {{
+            eq("id", studies.getPatientId());
+        }});
+        Institution institution = institutionMapper.selectOne(new QueryWrapper<>() {{
+            eq("id", patient.getInstitutionId());
+        }});
+
+        SeriesDetailOutDto seriesDetail = ConvertUtils.entityToDto(series, ImageSeries.class, SeriesDetailOutDto.class);
+        seriesDetail.setInstitutionName(institution.getInstitutionName());
+        seriesDetail.setPatientName(patient.getPatientName());
+        seriesDetail.setPatientNumber(patient.getPatientNumber());
+        seriesDetail.setPatientSex(patient.getPatientSex());
+
+        return seriesDetail;
+    }
+
+    @Override
+    public void updateInstanceNum(Long seriesId) {
+        Long instanceNum = imageInstancesMapper.selectCount(new QueryWrapper<>() {{
+            eq("series_id", seriesId);
+        }});
+        imageSeriesMapper.updateInstanceNum(seriesId, instanceNum);
     }
 }

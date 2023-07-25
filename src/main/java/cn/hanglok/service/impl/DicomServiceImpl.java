@@ -51,6 +51,9 @@ public class DicomServiceImpl implements DicomService {
         // 添加实例信息
         imageInstancesService.addInstances(dicomInfo);
 
+        // 更新系列实例数
+        imageSeriesService.updateInstanceNum(dicomInfo.getImageStudies().getImageSeries().getId());
+
         // 更新字典
         dictionaryService.updateModality();
 

@@ -1,10 +1,7 @@
 package cn.hanglok.controller;
 
 import cn.hanglok.config.AuthorConfig;
-import cn.hanglok.dto.ModifyLabelOrganDto;
-import cn.hanglok.dto.ModifySeriesBodyPartDto;
-import cn.hanglok.dto.ModifySeriesScanTypeDto;
-import cn.hanglok.dto.SimpleSeriesOutDto;
+import cn.hanglok.dto.*;
 import cn.hanglok.entity.ImageInstances;
 import cn.hanglok.entity.res.Res;
 import cn.hanglok.service.*;
@@ -88,9 +85,18 @@ public class ImpController {
 
     }
 
-    @GetMapping("instance/{seriesId}")
+    @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
+    @Operation(summary = "获取实例信息列表")
+    @GetMapping("/instance/{seriesId}")
     public Res<List<ImageInstances>> getSeriesInstance(@PathVariable String seriesId) {
         return Res.ok(imageInstancesService.getInstances(seriesId));
+    }
+
+    @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
+    @Operation(summary = "获取系列详情")
+    @GetMapping("/series/{seriesId}")
+    public Res<SeriesDetailOutDto> getSeriesDetail(@PathVariable String seriesId) {
+        return Res.ok(imageSeriesService.getSeriesDetail(seriesId));
     }
 
     @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)

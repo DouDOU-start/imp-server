@@ -143,4 +143,12 @@
         WHERE image_series.id = #{seriesId}
     </select>
 
+    <update id="updateInstanceNum">
+        UPDATE image_series
+        <set>
+            instance_num = #{instanceNum}
+        </set>
+        where id = #{seriesId}
+    </update>
+
 </mapper>

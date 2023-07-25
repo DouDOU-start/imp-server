@@ -26,4 +26,6 @@ public interface ImageSeriesMapper extends BaseMapper<ImageSeries> {
 
     SeriesTree getTree(Long seriesId);
 
+    void updateInstanceNum(Long seriesId, Long instanceNum);
+
 }

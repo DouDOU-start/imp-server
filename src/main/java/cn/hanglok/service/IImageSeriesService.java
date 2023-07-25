@@ -1,6 +1,7 @@
 package cn.hanglok.service;
 
 import cn.hanglok.dto.DicomInfoDto;
+import cn.hanglok.dto.SeriesDetailOutDto;
 import cn.hanglok.dto.SimpleSeriesOutDto;
 import cn.hanglok.entity.ImageSeries;
 import cn.hanglok.entity.SeriesTree;
@@ -27,4 +28,8 @@ public interface IImageSeriesService extends IService<ImageSeries> {
     List<String> getModality();
 
     SeriesTree getTree(Long seriesId);
+
+    SeriesDetailOutDto getSeriesDetail(String seriesId);
+
+    void updateInstanceNum(Long seriesId);
 }
