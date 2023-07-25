@@ -1,4 +1,4 @@
-package cn.hanglok;
+package cn.hanglok.util;
 
 import cn.hanglok.config.DataSourceConfig;
 import com.baomidou.mybatisplus.annotation.FieldFill;
@@ -8,8 +8,6 @@ import com.baomidou.mybatisplus.generator.config.TemplateType;
 import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
 import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
 import com.baomidou.mybatisplus.generator.fill.Column;
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.File;
 import java.sql.Types;
@@ -25,8 +23,7 @@ import java.util.List;
  * @description TODO
  * @date 2023/6/7 14:16
  */
-@SpringBootTest
-public class MybatisPlusGeneratorTest {
+public class MybatisPlusGenerator {
 
     // MP生成代码指定目录
     private final String outDir = System.getProperty("user.dir") + MessageFormat.format("{0}src{0}main{0}java", File.separator);
@@ -36,7 +33,6 @@ public class MybatisPlusGeneratorTest {
     /**
      * 快速生成
      */
-    @Test
     public void fastGeneratorCode() {
         FastAutoGenerator.create(DataSourceConfig.url, DataSourceConfig.username, DataSourceConfig.password)
                 .globalConfig(builder -> {
@@ -73,7 +69,6 @@ public class MybatisPlusGeneratorTest {
     /**
      * 交互式生成
      */
-    @Test
     public void interactiveGeneratorCode() {
         FastAutoGenerator.create(DataSourceConfig.url, DataSourceConfig.username, DataSourceConfig.password)
                 // 全局配置
