@@ -54,6 +54,7 @@ public class FileServiceImpl implements FileService {
     @Autowired
     IImageInstancesService imageInstancesService;
 
+
     @Override
     public DicomInfoDto uploadDicom(File file) {
 
@@ -105,23 +106,32 @@ public class FileServiceImpl implements FileService {
             if (null != fileName) {
 
                 // 备份覆盖标签文件移动到回收站
-                File[] files = new File(FileConfig.labelLocation)
-                        .listFiles((dir1, name) -> name.substring(0, name.indexOf(".")).equals(seriesId));
+                File[] files = new File(FileConfig.labelLocation + File.separator + seriesId)
+                        .listFiles((dir1, name) -> name.equals(fileName));
                 for (File bakFile : files) {
+                    File bakFileDir = new File(FileConfig.labelBakLocation + File.separator + seriesId);
+                    if (!bakFileDir.exists()) {
+                        bakFileDir.mkdirs();
+                    }
                     Files.move(
                             bakFile.toPath(),
-                            new File(FileConfig.labelBakLocation + File.separator + bakFile.getName()).toPath(),
+                            new File(FileConfig.labelBakLocation + File.separator +
+                                    seriesId + File.separator + bakFile.getName())
+                                    .toPath(),
                             StandardCopyOption.REPLACE_EXISTING
                     );
                 }
 
                 // 保存文件到本地
-                String fileLocation = FileConfig.labelLocation + File.separator + seriesId + fileName.substring(fileName.indexOf("."));
-                file.transferTo(new File(fileLocation));
+                File fileDir = new File(FileConfig.labelLocation + File.separator + seriesId);
+                if (!fileDir.exists()) {
+                    fileDir.mkdirs();
+                }
+                file.transferTo(new File(fileDir.getAbsolutePath() + File.separator + fileName));
 
                 imageLabelService.saveOrUpdateLabel(new ImageLabel() {{
                     setFileName(fileName);
-                    setFileLocation(fileLocation);
+                    setFileLocation(File.separator + seriesId + File.separator + fileName);
                     setSeriesId(Long.valueOf(seriesId));
                 }});
 
@@ -202,5 +212,18 @@ public class FileServiceImpl implements FileService {
         );
 
         return zipFilePath;
+    }
+
+    @Override
+    public void downloadSeriesLabel(HttpServletResponse response, String seriesId, String fileName) {
+        File file = new File(FileConfig.labelLocation + File.separator + seriesId + File.separator + fileName);
+        FileUtils.resFlush(response, file, fileName);
+    }
+
+    @Override
+    public Boolean delSeriesLabel(String seriesId, String fileName) {
+        File file = new File(FileConfig.labelLocation + File.separator + seriesId + File.separator + fileName);
+        file.deleteOnExit();
+        return true;
     }
 }

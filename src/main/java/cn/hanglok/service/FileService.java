@@ -22,4 +22,8 @@ public interface FileService {
     void downloadSeries(HttpServletResponse response, String seriesId);
 
     void downloadInstanceJpg(HttpServletResponse response, String instanceId);
+
+    void downloadSeriesLabel(HttpServletResponse response, String seriesId, String fileName);
+
+    Boolean delSeriesLabel(String seriesId, String fileName);
 }

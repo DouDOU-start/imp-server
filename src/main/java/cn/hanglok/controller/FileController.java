@@ -60,6 +60,25 @@ public class FileController {
         return Res.ok(fileService.uploadLabel(file, seriesId));
     }
 
+    @Operation(summary = "下载标注文件")
+    @Parameters({
+            @Parameter(name = "seriesId", description = "系列 id", in = ParameterIn.PATH),
+            @Parameter(name = "fileName", description = "标签文件名", in = ParameterIn.PATH)
+    })
+    @GetMapping("/label/{seriesId}/{fileName}")
+    public void downloadSeriesLabel(HttpServletResponse response,
+                                    @PathVariable("seriesId") String seriesId,
+                                    @PathVariable("fileName") String fileName) {
+        fileService.downloadSeriesLabel(response, seriesId, fileName);
+    }
+
+    @Operation(summary = "删除标注文件")
+    @DeleteMapping("/label/{seriesId}/{fileName}")
+    public Res<Boolean> delSeriesLabel(@PathVariable("seriesId") String seriesId,
+                                       @PathVariable("fileName") String fileName) {
+        return Res.ok(fileService.delSeriesLabel(seriesId, fileName));
+    }
+
     @Operation(summary = "下载影像系列文件包")
     @Parameters(@Parameter(name = "seriesId", description = "系列 id", in = ParameterIn.PATH))
     @GetMapping("/series/{seriesId}")
@@ -72,6 +91,7 @@ public class FileController {
     public void downloadInstanceJpg(HttpServletResponse response, @PathVariable("instanceId") String instanceId) {
         fileService.downloadInstanceJpg(response, instanceId);
     }
+
 
 //    @PostMapping("/upload")
 //    public ResponseEntity<String> uploadFile(@RequestParam MultipartFile file,
