@@ -18,4 +18,5 @@ public class SeriesDetailOutDto extends ImageSeries {
     private String patientNumber;
     private String patientName;
     private String patientSex;
+    private String bodyPart;
 }

@@ -3,8 +3,10 @@ package cn.hanglok.controller;
 import cn.hanglok.config.AuthorConfig;
 import cn.hanglok.dto.*;
 import cn.hanglok.entity.ImageInstances;
+import cn.hanglok.entity.ImageLabel;
 import cn.hanglok.entity.res.Res;
 import cn.hanglok.service.*;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.v3.oas.annotations.Operation;
@@ -43,6 +45,9 @@ public class ImpController {
 
     @Autowired
     IImageInstancesService imageInstancesService;
+
+    @Autowired
+    IImageLabelService imageLabelService;
 
     @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
     @Operation(summary = "获取系列简要信息列表")
@@ -118,6 +123,15 @@ public class ImpController {
     @PutMapping("/scanType")
     public Res<Integer> modifyScanType(@RequestBody ModifySeriesScanTypeDto modifySeriesScanTypeDto) {
         return Res.ok(seriesScanTypeService.modifyScanType(modifySeriesScanTypeDto));
+    }
+
+    @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
+    @Operation(summary = "获取标签信息列表")
+    @GetMapping("/label/{seriesId}")
+    public Res<List<ImageLabel>> getSeriesLabel(@PathVariable String seriesId) {
+        return Res.ok(imageLabelService.list(new QueryWrapper<>() {{
+            eq("series_id", seriesId);
+        }}));
     }
 
 }

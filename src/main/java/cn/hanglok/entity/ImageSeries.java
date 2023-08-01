@@ -74,6 +74,11 @@ public class ImageSeries implements Serializable {
     private Integer columns;
 
     /**
+     * 实例数
+     */
+    private Integer instanceNum;
+
+    /**
      * 影像患者年龄
      */
     private String patientAge;

@@ -48,6 +48,7 @@ public class ImageInstancesServiceImpl extends ServiceImpl<ImageInstancesMapper,
     public List<ImageInstances> getInstances(String seriesId) {
         return imageInstancesMapper.selectList(new QueryWrapper<>() {{
             eq("series_id", seriesId);
+            orderByAsc("instance_number");
         }});
     }
 

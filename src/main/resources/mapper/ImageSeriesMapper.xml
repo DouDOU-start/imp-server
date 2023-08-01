@@ -151,4 +151,29 @@
         where id = #{seriesId}
     </update>
 
+    <select id="getSeriesDetail" resultType="cn.hanglok.dto.SeriesDetailOutDto">
+        SELECT image_series.*,
+               institution.institution_name,
+               institution_patient.patient_number,
+               institution_patient.patient_name,
+               institution_patient.patient_sex,
+               GROUP_CONCAT(body_part.body_name SEPARATOR ', ') as body_part
+        FROM institution
+                 LEFT JOIN institution_patient ON institution.id = institution_patient.institution_id
+                 LEFT JOIN image_studies ON institution_patient.id = image_studies.patient_id
+                 LEFT JOIN image_series ON image_studies.id = image_series.study_id
+                 LEFT JOIN image_label ON image_series.id = image_label.series_id
+                 LEFT JOIN label_organ ON image_label.id = label_organ.label_id
+                 LEFT JOIN human_organ ON label_organ.organ_id = human_organ.id
+                 LEFT JOIN series_body_part ON image_series.id = series_body_part.series_id
+                 LEFT JOIN body_part ON series_body_part.body_part_id = body_part.id
+                 LEFT JOIN series_scan_type ON image_series.id = series_scan_type.series_id
+                 LEFT JOIN image_scan_type ON series_scan_type.scan_type_id = image_scan_type.id
+
+        WHERE image_series.id = #{seriesId}
+        GROUP BY image_series.id, institution.institution_name, institution_patient.patient_number,
+                 institution_patient.patient_name, institution_patient.patient_sex, image_scan_type.scan_type_name
+        ORDER BY image_series.updated_at desc
+    </select>
+
 </mapper>

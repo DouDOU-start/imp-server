@@ -1,5 +1,6 @@
 package cn.hanglok.mapper;
 
+import cn.hanglok.dto.SeriesDetailOutDto;
 import cn.hanglok.dto.SimpleSeriesOutDto;
 import cn.hanglok.entity.ImageSeries;
 import cn.hanglok.entity.SeriesTree;
@@ -27,5 +28,7 @@ public interface ImageSeriesMapper extends BaseMapper<ImageSeries> {
     SeriesTree getTree(Long seriesId);
 
     void updateInstanceNum(Long seriesId, Long instanceNum);
+
+    SeriesDetailOutDto getSeriesDetail(String seriesId);
 
 }
