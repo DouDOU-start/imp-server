@@ -13,7 +13,7 @@ import java.io.File;
  * @date 2023/6/6 14:18
  */
 @Component
-@ConfigurationProperties(prefix = "immp.file")
+@ConfigurationProperties(prefix = "imp.file")
 public class FileConfig {
     public static String dicomLocation;
     public static String labelLocation;
