@@ -7,7 +7,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.net.URLEncoder;
 import java.nio.channels.FileChannel;
+import java.nio.charset.StandardCharsets;
 import java.util.function.Function;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -236,11 +238,31 @@ public class FileUtils {
         }
     }
 
+    public static void deleteFolder(File folder) {
+        if (folder.isDirectory()) {
+            // 获取文件夹内所有文件和子文件夹
+            File[] files = folder.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    // 递归删除文件夹内的文件和子文件夹
+                    deleteFolder(file);
+                }
+            }
+        }
+        // 删除空文件夹或文件
+        folder.delete();
+    }
+
     public static void resFlush(HttpServletResponse response, File file, String fileName) {
+
+        // 处理中文字符编码，前端需要解析
+        String encodedFileName;
+        encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8);
+
         response.reset();
         response.setContentType("application/octet-stream");
-        response.setHeader("Content-disposition", "attachment;filename=" + fileName.split("\\.")[0] + "_"
-                + System.currentTimeMillis() + "." + fileName.split("\\.")[1]);
+        response.setHeader("Content-disposition", "attachment;filename=" + encodedFileName.split("\\.")[0] + "_"
+                + System.currentTimeMillis() + "." + encodedFileName.split("\\.")[1]);
         response.setHeader("Content-Length", String.valueOf(file.length()));
 
         // 从文件读到servlet response输出流中
