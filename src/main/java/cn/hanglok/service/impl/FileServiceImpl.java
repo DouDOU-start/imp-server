@@ -106,18 +106,32 @@ public class FileServiceImpl implements FileService {
             if (null != fileName) {
 
                 // 备份覆盖标签文件移动到回收站
-                File[] files = new File(FileConfig.labelLocation + File.separator + seriesId)
-                        .listFiles((dir1, name) -> name.equals(fileName));
-                for (File bakFile : files) {
-                    File bakFileDir = new File(FileConfig.labelBakLocation + File.separator + seriesId);
-                    if (!bakFileDir.exists()) {
-                        bakFileDir.mkdirs();
-                    }
+//                File[] files = new File(FileConfig.labelLocation + File.separator + seriesId)
+//                        .listFiles((dir1, name) -> name.equals(fileName));
+//                if (null != files) {
+//                    for (File bakFile : files) {
+//                        File bakFileDir = new File(FileConfig.labelBakLocation + File.separator + seriesId);
+//                        if (!bakFileDir.exists()) {
+//                            bakFileDir.mkdirs();
+//                        }
+//                        Files.move(
+//                                bakFile.toPath(),
+//                                new File(FileConfig.labelBakLocation + File.separator +
+//                                        seriesId + File.separator + bakFile.getName())
+//                                        .toPath(),
+//                                StandardCopyOption.REPLACE_EXISTING
+//                        );
+//                    }
+//                }
+
+                // 备份覆盖标签文件移动到回收站
+                File bakFile = new File(FileConfig.labelLocation + File.separator + seriesId);
+                File delFile = new File(FileConfig.labelBakLocation + File.separator + seriesId);
+                FileUtils.deleteFolder(delFile);
+                if (bakFile.exists()) {
                     Files.move(
                             bakFile.toPath(),
-                            new File(FileConfig.labelBakLocation + File.separator +
-                                    seriesId + File.separator + bakFile.getName())
-                                    .toPath(),
+                            delFile.toPath(),
                             StandardCopyOption.REPLACE_EXISTING
                     );
                 }
@@ -192,15 +206,19 @@ public class FileServiceImpl implements FileService {
         // 复制DICOM文件
         FileUtils.copyFolder(sourcePath, file.getAbsolutePath() + File.separator + "dicom");
 
-        // 复制标注文件
-        File[] files = new File(FileConfig.labelLocation).listFiles((dir1, name) ->
-                name.substring(0, name.indexOf(".")).equals(String.valueOf(seriesId)));
-
-        for (File labelFile : files) {
-            FileUtils.copyFile(
-                    labelFile,
-                    new File(file.getAbsolutePath() + File.separator + labelFile.getName())
-            );
+        // 创建文件夹，复制标注文件
+        File labelDir = new File(file.getAbsolutePath() + File.separator + "label");
+        if (! labelDir.exists()) {
+            labelDir.mkdir();
+        }
+        File[] files = new File(FileConfig.labelLocation + File.separator + seriesId).listFiles();
+        if (null != files) {
+            for (File labelFile : files) {
+                FileUtils.copyFile(
+                        labelFile,
+                        new File(file.getAbsolutePath() + File.separator + "label" + File.separator + labelFile.getName())
+                );
+            }
         }
 
         // 压缩影像数据
@@ -223,7 +241,13 @@ public class FileServiceImpl implements FileService {
     @Override
     public Boolean delSeriesLabel(String seriesId, String fileName) {
         File file = new File(FileConfig.labelLocation + File.separator + seriesId + File.separator + fileName);
-        file.deleteOnExit();
+        file.delete();
+
+        imageLabelService.remove(new QueryWrapper<>() {{
+            eq("series_id", seriesId);
+            eq("file_name", fileName);
+        }});
+
         return true;
     }
 }
