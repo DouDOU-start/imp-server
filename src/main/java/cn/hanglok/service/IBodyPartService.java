@@ -1,6 +1,7 @@
 package cn.hanglok.service;
 
 import cn.hanglok.entity.BodyPart;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -18,5 +19,7 @@ public interface IBodyPartService extends IService<BodyPart> {
     int modifyBodyPart(BodyPart bodyPartDto);
 
     int delBodyPart(long id);
+
+    IPage<BodyPart> selectPage(String keyword, Integer currentPage, Integer pageSize);
 
 }

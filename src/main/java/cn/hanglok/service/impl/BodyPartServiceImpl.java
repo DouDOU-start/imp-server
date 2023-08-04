@@ -4,6 +4,8 @@ import cn.hanglok.entity.BodyPart;
 import cn.hanglok.mapper.BodyPartMapper;
 import cn.hanglok.service.IBodyPartService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -59,5 +61,17 @@ public class BodyPartServiceImpl extends ServiceImpl<BodyPartMapper, BodyPart> i
     @Override
     public int delBodyPart(long id) {
         return bodyPartMapper.deleteById(id);
+    }
+
+    @Override
+    public IPage<BodyPart> selectPage(String keyword, Integer currentPage, Integer pageSize) {
+        return bodyPartMapper.selectPage(
+                new Page<>(currentPage == null ? -1 : currentPage, pageSize == null ? -1 : pageSize),
+                new QueryWrapper<>() {{
+                    if (null != keyword) {
+                        like("body_name", keyword);
+                    }
+            }}
+        );
     }
 }

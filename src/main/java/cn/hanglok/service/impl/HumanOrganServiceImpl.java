@@ -4,6 +4,8 @@ import cn.hanglok.entity.HumanOrgan;
 import cn.hanglok.mapper.HumanOrganMapper;
 import cn.hanglok.service.IHumanOrganService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -57,5 +59,17 @@ public class HumanOrganServiceImpl extends ServiceImpl<HumanOrganMapper, HumanOr
     @Override
     public int delHumanOrgan(Long id) {
         return humanOrganMapper.deleteById(id);
+    }
+
+    @Override
+    public IPage<HumanOrgan> selectPage(String keyword, Integer currentPage, Integer pageSize) {
+        return humanOrganMapper.selectPage(
+                new Page<>(currentPage == null ? -1 :currentPage, pageSize == null ? -1 : pageSize),
+                new QueryWrapper<>() {{
+                    if (null != keyword) {
+                        like("organ_name", keyword);
+                    }
+                }}
+        );
     }
 }

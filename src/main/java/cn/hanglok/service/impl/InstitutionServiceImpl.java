@@ -7,6 +7,8 @@ import cn.hanglok.mapper.InstitutionMapper;
 import cn.hanglok.service.IInstitutionService;
 import cn.hanglok.util.ConvertUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,4 +48,15 @@ public class InstitutionServiceImpl extends ServiceImpl<InstitutionMapper, Insti
         return institutionMapper.selectList(null);
     }
 
+    @Override
+    public IPage<Institution> selectPage(String keyword, Integer currentPage, Integer pageSize) {
+        return institutionMapper.selectPage(
+                new Page<>(currentPage == null ? -1 : currentPage, pageSize == null ? -1 : pageSize),
+                new QueryWrapper<>() {{
+                    if (null != keyword) {
+                        like("institution_name", keyword);
+                    }
+                }}
+        );
+    }
 }

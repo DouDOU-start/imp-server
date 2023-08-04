@@ -4,6 +4,8 @@ import cn.hanglok.entity.ImageScanType;
 import cn.hanglok.mapper.ImageScanTypeMapper;
 import cn.hanglok.service.IImageScanTypeService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -56,5 +58,17 @@ public class ImageScanTypeServiceImpl extends ServiceImpl<ImageScanTypeMapper, I
     @Override
     public int delScanType(Long id) {
         return imageScanTypeMapper.deleteById(id);
+    }
+
+    @Override
+    public IPage<ImageScanType> selectPage(String keyword, Integer currentPage, Integer pageSize) {
+        return imageScanTypeMapper.selectPage(
+                new Page<>(currentPage == null ? -1 :currentPage, pageSize == null ? -1 : pageSize),
+                new QueryWrapper<>() {{
+                    if (null != keyword) {
+                        like("scan_type_name", keyword);
+                    }
+                }}
+        );
     }
 }

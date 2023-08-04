@@ -1,6 +1,7 @@
 package cn.hanglok.service;
 
 import cn.hanglok.entity.ImageScanType;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -18,4 +19,6 @@ public interface IImageScanTypeService extends IService<ImageScanType> {
     int modifyScanType(ImageScanType imageScanTypeDto);
 
     int delScanType(Long id);
+
+    IPage<ImageScanType> selectPage(String keyword, Integer currentPage, Integer pageSize);
 }

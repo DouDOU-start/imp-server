@@ -4,14 +4,13 @@ import cn.hanglok.config.AuthorConfig;
 import cn.hanglok.dto.BodyPartDto;
 import cn.hanglok.dto.HumanOrganDto;
 import cn.hanglok.dto.ImageScanTypeDto;
-import cn.hanglok.dto.InstitutionDto;
 import cn.hanglok.entity.BodyPart;
 import cn.hanglok.entity.HumanOrgan;
 import cn.hanglok.entity.ImageScanType;
 import cn.hanglok.entity.Institution;
 import cn.hanglok.entity.res.Res;
 import cn.hanglok.service.*;
-import cn.hanglok.util.ConvertUtils;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -21,7 +20,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -53,11 +51,16 @@ public class DimensionController {
 
     @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
     @Operation(summary = "获取机构信息列表")
+    @Parameters({
+            @Parameter(name = "keyword",description = "关键字", in = ParameterIn.QUERY),
+            @Parameter(name = "currentPage",description = "分页当前页", in = ParameterIn.QUERY),
+            @Parameter(name = "pageSize",description = "页面大小", in = ParameterIn.QUERY),
+    })
     @GetMapping("/institution")
-    public Res<List<InstitutionDto>> getInstitution() {
-        return Res.ok(new ArrayList<>() {{
-            institutionService.getInstitutionList().forEach(entity -> add(ConvertUtils.entityToDto(entity, Institution.class, InstitutionDto.class)));
-        }});
+    public Res<IPage<Institution>> getInstitution(@RequestParam(required = false) String keyword,
+                                                     @RequestParam(required = false) Integer currentPage,
+                                                     @RequestParam(required = false) Integer pageSize) {
+        return Res.ok(institutionService.selectPage(keyword, currentPage, pageSize));
     }
 
     @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
@@ -76,9 +79,16 @@ public class DimensionController {
 
     @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
     @Operation(summary = "获取身体检查部位")
+    @Parameters({
+            @Parameter(name = "keyword",description = "关键字", in = ParameterIn.QUERY),
+            @Parameter(name = "currentPage",description = "分页当前页", in = ParameterIn.QUERY),
+            @Parameter(name = "pageSize",description = "页面大小", in = ParameterIn.QUERY),
+    })
     @GetMapping("/bodyPart")
-    public Res<List<BodyPart>> getBodyPart() {
-        return Res.ok(bodyPartService.list());
+    public Res<IPage<BodyPart>> getBodyPart(@RequestParam(required = false) String keyword,
+                                            @RequestParam(required = false) Integer currentPage,
+                                            @RequestParam(required = false) Integer pageSize) {
+        return Res.ok(bodyPartService.selectPage(keyword, currentPage, pageSize));
     }
 
     @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
@@ -105,9 +115,16 @@ public class DimensionController {
 
     @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
     @Operation(summary = "获取器官")
+    @Parameters({
+            @Parameter(name = "keyword",description = "关键字", in = ParameterIn.QUERY),
+            @Parameter(name = "currentPage",description = "分页当前页", in = ParameterIn.QUERY),
+            @Parameter(name = "pageSize",description = "页面大小", in = ParameterIn.QUERY),
+    })
     @GetMapping("/humanOrgan")
-    public Res<List<HumanOrgan>> getHumanOrgan() {
-        return Res.ok(humanOrganService.list());
+    public Res<IPage<HumanOrgan>> getHumanOrgan(@RequestParam(required = false) String keyword,
+                                               @RequestParam(required = false) Integer currentPage,
+                                               @RequestParam(required = false) Integer pageSize) {
+        return Res.ok(humanOrganService.selectPage(keyword, currentPage, pageSize));
     }
 
     @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
@@ -135,8 +152,10 @@ public class DimensionController {
     @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
     @Operation(summary = "获取扫描类型")
     @GetMapping("/scanType")
-    public Res<List<ImageScanType>> getScanType() {
-        return Res.ok(imageScanTypeService.list());
+    public Res<IPage<ImageScanType>> getScanType(@RequestParam(required = false) String keyword,
+                                                @RequestParam(required = false) Integer currentPage,
+                                                @RequestParam(required = false) Integer pageSize) {
+        return Res.ok(imageScanTypeService.selectPage(keyword, currentPage, pageSize));
     }
 
     @ApiOperationSupport(author = AuthorConfig.AUTHOR_INFO)
