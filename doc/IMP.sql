@@ -20,7 +20,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ----------------------------
 -- Table structure for body_part
 -- ----------------------------
-CREATE TABLE IF NO EXISTS `body_part` (
+CREATE TABLE IF NOT EXISTS `body_part` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '自增 id',
   `body_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '身体检查部位名称',
   `created_at` timestamp NOT NULL COMMENT '创建时间',
@@ -35,7 +35,7 @@ CREATE TABLE IF NO EXISTS `body_part` (
 -- ----------------------------
 -- Table structure for dictionary
 -- ----------------------------
-CREATE TABLE IF NO EXISTS `dictionary`(
+CREATE TABLE IF NOT EXISTS `dictionary`(
   `id`         bigint                                                        NOT NULL AUTO_INCREMENT COMMENT '自增 id',
   `name`       varchar(50)                                                   NOT NULL COMMENT '字典名',
   `value`      varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '属性（用英文逗号分隔）',
@@ -49,7 +49,7 @@ CREATE TABLE IF NO EXISTS `dictionary`(
 -- ----------------------------
 -- Table structure for human_organ
 -- ----------------------------
-CREATE TABLE IF NO EXISTS `human_organ` (
+CREATE TABLE IF NOT EXISTS `human_organ` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '自增 id',
   `organ_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '器官名称',
   `created_at` timestamp NOT NULL COMMENT '创建时间',
@@ -64,7 +64,7 @@ CREATE TABLE IF NO EXISTS `human_organ` (
 -- ----------------------------
 -- Table structure for label_organ
 -- ----------------------------
-CREATE TABLE IF NO EXISTS `label_organ`
+CREATE TABLE IF NOT EXISTS `label_organ`
 (
     `id`         bigint    NOT NULL AUTO_INCREMENT COMMENT '自增 id',
     `label_id`   bigint    NOT NULL COMMENT '标签 id',
@@ -80,7 +80,7 @@ CREATE TABLE IF NO EXISTS `label_organ`
 -- ----------------------------
 -- Table structure for series_body_part
 -- ----------------------------
-CREATE TABLE IF NO EXISTS `series_body_part`
+CREATE TABLE IF NOT EXISTS `series_body_part`
 (
     `id`           bigint    NOT NULL AUTO_INCREMENT COMMENT '自增 id',
     `series_id`    bigint    NOT NULL COMMENT '系列 id',
@@ -96,7 +96,7 @@ CREATE TABLE IF NO EXISTS `series_body_part`
 -- ----------------------------
 -- Table structure for series_scan_type
 -- ----------------------------
-CREATE TABLE IF NO EXISTS `series_scan_type`
+CREATE TABLE IF NOT EXISTS `series_scan_type`
 (
     `id`           bigint    NOT NULL AUTO_INCREMENT COMMENT '自增 id',
     `series_id`    bigint    NOT NULL COMMENT '系列 id',
@@ -112,7 +112,7 @@ CREATE TABLE IF NO EXISTS `series_scan_type`
 -- ----------------------------
 -- Table structure for image_instances
 -- ----------------------------
-CREATE TABLE IF NO EXISTS `image_instances`
+CREATE TABLE IF NOT EXISTS `image_instances`
 (
   `id`              bigint                                                        NOT NULL AUTO_INCREMENT COMMENT '自增 id',
   `instance_number` int                                                           NOT NULL COMMENT '实例号',
@@ -131,7 +131,7 @@ CREATE TABLE IF NO EXISTS `image_instances`
 -- ----------------------------
 -- Table structure for image_label
 -- ----------------------------
-CREATE TABLE IF NO EXISTS `image_label` (
+CREATE TABLE IF NOT EXISTS `image_label` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '自增 id',
   `file_name` varchar(50) NOT NULL COMMENT '文件名',
   `file_location` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '文件路径',
@@ -147,7 +147,7 @@ CREATE TABLE IF NO EXISTS `image_label` (
 -- ----------------------------
 -- Table structure for image_scan_type
 -- ----------------------------
-CREATE TABLE IF NO EXISTS `image_scan_type` (
+CREATE TABLE IF NOT EXISTS `image_scan_type` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '自增 id',
   `scan_type_name` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '扫描类型名称',
   `created_at` timestamp NOT NULL COMMENT '创建时间',
@@ -162,7 +162,7 @@ CREATE TABLE IF NO EXISTS `image_scan_type` (
 -- ----------------------------
 -- Table structure for image_series
 -- ----------------------------
-CREATE TABLE IF NO EXISTS `image_series` (
+CREATE TABLE IF NOT EXISTS `image_series` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '自增 id',
   `series_number` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '系列号（单个设备唯一）',
   `series_uid` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '系列uid',
@@ -188,7 +188,7 @@ CREATE TABLE IF NO EXISTS `image_series` (
 -- ----------------------------
 -- Table structure for image_studies
 -- ----------------------------
-CREATE TABLE IF NO EXISTS `image_studies` (
+CREATE TABLE IF NOT EXISTS `image_studies` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '自增 id',
   `study_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '研究 id',
   `study_uid` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '研究 uid',
@@ -207,7 +207,7 @@ CREATE TABLE IF NO EXISTS `image_studies` (
 -- ----------------------------
 -- Table structure for institution
 -- ----------------------------
-CREATE TABLE IF NO EXISTS `institution` (
+CREATE TABLE IF NOT EXISTS `institution` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT '自增 id',
   `institution_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '机构名称',
   `institution_address` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '机构地址',
@@ -223,7 +223,7 @@ CREATE TABLE IF NO EXISTS `institution` (
 -- ----------------------------
 -- Table structure for institution_patient
 -- ----------------------------
-CREATE TABLE IF NO EXISTS `institution_patient` (
+CREATE TABLE IF NOT EXISTS `institution_patient` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT '自增 id',
   `patient_number` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '患者 id',
   `patient_name` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '患者姓名',
