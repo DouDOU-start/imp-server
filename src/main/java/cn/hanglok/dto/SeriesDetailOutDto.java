@@ -18,5 +18,37 @@ public class SeriesDetailOutDto extends ImageSeries {
     private String patientNumber;
     private String patientName;
     private String patientSex;
-    private String bodyPart;
+//    private List<Integer> bodyPart;
+//    private List<Integer> scanType;
+    private Integer bodyPart;
+    private Integer scanType;
+
+    public SeriesDetailOutDto(String institutionName, String patientNumber, String patientName, String patientSex, String bodyPart, String scanType) {
+        this.institutionName = institutionName;
+        this.patientNumber = patientNumber;
+        this.patientName = patientName;
+        this.patientSex = patientSex;
+
+
+        if (null != bodyPart) {
+            this.bodyPart = Integer.valueOf(bodyPart);
+//            this.bodyPart = Arrays.stream(bodyPart.split(","))
+//                    .map(String::trim)
+//                    .map(Integer::parseInt)
+//                    .collect(Collectors.toList());
+        } else {
+//            this.bodyPart = List.of();
+        }
+
+        if (null != scanType) {
+//            this.scanType = Arrays.stream(scanType.split(","))
+//                    .map(String::trim)
+//                    .map(Integer::parseInt)
+//                    .collect(Collectors.toList());
+            this.scanType = Integer.valueOf(scanType);
+        } else {
+//            this.scanType = List.of();
+        }
+
+    }
 }

@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -38,4 +39,24 @@ public class SeriesBodyPart implements Serializable {
      * 身体检查部位 id
      */
     private Long bodyPartId;
+
+    /**
+     * 创建时间
+     */
+    private LocalDateTime createdAt;
+
+    /**
+     * 修改时间
+     */
+    private LocalDateTime updatedAt;
+
+    /**
+     * 创建人
+     */
+    private Long creator;
+
+    /**
+     * 修改人
+     */
+    private Long updater;
 }

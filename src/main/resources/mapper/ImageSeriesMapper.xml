@@ -30,8 +30,8 @@
 	    image_series.modality,
 	    image_series.slice_thickness,
 	    image_series.created_at,
-	    GROUP_CONCAT( body_part.body_name SEPARATOR ', ' ) as body_part,
-        image_scan_type.scan_type_name as scan_type
+        GROUP_CONCAT(DISTINCT image_scan_type.scan_type_name SEPARATOR ', ') as scan_type,
+        GROUP_CONCAT(DISTINCT body_part.body_name SEPARATOR ', ') as body_part
     </sql>
 
     <select id="getSimpleSeriesList" resultMap="simpleDicomInfoMap">
@@ -151,13 +151,25 @@
         where id = #{seriesId}
     </update>
 
-    <select id="getSeriesDetail" resultType="cn.hanglok.dto.SeriesDetailOutDto">
+    <resultMap id="SeriesDetailOutDtoMap" type="cn.hanglok.dto.SeriesDetailOutDto">
+        <constructor>
+            <arg column="institution_name" javaType="java.lang.String" />
+            <arg column="patient_number" javaType="java.lang.String" />
+            <arg column="patient_name" javaType="java.lang.String" />
+            <arg column="patient_sex" javaType="java.lang.String" />
+            <arg column="body_part" javaType="java.lang.String" />
+            <arg column="scan_type" javaType="java.lang.String" />
+        </constructor>
+    </resultMap>
+
+    <select id="getSeriesDetail" resultMap="SeriesDetailOutDtoMap">
         SELECT image_series.*,
                institution.institution_name,
                institution_patient.patient_number,
                institution_patient.patient_name,
                institution_patient.patient_sex,
-               GROUP_CONCAT(body_part.body_name SEPARATOR ', ') as body_part
+               GROUP_CONCAT(DISTINCT image_scan_type.id SEPARATOR ',') as scan_type,
+               GROUP_CONCAT(DISTINCT body_part.id SEPARATOR ',') as body_part
         FROM institution
                  LEFT JOIN institution_patient ON institution.id = institution_patient.institution_id
                  LEFT JOIN image_studies ON institution_patient.id = image_studies.patient_id

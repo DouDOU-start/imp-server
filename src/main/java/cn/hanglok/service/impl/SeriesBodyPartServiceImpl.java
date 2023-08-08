@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -40,6 +41,8 @@ public class SeriesBodyPartServiceImpl extends ServiceImpl<SeriesBodyPartMapper,
                         int insert = seriesBodyPartMapper.insert(new SeriesBodyPart() {{
                             setSeriesId(modifySeriesBodyPart.getSeriesId());
                             setBodyPartId(Long.valueOf(op.getBodyPartId()));
+                            setCreatedAt(LocalDateTime.now());
+                            setUpdatedAt(LocalDateTime.now());
                         }});
                         if (1 == insert) {
                             success.getAndIncrement();

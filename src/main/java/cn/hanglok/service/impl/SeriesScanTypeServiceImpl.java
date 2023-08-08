@@ -49,13 +49,13 @@ public class SeriesScanTypeServiceImpl extends ServiceImpl<SeriesScanTypeMapper,
                             success.getAndIncrement();
                         }
                     } catch (Exception e) {
-                        logger.error("新增系列身体部位异常：" + op + e.getMessage());
+                        logger.error("新增系列扫描类型异常：" + op + e.getMessage());
                     }
                 }
                 case DEL -> {
                     int delete = seriesScanTypeMapper.delete(new QueryWrapper<>() {{
                         eq("series_id", modifySeriesScanType.getSeriesId());
-                        eq("body_part_id", op.getScanTypeId());
+                        eq("scan_type_id", op.getScanTypeId());
                     }});
                     if (1 == delete) {
                         success.getAndIncrement();
