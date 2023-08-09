@@ -80,6 +80,12 @@
 
         <dependency>
             <groupId>org.dcm4che</groupId>
+            <artifactId>dcm4che-net</artifactId>
+            <version>5.29.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.dcm4che</groupId>
             <artifactId>dcm4che-image</artifactId>
             <version>5.29.2</version>
         </dependency>
