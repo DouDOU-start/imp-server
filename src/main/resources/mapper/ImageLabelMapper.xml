@@ -11,4 +11,23 @@
         </set>
         where id = #{id}
     </update>
+
+    <resultMap id="ImageLabelOutDtoMap" type="cn.hanglok.dto.ImageLabelOutDto">
+        <constructor>
+            <arg column="id" javaType="java.lang.Long" />
+            <arg column="organ_id" javaType="java.lang.String" />
+        </constructor>
+    </resultMap>
+
+    <select id="getSeriesLabel" resultMap="ImageLabelOutDtoMap">
+        SELECT
+            image_label.*,
+            GROUP_CONCAT(DISTINCT label_organ.organ_id SEPARATOR ',') as organ_id
+        FROM
+            image_label
+        LEFT JOIN label_organ ON
+            image_label.id = label_organ.label_id
+        WHERE series_id = #{seriesId}
+        GROUP BY image_label.id
+    </select>
 </mapper>

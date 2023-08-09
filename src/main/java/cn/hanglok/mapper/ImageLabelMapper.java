@@ -1,7 +1,10 @@
 package cn.hanglok.mapper;
 
+import cn.hanglok.dto.ImageLabelOutDto;
 import cn.hanglok.entity.ImageLabel;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +16,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface ImageLabelMapper extends BaseMapper<ImageLabel> {
     int updateFile(ImageLabel imageLabel);
+
+    List<ImageLabelOutDto> getSeriesLabel(String seriesId);
 }

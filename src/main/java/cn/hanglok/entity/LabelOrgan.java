@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
+import java.time.LocalDateTime;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -37,4 +39,24 @@ public class LabelOrgan implements Serializable {
      * 器官 id
      */
     private Long organId;
+
+    /**
+     * 创建时间
+     */
+    private LocalDateTime createdAt;
+
+    /**
+     * 修改时间
+     */
+    private LocalDateTime updatedAt;
+
+    /**
+     * 创建人
+     */
+    private Long creator;
+
+    /**
+     * 修改人
+     */
+    private Long updater;
 }

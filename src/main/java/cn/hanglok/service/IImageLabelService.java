@@ -1,7 +1,10 @@
 package cn.hanglok.service;
 
+import cn.hanglok.dto.ImageLabelOutDto;
 import cn.hanglok.entity.ImageLabel;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 /**
  * <p>
@@ -14,5 +17,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface IImageLabelService extends IService<ImageLabel> {
 
     int saveOrUpdateLabel(ImageLabel imageLabel);
+
+    List<ImageLabelOutDto> getSeriesLabel(String seriesId);
 
 }

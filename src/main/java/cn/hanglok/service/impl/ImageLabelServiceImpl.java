@@ -1,5 +1,6 @@
 package cn.hanglok.service.impl;
 
+import cn.hanglok.dto.ImageLabelOutDto;
 import cn.hanglok.entity.ImageLabel;
 import cn.hanglok.mapper.ImageLabelMapper;
 import cn.hanglok.service.IImageLabelService;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * <p>
@@ -44,4 +46,8 @@ public class ImageLabelServiceImpl extends ServiceImpl<ImageLabelMapper, ImageLa
         return imageLabelMapper.updateFile(imageLabel);
     }
 
+    @Override
+    public List<ImageLabelOutDto> getSeriesLabel(String seriesId) {
+        return imageLabelMapper.getSeriesLabel(seriesId);
+    }
 }
