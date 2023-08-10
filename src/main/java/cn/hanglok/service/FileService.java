@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * @author Allen
@@ -19,7 +20,7 @@ public interface FileService {
 
     boolean uploadLabel(MultipartFile file, String seriesId);
 
-    void downloadSeries(HttpServletResponse response, String seriesId);
+    void downloadSeries(HttpServletResponse response, List<Long> seriesIds);
 
     void downloadInstanceJpg(HttpServletResponse response, String instanceId);
 

@@ -26,6 +26,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author Allen
@@ -158,17 +162,20 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public void downloadSeries(HttpServletResponse response, String seriesId) {
+    public void downloadSeries(HttpServletResponse response, List<Long> seriesIds) {
 
         File file;
         try {
-            file = new File(zipSeries(Long.valueOf(seriesId)));
+            file = new File(zipBathSeries(seriesIds));
         } catch (FileNotFoundException e) {
             logger.error("找不到系列影像数据", e);
             return;
         }
 
-        FileUtils.resFlush(response, file, seriesId + ".zip");
+        FileUtils.resFlush(response, file, seriesIds
+                .stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining("+")) + ".zip");
 
     }
 
@@ -179,19 +186,65 @@ public class FileServiceImpl implements FileService {
         FileUtils.resFlush(response, jpg, jpg.getName());
     }
 
-    public String zipSeries(Long seriesId) throws FileNotFoundException {
+//    public String zipSeries(Long seriesId) throws FileNotFoundException {
+//
+//        SeriesTree seriesTree = imageSeriesMapper.getTree(seriesId);
+//        if (null == seriesTree) {
+//            return null;
+//        }
+//
+//        String sourcePath = FileConfig.dicomLocation + seriesTree;
+//
+//        if (!new File(sourcePath).exists()) {
+//            logger.error("系列影像路径不存在");
+//            return null;
+//        }
+//
+//        // 创建临时目录
+//        File file;
+//        while (true) {
+//            file = new File(FileConfig.tmpLocation + File.separator + System.currentTimeMillis());
+//            if (!file.exists()) {
+//                file.mkdirs();
+//                break;
+//            }
+//        }
+//
+//        // 复制DICOM文件
+//        FileUtils.copyFolder(sourcePath, file.getAbsolutePath() + File.separator + "dicom");
+//
+//        // 创建文件夹，复制标注文件
+//        File labelDir = new File(file.getAbsolutePath() + File.separator + "label");
+//        if (! labelDir.exists()) {
+//            labelDir.mkdir();
+//        }
+//        File[] files = new File(FileConfig.labelLocation + File.separator + seriesId).listFiles();
+//        if (null != files) {
+//            for (File labelFile : files) {
+//                FileUtils.copyFile(
+//                        labelFile,
+//                        new File(file.getAbsolutePath() + File.separator + "label" + File.separator + labelFile.getName())
+//                );
+//            }
+//        }
+//
+//        // 压缩影像数据
+//        String zipFilePath = FileConfig.tmpLocation + File.separator + seriesId + ".zip";
+//        FileUtils.toZip(
+//                file.getAbsolutePath(),
+//                new FileOutputStream(zipFilePath),
+//                true
+//        );
+//
+//        return zipFilePath;
+//    }
 
-        SeriesTree seriesTree = imageSeriesMapper.getTree(seriesId);
-        if (null == seriesTree) {
-            return null;
-        }
+    public String zipBathSeries(List<Long> seriesIds) throws FileNotFoundException {
 
-        String sourcePath = FileConfig.dicomLocation + seriesTree;
-
-        if (!new File(sourcePath).exists()) {
-            logger.error("系列影像路径不存在");
-            return null;
-        }
+        Map<Long, SeriesTree> seriesTreeList = new HashMap<>();
+        seriesIds.forEach(seriesId -> {
+            seriesTreeList.put(seriesId, imageSeriesMapper.getTree(seriesId));
+        });
 
         // 创建临时目录
         File file;
@@ -203,26 +256,41 @@ public class FileServiceImpl implements FileService {
             }
         }
 
-        // 复制DICOM文件
-        FileUtils.copyFolder(sourcePath, file.getAbsolutePath() + File.separator + "dicom");
+        File finalFile = file;
 
-        // 创建文件夹，复制标注文件
-        File labelDir = new File(file.getAbsolutePath() + File.separator + "label");
-        if (! labelDir.exists()) {
-            labelDir.mkdir();
-        }
-        File[] files = new File(FileConfig.labelLocation + File.separator + seriesId).listFiles();
-        if (null != files) {
-            for (File labelFile : files) {
-                FileUtils.copyFile(
-                        labelFile,
-                        new File(file.getAbsolutePath() + File.separator + "label" + File.separator + labelFile.getName())
-                );
+        // 复制DICOM文件
+        seriesTreeList.forEach((seriesId, seriesTree) -> {
+            FileUtils.copyFolder(
+                    FileConfig.dicomLocation + seriesTree,
+                    finalFile.getAbsolutePath() + File.separator + "dicom" + File.separator + seriesId
+            );
+        });
+
+
+        seriesIds.forEach(seriesId -> {
+            // 创建文件夹，复制标注文件
+            File labelDir = new File(finalFile.getAbsolutePath() + File.separator + "label" + File.separator + seriesId);
+            if (! labelDir.exists()) {
+                FileUtils.mkdir(labelDir.getAbsolutePath());
             }
-        }
+            File[] files = new File(FileConfig.labelLocation + File.separator + seriesId).listFiles();
+            if (null != files) {
+                for (File labelFile : files) {
+                    FileUtils.copyFile(
+                            labelFile,
+                            new File(finalFile.getAbsolutePath() + File.separator + "label" +
+                                    File.separator + seriesId + File.separator + labelFile.getName())
+                    );
+                }
+            }
+        });
 
         // 压缩影像数据
-        String zipFilePath = FileConfig.tmpLocation + File.separator + seriesId + ".zip";
+        String zipFilePath = FileConfig.tmpLocation + File.separator + seriesIds
+                .stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining("+")) + ".zip";
+
         FileUtils.toZip(
                 file.getAbsolutePath(),
                 new FileOutputStream(zipFilePath),
@@ -230,6 +298,7 @@ public class FileServiceImpl implements FileService {
         );
 
         return zipFilePath;
+
     }
 
     @Override

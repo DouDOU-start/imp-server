@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 /**
  * @author Allen
@@ -80,10 +82,12 @@ public class FileController {
     }
 
     @Operation(summary = "下载影像系列文件包")
-    @Parameters(@Parameter(name = "seriesId", description = "系列 id", in = ParameterIn.PATH))
-    @GetMapping("/series/{seriesId}")
-    public void downloadSeries(HttpServletResponse response, @PathVariable("seriesId") String seriesId) {
-        fileService.downloadSeries(response, seriesId);
+    @Parameters(@Parameter(name = "seriesIds",description = "系列id，批量用英文逗号分隔", in = ParameterIn.QUERY))
+    @GetMapping("/series")
+    public void downloadSeries(HttpServletResponse response, @RequestParam String seriesIds) {
+        fileService.downloadSeries(response, Arrays.stream(seriesIds.split(","))
+                .map(Long::valueOf)
+                .collect(Collectors.toList()));
     }
 
     @Operation(summary = "下载DICOM文件图片")
