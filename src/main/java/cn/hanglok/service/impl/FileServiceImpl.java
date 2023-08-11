@@ -166,7 +166,7 @@ public class FileServiceImpl implements FileService {
 
         File file;
         try {
-            file = new File(zipBathSeries(seriesIds));
+            file = new File(zipBatchSeries(seriesIds));
         } catch (FileNotFoundException e) {
             logger.error("找不到系列影像数据", e);
             return;
@@ -239,7 +239,7 @@ public class FileServiceImpl implements FileService {
 //        return zipFilePath;
 //    }
 
-    public String zipBathSeries(List<Long> seriesIds) throws FileNotFoundException {
+    public String zipBatchSeries(List<Long> seriesIds) throws FileNotFoundException {
 
         Map<Long, SeriesTree> seriesTreeList = new HashMap<>();
         seriesIds.forEach(seriesId -> {
