@@ -8,6 +8,7 @@ spring:
     username: root
     password: hanglok8888
     driver-class-name: com.mysql.cj.jdbc.Driver
+    script-location: doc/sql/init.sql
 
 # springdoc-openapi项目配置
 springdoc:

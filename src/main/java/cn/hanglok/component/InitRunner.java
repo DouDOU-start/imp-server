@@ -1,6 +1,7 @@
 package cn.hanglok.component;
 
 import cn.hanglok.config.FileConfig;
+import cn.hanglok.util.DataBaseUtils;
 import cn.hanglok.util.FileUtils;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -18,6 +19,7 @@ public class InitRunner implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) {
         createUploadFileDir();
+        DataBaseUtils.executeInitScript();
     }
 
     public void createUploadFileDir() {
