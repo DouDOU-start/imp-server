@@ -1,0 +1,67 @@
+spring:
+  servlet:
+    multipart:
+      max-file-size: 500MB
+      max-request-size: 500MB
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3366/IMP
+    username: root
+    password: hanglok8888
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    script-location: doc/sql/init.sql
+
+# springdoc-openapi项目配置
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+  api-docs:
+    path: /v3/api-docs
+  group-configs:
+    - group: 'v1.0.0'
+      paths-to-match: '/**'
+      packages-to-scan: cn.hanglok.pacs.controller
+      display-name: v1.0.0
+
+# knife4j的增强配置，不需要增强可以不配
+knife4j:
+  enable: true
+  setting:
+    language: zh-CN
+    enable-swagger-models: true
+    enable-document-manage: true
+    swagger-model-name: 实体类列表
+    enable-version: false
+    enable-reload-cache-parameter: false
+    enable-after-script: true
+    enable-filter-multipart-api-method-type: POST
+    enable-filter-multipart-apis: false
+    enable-request-cache: true
+#    enable-host: false
+#    enable-host-text: 192.168.0.193:8000
+    enable-home-custom: true
+    home-custom-path: classpath:md/home.md
+    enable-search: true
+    enable-footer: false
+    enable-footer-custom: true
+    footer-custom-content: 珠海横乐医学科技有限公司 allen.huang@hanglok-tech.cn
+    enable-dynamic-parameter: false
+    enable-debug: true
+    enable-open-api: true
+    enable-group: true
+  cors: false
+  production: false
+  basic:
+    enable: true
+    username: hanglok
+    password: hanglok8888
+
+
+mybatis-plus:
+  mapper-locations: mapper/*.xml
+
+pacs:
+  file:
+    location: /Users/allen/imp-fileDir
+    buffSize: 16
