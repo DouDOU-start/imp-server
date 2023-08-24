@@ -1,0 +1,14 @@
+[Unit]
+Description=Image Manager Platform PACS Service
+After=syslog.target
+
+[Service]
+User=root
+ExecStart=/usr/bin/java -cp /etc/imp/pacs/dependency/*:/etc/imp/pacs/pacs-service.jar -Dspring.config.location=classpath:application.yml,/etc/imp/pacs/pacs.yml cn.hanglok.pacs.ImpApplication
+SuccessExitStatus=143
+Restart=always
+RestartSec=10
+WorkingDirectory=/etc/imp/pacs
+
+[Install]
+WantedBy=multi-user.targetls

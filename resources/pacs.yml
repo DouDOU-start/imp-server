@@ -1,0 +1,14 @@
+server:
+  port: 8088
+
+spring:
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3366/IMP
+    username: root
+    password: hanglok8888
+    script-location: /etc/imp/pacs/sql/init.sql
+
+pacs:
+  file:
+    location: /imp-fileDir
+    buffSize: 16
