@@ -31,3 +31,12 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### 编译产生的垃圾文件 ###
+resources/rootfs/etc/imp/pacs/pacs-service.jar
+resources/rootfs/etc/imp/pacs/dependency
+resources/rootfs/etc/imp/pacs/sql
+resources/*.zip
+
+docker/rootfs
+docker/package
