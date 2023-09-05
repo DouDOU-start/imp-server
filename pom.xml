@@ -11,6 +11,7 @@
 
     <modules>
         <module>pacs-service</module>
+        <module>common</module>
     </modules>
 
     <properties>
@@ -24,6 +25,7 @@
         <freemarker.version>2.3.32</freemarker.version>
         <fastjson.version>2.0.33</fastjson.version>
         <okhttp.version>4.9.1</okhttp.version>
+        <lombok.version>1.18.28</lombok.version>
     </properties>
 
     <dependencyManagement>
@@ -69,6 +71,11 @@
                 <groupId>com.squareup.okhttp3</groupId>
                 <artifactId>okhttp</artifactId>
                 <version>${okhttp.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
