@@ -13,7 +13,9 @@ import org.dcm4che3.net.pdu.PresentationContext;
 @Getter
 public enum SCUPresentationContext {
 
-    C_STORE("1.2.840.10008.5.1.4.1.1.2", new String[]{"1.2.840.10008.1.2.1", "1.2.840.10008.1.2.2"});
+    C_STORE("1.2.840.10008.5.1.4.1.1.2", new String[]{"1.2.840.10008.1.2.1", "1.2.840.10008.1.2.2"}),
+
+    C_FIND("1.2.840.10008.5.1.4.1.2.1.1", new String[]{"1.2.840.10008.1.2.1", "1.2.840.10008.1.2.2", "1.2.840.10008.1.2"});
 
     private final PresentationContext pc;
     private final String as;
