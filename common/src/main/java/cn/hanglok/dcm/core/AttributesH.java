@@ -1,6 +1,5 @@
 package cn.hanglok.dcm.core;
 
-import lombok.extern.slf4j.Slf4j;
 import org.dcm4che3.data.Attributes;
 import org.dcm4che3.io.DicomInputStream;
 
@@ -14,7 +13,6 @@ import java.io.IOException;
  * @description TODO
  * @date 2023/9/5
  */
-@Slf4j
 public class AttributesH {
     public static Attributes parseAttributes(File file) {
         try {
@@ -24,8 +22,7 @@ public class AttributesH {
             dis.close();
             return attr;
         } catch (IOException e) {
-            log.error(file.getAbsolutePath() + "不是DCM文件！");
+            throw new RuntimeException(String.format("%s may not be dicom file!", file.getAbsolutePath()));
         }
-        return null;
     }
 }

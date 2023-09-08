@@ -11,16 +11,8 @@ import lombok.Getter;
  */
 @Getter
 public enum QueryRetrieveLevel {
-
-    Patient("Patient"),
-    Study("Study"),
-    Series("Series"),
-    Image("Image");
-
-    private final String value;
-
-    QueryRetrieveLevel(String value) {
-        this.value = value;
-    }
-
+    Patient,
+    Study,
+    Series,
+    Image;
 }

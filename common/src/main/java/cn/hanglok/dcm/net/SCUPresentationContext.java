@@ -1,6 +1,7 @@
 package cn.hanglok.dcm.net;
 
 import lombok.Getter;
+import org.dcm4che3.data.UID;
 import org.dcm4che3.net.pdu.PresentationContext;
 
 /**
@@ -13,17 +14,20 @@ import org.dcm4che3.net.pdu.PresentationContext;
 @Getter
 public enum SCUPresentationContext {
 
-    C_STORE("1.2.840.10008.5.1.4.1.1.2", new String[]{"1.2.840.10008.1.2.1", "1.2.840.10008.1.2.2"}),
-
-    C_FIND("1.2.840.10008.5.1.4.1.2.1.1", new String[]{"1.2.840.10008.1.2.1", "1.2.840.10008.1.2.2", "1.2.840.10008.1.2"});
+    C_GET(0x01, UID.PatientRootQueryRetrieveInformationModelGet),
+    C_FIND(0x02, UID.PatientRootQueryRetrieveInformationModelFind),
+    C_STORE(0x03, UID.CTImageStorage);
 
     private final PresentationContext pc;
     private final String as;
-    private final String[] tss;
 
-    SCUPresentationContext(String as, String[] tss) {
+    SCUPresentationContext(int pcid, String as) {
         this.as = as;
-        this.tss = tss;
-        this.pc = new PresentationContext(0, as, tss);
+        this.pc = new PresentationContext(pcid, as,
+                UID.ImplicitVRLittleEndian,
+                UID.ExplicitVRLittleEndian,
+                UID.DeflatedExplicitVRLittleEndian,
+                UID.ExplicitVRBigEndian
+        );
     }
 }

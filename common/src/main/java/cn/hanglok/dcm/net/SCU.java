@@ -4,17 +4,18 @@ import cn.hanglok.dcm.core.AttributesH;
 import lombok.extern.slf4j.Slf4j;
 import org.dcm4che3.data.Attributes;
 import org.dcm4che3.data.Tag;
+import org.dcm4che3.data.UID;
 import org.dcm4che3.data.VR;
 import org.dcm4che3.net.*;
 import org.dcm4che3.net.pdu.AAssociateRQ;
+import org.dcm4che3.net.pdu.RoleSelection;
 
 import java.io.File;
 import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author Allen
@@ -26,92 +27,67 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class SCU {
 
-    private final String SCUAet = "SCU";
+    private final String SCUAet;
     private final String remoteAet;
     private final String remoteHost;
     private final int remotePort;
-    private Map<Integer, List<Attributes>> rspMap = new HashMap<>();
 
-    public SCU(String remoteAet, String remoteHost, int remotePort) {
+    protected List<Attributes> attrList;
+    private final AtomicInteger messageID = new AtomicInteger();
+
+    SCU(String remoteAet, String remoteHost, int remotePort) {
+        this.SCUAet = "SCU";
         this.remoteAet = remoteAet;
         this.remoteHost = remoteHost;
         this.remotePort = remotePort;
     }
 
-    void getOrCreateAttributes(int msgId, Attributes attributes) {
-        List<Attributes> attributesList = rspMap.get(msgId);
-        if (attributesList == null) {
-            attributesList = new ArrayList<>();
-        }
-        attributesList.add(attributes);
-        rspMap.put(msgId, attributesList);
+    SCU(String aet, String remoteAet, String remoteHost, int remotePort) {
+        this.SCUAet = aet;
+        this.remoteAet = remoteAet;
+        this.remoteHost = remoteHost;
+        this.remotePort = remotePort;
     }
 
-    public Association connect(AAssociateRQ rq) {
-        try {
-            // Create a dicom device
-            Device device = new Device();
-            Connection conn = new Connection();
-            device.setExecutor(Executors.newFixedThreadPool(1));
-            device.addConnection(conn);
-
-            // Create a applicationEntity (AE) for your Dicom server
-            ApplicationEntity ae = new ApplicationEntity();
-            ae.addConnection(conn);
-            device.addApplicationEntity(ae);
-
-            // Connect to the DICOM server
-            Connection remoteConn = new Connection(null, remoteHost, remotePort);
-
-            device.bindConnections();
-
-            return ae.connect(remoteConn, rq);
-
-        } catch (IncompatibleConnectionException | GeneralSecurityException | IOException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-
+    public int nextMessageID() {
+        return messageID.incrementAndGet() & 0xFFFF;
     }
 
     public void cstore(File dcmFile) {
+        DimseRSPHandlerH rsp = new DimseRSPHandlerH(this.nextMessageID(), DimseType.C_STORE, this);
+        cstore(dcmFile, rsp);
+    }
+
+    /**
+     * Store DICOM file to server
+     * @param dcmFile dicomFile
+     * @param rspHandler DimseRSPHandler
+     */
+    public void cstore(File dcmFile, DimseRSPHandler rspHandler) {
         try {
-            Attributes attr = AttributesH.parseAttributes(dcmFile);
-
-            if (null == attr) {
-                return;
-            }
-
-            // Release this code for now, it will influence the Chinese characterSet.
-//            String characterSet = attr.getString(Tag.SpecificCharacterSet);
-//            if (StringUtils.isBlank(characterSet) || !"GB18030".equals(characterSet)) { // 设置编码，防止乱码
-//                attr.setString(Tag.SpecificCharacterSet, VR.PN, "GB18030");
-//                attr.setString(Tag.SpecificCharacterSet, VR.CS, "GB18030");
-//            }
-
             AAssociateRQ rq = new AAssociateRQ() {{
                 setCalledAET(remoteAet); // Remote dicom Server applicationEntity Title (Aet)
                 setCallingAET(SCUAet); // SCU Aet
-                addPresentationContext(SCUPresentationContext.C_STORE.getPc());
+                addPresentationContext(SCUPresentationContext.C_STORE.getPc()); //SCU supported presentation context.
             }};
 
-            Association association = connect(rq);
+            Association association = AssociationFactory.connect(remoteHost, remotePort, rq);
 
             association.cstore(
                     SCUPresentationContext.C_STORE.getAs(),
                     parseSOPInstanceUID(dcmFile),
                     0,
-                    DataWriterAdapter.forAttributes(attr),
-                    SCUPresentationContext.C_STORE.getTss()[0]
+                    DataWriterAdapter.forAttributes(AttributesH.parseAttributes(dcmFile)),
+                    UID.ImplicitVRLittleEndian,
+                    rspHandler
             );
-
-            association.release();
 
         }  catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public String parseSOPInstanceUID(File file) {
+    private String parseSOPInstanceUID(File file) {
         Attributes attr = AttributesH.parseAttributes(file);
         if (null != attr) {
             return attr.getString(Tag.SOPInstanceUID, "");
@@ -119,7 +95,7 @@ public class SCU {
         return null;
     }
 
-    public List<Attributes> cfind(int msgId, QueryRetrieveLevel qrl) {
+    public void cfind(Attributes attr, DimseRSPHandlerH rspHandler) {
 
         try {
             AAssociateRQ rq = new AAssociateRQ() {{
@@ -128,36 +104,19 @@ public class SCU {
                 addPresentationContext(SCUPresentationContext.C_FIND.getPc());
             }};
 
-            Association association = connect(rq);
-
-            Attributes attr = new Attributes();
-
-            attr.setString(Tag.QueryRetrieveLevel, VR.CS, qrl.getValue());
-            attr.setString(Tag.PatientName, VR.PN, "");
-
-            attr.setNull(Tag.SeriesInstanceUID, VR.UI);
-            attr.setNull(Tag.InstanceCreatorUID, VR.UI);
-
-            CountDownLatch latch = new CountDownLatch(1);
+            Association association = AssociationFactory.connect(remoteHost, remotePort, rq);
 
             association.cfind(
                     SCUPresentationContext.C_FIND.getAs(),
                     2,
                     attr,
-                    SCUPresentationContext.C_FIND.getTss()[0],
-                    new CFindRSPHandler(this, msgId, latch)
+                    UID.ExplicitVRLittleEndian,
+                    rspHandler
             );
 
-            boolean timeout = ! latch.await(3000, TimeUnit.SECONDS);
-
-            association.release();
-
-            if (timeout) {
-                rspMap.remove(msgId);
-                throw new RuntimeException(String.format("cfind timeout, msgId: %s", msgId));
+            while (rspHandler.isRunning) {
+                Thread.sleep(3);
             }
-
-            return rspMap.get(msgId);
 
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
@@ -165,53 +124,50 @@ public class SCU {
 
     }
 
-    public List<String> getSeriesInstanceUIDs(int msgId) {
+    public List<String> getSeriesInstanceUID(DimseRSPHandlerH rspHandler) {
+        Attributes attributes = new Attributes() {{
+            setString(Tag.QueryRetrieveLevel, VR.CS, String.valueOf(QueryRetrieveLevel.Patient));
+            setNull(Tag.SeriesInstanceUID, VR.UI);
+        }};
 
-        List<Attributes> attributes;
+        cfind(attributes, rspHandler);
 
-        if (null != (attributes = rspMap.get(msgId))) {
-            return attributes.stream()
-                    .map(attr->attr.getString(Tag.SeriesInstanceUID, null))
-                    .filter(Objects::nonNull).toList();
-        }
-
-        log.error("msgId: {} no result", msgId);
-
-        return null;
+        return attrList.stream()
+                .map(attr->attr.getString(Tag.SeriesInstanceUID, null))
+                .filter(Objects::nonNull).toList();
 
     }
 
-    private static final class CFindRSPHandler extends DimseRSPHandler {
+    public void cget() {
+        try {
+            AAssociateRQ rq = new AAssociateRQ() {{
+                setCalledAET(remoteAet); // Remote dicom Server applicationEntity Title (Aet)
+                setCallingAET(SCUAet); // SCU Aet
+                addPresentationContext(SCUPresentationContext.C_GET.getPc());
+                addPresentationContext(SCUPresentationContext.C_STORE.getPc());
+                addRoleSelection(new RoleSelection(UID.CTImageStorage, false, true));
+            }};
 
-        private final SCU scu;
+            Association association = AssociationFactory.connect(remoteHost, remotePort, rq);
 
-        private final int msgId;
-        private final CountDownLatch latch;
+            Attributes attr = new Attributes();
 
-        public CFindRSPHandler(SCU scu, int msgId, CountDownLatch latch) {
-            super(msgId);
-            this.scu = scu;
-            this.msgId = msgId;
-            this.latch = latch;
-        }
+            attr.setString(Tag.QueryRetrieveLevel, VR.CS, "SERIES");
 
-        @Override
-        public void onDimseRSP(Association as, Attributes cmd, Attributes data) {
-            super.onDimseRSP(as, cmd, data);
-            int findStatus = cmd.getInt(Tag.Status, -1);
-            if (findStatus == Status.Success) {
-                log.debug("On find RSP Success[msgId={}]", msgId);
-                latch.countDown();
-            } else if ((findStatus & 0xB000) == 0xB000) {
-                scu.getOrCreateAttributes(msgId, data);
-            } else {
-                log.error("On find RSP Error[msgId{}", msgId);
-            }
-        }
+            attr.setString(Tag.SeriesInstanceUID, VR.UI, "1.2.840.113619.2.472.3.168453387.580.1676731896.513.3");
 
-        @Override
-        public void onClose(Association as) {
-            super.onClose(as);
+            CountDownLatch latch = new CountDownLatch(1);
+
+            association.cget(
+                    UID.PatientRootQueryRetrieveInformationModelGet,
+                    0,
+                    attr,
+                    UID.ExplicitVRLittleEndian,
+                    new DimseRSPHandler(this.nextMessageID())
+            );
+
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 
