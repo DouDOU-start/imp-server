@@ -12,6 +12,7 @@
     <modules>
         <module>pacs-service</module>
         <module>common</module>
+        <module>auth-server</module>
     </modules>
 
     <properties>

@@ -36,10 +36,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
+
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
+            <groupId>cn.hanglok</groupId>
+            <artifactId>common</artifactId>
+            <version>1.0.0</version>
         </dependency>
 
         <dependency>
@@ -49,56 +50,11 @@
         </dependency>
 
         <dependency>
-            <groupId>org.dcm4che</groupId>
-            <artifactId>dcm4che-core</artifactId>
-            <version>5.29.2</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.dcm4che</groupId>
-            <artifactId>dcm4che-net</artifactId>
-            <version>5.29.2</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.dcm4che</groupId>
-            <artifactId>dcm4che-image</artifactId>
-            <version>5.29.2</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.dcm4che</groupId>
-            <artifactId>dcm4che-imageio</artifactId>
-            <version>5.29.2</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.mysql</groupId>
-            <artifactId>mysql-connector-j</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-boot-starter</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-generator</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.squareup.okhttp3</groupId>
-            <artifactId>okhttp</artifactId>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>
-
-    <repositories>
-        <repository>
-            <id>dcm4che-repo</id>
-            <name>Dcm4che Repository</name>
-            <url>https://www.dcm4che.org/maven2/</url>
-        </repository>
-    </repositories>
 
 </project>
