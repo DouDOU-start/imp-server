@@ -1,5 +1,7 @@
-import cn.hanglok.dcm.net.*;
-import cn.hanglok.dcm.utils.FileUtils;
+package cn.hanglok.common;
+
+import cn.hanglok.common.dcm.net.*;
+import cn.hanglok.common.dcm.utils.FileUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.dcm4che3.data.Tag;
 import org.junit.jupiter.api.Disabled;
@@ -11,7 +13,7 @@ import java.util.List;
 /**
  * @author Allen
  * @version 1.0
- * @className SCUTest
+ * @className cn.hanglok.common.SCUTest
  * @description TODO
  * @date 2023/9/8
  */

@@ -1,4 +1,4 @@
-package cn.hanglok.dcm.core;
+package cn.hanglok.common.dcm.core;
 
 import org.dcm4che3.data.Attributes;
 import org.dcm4che3.io.DicomInputStream;

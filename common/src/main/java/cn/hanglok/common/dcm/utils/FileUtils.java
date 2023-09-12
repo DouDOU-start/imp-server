@@ -1,4 +1,4 @@
-package cn.hanglok.dcm.utils;
+package cn.hanglok.common.dcm.utils;
 
 import java.io.File;
 import java.util.function.Function;

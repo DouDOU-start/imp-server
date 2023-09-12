@@ -1,4 +1,4 @@
-package cn.hanglok.dcm.net;
+package cn.hanglok.common.dcm.net;
 
 import org.dcm4che3.net.*;
 import org.dcm4che3.net.pdu.AAssociateRQ;

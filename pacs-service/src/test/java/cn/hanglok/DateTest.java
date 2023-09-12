@@ -1,7 +1,6 @@
 package cn.hanglok;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.Test;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -14,7 +13,6 @@ import java.util.Date;
  * @description TODO
  * @date 2023/6/6 10:19
  */
-@SpringBootTest
 public class DateTest {
 
     @Test

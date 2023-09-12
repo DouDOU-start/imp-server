@@ -2,10 +2,9 @@ package cn.hanglok.utils;
 
 import cn.hanglok.pacs.config.FileConfig;
 import cn.hanglok.pacs.util.FileUtils;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -18,7 +17,6 @@ import java.io.FileOutputStream;
  * @description 文件工具测试类
  * @date 2023/7/6 11:22
  */
-@SpringBootTest
 public class FileUtilsTest {
 
     Logger logger = LoggerFactory.getLogger(FileUtils.class);

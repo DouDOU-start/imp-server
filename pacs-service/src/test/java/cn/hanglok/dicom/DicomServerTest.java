@@ -4,8 +4,7 @@ import org.dcm4che3.data.Attributes;
 import org.dcm4che3.net.*;
 import org.dcm4che3.net.pdu.PresentationContext;
 import org.dcm4che3.net.service.*;
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -18,7 +17,6 @@ import java.util.concurrent.Executors;
  * @description TODO
  * @date 2023/8/9
  */
-@SpringBootTest
 public class DicomServerTest {
 
     @Test

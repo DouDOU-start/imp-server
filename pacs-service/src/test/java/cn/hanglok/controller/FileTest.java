@@ -1,12 +1,10 @@
 package cn.hanglok.controller;
 
+import cn.hanglok.common.http.OkHttpUtils;
 import cn.hanglok.pacs.util.DicomUtils;
-import cn.hanglok.pacs.util.OkHttpUtils;
-import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import cn.hanglok.pacs.util.FileUtils;
-import org.slf4j.LoggerFactory;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.Test;
 
 import java.io.File;
 import java.util.function.Function;
@@ -18,10 +16,8 @@ import java.util.function.Function;
  * @description TODO
  * @date 2023/5/30 14:48
  */
-@SpringBootTest
+@Slf4j
 public class FileTest {
-
-    private final Logger logger = LoggerFactory.getLogger(FileTest.class);
 
     @Test
     public void uploadDicomFile() {

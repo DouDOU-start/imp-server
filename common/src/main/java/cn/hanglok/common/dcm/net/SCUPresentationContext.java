@@ -1,4 +1,4 @@
-package cn.hanglok.dcm.net;
+package cn.hanglok.common.dcm.net;
 
 import lombok.Getter;
 import org.dcm4che3.data.UID;

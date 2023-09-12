@@ -1,6 +1,6 @@
-package cn.hanglok.dcm.net;
+package cn.hanglok.common.dcm.net;
 
-import cn.hanglok.dcm.core.AttributesH;
+import cn.hanglok.common.dcm.core.AttributesH;
 import lombok.extern.slf4j.Slf4j;
 import org.dcm4che3.data.Attributes;
 import org.dcm4che3.data.Tag;

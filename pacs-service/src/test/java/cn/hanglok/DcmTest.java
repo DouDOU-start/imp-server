@@ -1,21 +1,26 @@
 package cn.hanglok;
 
+import cn.hanglok.common.dcm.net.CFindRSPHandler;
+import cn.hanglok.common.dcm.net.DimseType;
+import cn.hanglok.common.dcm.net.SCU;
+import cn.hanglok.common.dcm.net.SCUConstructor;
 import cn.hanglok.pacs.dto.DicomInfoDto;
 import cn.hanglok.pacs.util.DicomUtils;
 import cn.hanglok.pacs.util.FileUtils;
 import io.micrometer.common.util.StringUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.dcm4che3.data.Attributes;
 import org.dcm4che3.data.Tag;
 import org.dcm4che3.data.VR;
 import org.dcm4che3.io.DicomInputStream;
 import org.dcm4che3.io.DicomOutputStream;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.*;
 import java.util.Arrays;
+import java.util.List;
 import java.util.function.Function;
 
 /**
@@ -26,10 +31,22 @@ import java.util.function.Function;
  * @date 2023/5/23 17:47
  */
 
-@SpringBootTest
+@Slf4j
 public class DcmTest {
 
     private static final Logger logger = LoggerFactory.getLogger(DcmTest.class);
+
+    private static final String remoteAet = "ORTHANC";
+    private static final String remoteHost = "127.0.0.1";
+    private static final int remotePort = 4242;
+
+    @Test
+    void getSeriesInstanceUID() {
+        SCU scu = SCUConstructor.createSCU(remoteAet, remoteHost, remotePort);
+        List<String> seriesInstanceUID = scu.getSeriesInstanceUID(new CFindRSPHandler(scu.nextMessageID(), DimseType.C_FIND, scu));
+
+        log.info("result: {}", seriesInstanceUID);
+    }
 
     /**
      * 校验imageOrientationPatient属性
