@@ -1,9 +1,10 @@
-package cn.hanglok.pacs.util;
+package cn.hanglok.common.http;
 
 import jakarta.annotation.Nullable;
 import okhttp3.*;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 
 /**

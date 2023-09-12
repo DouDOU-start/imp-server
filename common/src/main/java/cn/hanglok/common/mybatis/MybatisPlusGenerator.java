@@ -1,6 +1,5 @@
-package cn.hanglok.pacs.util;
+package cn.hanglok.common.mybatis;
 
-import cn.hanglok.pacs.config.DataSourceConfig;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.generator.FastAutoGenerator;
 import com.baomidou.mybatisplus.generator.config.OutputFile;
@@ -25,21 +24,35 @@ import java.util.List;
  */
 public class MybatisPlusGenerator {
 
+    private final static String URL = "jdbc:mysql://127.0.0.1:3366/IMP";
+    private final static String USERNAME = "root";
+    private final static String PASSWORD = "hanglok8888";
+
+    private final static String OUT_MODULE = "auth-server";
+
+    private final static String MODULE_NAME = "auth";
+
     // MP生成代码指定目录
-    private final String outDir = System.getProperty("user.dir") + MessageFormat.format("{0}src{0}main{0}java", File.separator);
+    private final static String OUT_DIR = System.getProperty("user.dir") + File.separator + OUT_MODULE + File.separator +
+            MessageFormat.format("{0}src{0}main{0}java", File.separator);
     // MP生成xmp文件指定目录
-    private final String xmlOutDir = System.getProperty("user.dir") + MessageFormat.format("{0}src{0}main{0}resources{0}mapper", File.separator);
+    private final static String XML_OUT_DIR = System.getProperty("user.dir") + File.separator + OUT_MODULE + File.separator +
+            MessageFormat.format("{0}src{0}main{0}resources{0}mapper", File.separator);
+
+    public static void main(String[] args) {
+        interactiveGeneratorCode();
+    }
 
     /**
      * 快速生成
      */
-    public void fastGeneratorCode() {
-        FastAutoGenerator.create(DataSourceConfig.url, DataSourceConfig.username, DataSourceConfig.password)
+    public static void fastGeneratorCode() {
+        FastAutoGenerator.create(URL, USERNAME, PASSWORD)
                 .globalConfig(builder -> {
                     builder.author("Allen") // 设置作者
 //                            .enableSwagger() // 开启 swagger 模式，不需要开启
 //                            .fileOverride() // 覆盖已生成文件，已失效。未在策略配置中找到此配置
-                            .outputDir(outDir); // 指定输出目录
+                            .outputDir(OUT_DIR); // 指定输出目录
                 })
                 .dataSourceConfig(builder -> builder.typeConvertHandler((globalConfig, typeRegistry, metaInfo) -> {
                     int typeCode = metaInfo.getJdbcType().TYPE_CODE;
@@ -52,8 +65,8 @@ public class MybatisPlusGenerator {
                 }))
                 .packageConfig(builder -> {
                     builder.parent("cn.hanglok") // 设置父包名
-                            .moduleName("system") // 设置父包模块名
-                            .pathInfo(Collections.singletonMap(OutputFile.xml, xmlOutDir)); // 设置mapperXml生成路径
+                            .moduleName(MODULE_NAME) // 设置父包模块名
+                            .pathInfo(Collections.singletonMap(OutputFile.xml, XML_OUT_DIR)); // 设置mapperXml生成路径
                 })
                 .strategyConfig(builder -> {
                     builder.addInclude("institution"); // 设置需要生成的表名
@@ -69,15 +82,16 @@ public class MybatisPlusGenerator {
     /**
      * 交互式生成
      */
-    public void interactiveGeneratorCode() {
-        FastAutoGenerator.create(DataSourceConfig.url, DataSourceConfig.username, DataSourceConfig.password)
+    public static void interactiveGeneratorCode() {
+        FastAutoGenerator.create(URL, USERNAME, PASSWORD)
                 // 全局配置
 //                .globalConfig((scanner, builder) -> builder.author(scanner.apply("请输入作者名称？")))
-                .globalConfig(builder -> builder.author("Allen").outputDir(outDir))
+                .globalConfig(builder -> builder.author("Allen").outputDir(OUT_DIR))
                 // 包配置
 //                .packageConfig((scanner, builder) -> builder.parent(scanner.apply("请输入包名？")))
                 .packageConfig(builder -> builder.parent("cn.hanglok")
-                        .pathInfo(Collections.singletonMap(OutputFile.xml, xmlOutDir)))
+                        .moduleName(MODULE_NAME)
+                        .pathInfo(Collections.singletonMap(OutputFile.xml, XML_OUT_DIR)))
                 // 策略配置
                 .strategyConfig((scanner, builder) -> builder.addInclude(getTables(scanner.apply("请输入表名，多个英文逗号分隔？所有输入 all")))
                         .controllerBuilder().enableRestStyle().enableHyphenStyle()
@@ -99,15 +113,15 @@ public class MybatisPlusGenerator {
                     // 禁用生成controller
                     config.disable(TemplateType.CONTROLLER);
                     // 禁用生成xml
-                    config.disable(TemplateType.XML);
+//                    config.disable(TemplateType.XML);
                     // 禁用生成entity
 //                    config.disable(TemplateType.ENTITY);
                     // 禁用生成mapper
-                    config.disable(TemplateType.MAPPER);
+//                    config.disable(TemplateType.MAPPER);
                     // 禁用生成service
-                    config.disable(TemplateType.SERVICE);
+//                    config.disable(TemplateType.SERVICE);
                     // 禁用生成impl
-                    config.disable(TemplateType.SERVICE_IMPL);
+//                    config.disable(TemplateType.SERVICE_IMPL);
                 })
                 .execute();
     }
@@ -115,7 +129,7 @@ public class MybatisPlusGenerator {
     /**
      * 处理 all 情况
      */
-    protected List<String> getTables(String tables) {
+    protected static List<String> getTables(String tables) {
         return "all".equals(tables) ? Collections.emptyList() : Arrays.asList(tables.split(","));
     }
 
