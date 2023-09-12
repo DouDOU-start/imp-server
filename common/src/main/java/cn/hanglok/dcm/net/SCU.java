@@ -14,7 +14,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -138,7 +137,7 @@ public class SCU {
 
     }
 
-    public void cget() {
+    public void cget(Attributes attr, String storeFolder) {
         try {
             AAssociateRQ rq = new AAssociateRQ() {{
                 setCalledAET(remoteAet); // Remote dicom Server applicationEntity Title (Aet)
@@ -148,27 +147,27 @@ public class SCU {
                 addRoleSelection(new RoleSelection(UID.CTImageStorage, false, true));
             }};
 
-            Association association = AssociationFactory.connect(remoteHost, remotePort, rq);
-
-            Attributes attr = new Attributes();
-
-            attr.setString(Tag.QueryRetrieveLevel, VR.CS, "SERIES");
-
-            attr.setString(Tag.SeriesInstanceUID, VR.UI, "1.2.840.113619.2.472.3.168453387.580.1676731896.513.3");
-
-            CountDownLatch latch = new CountDownLatch(1);
+            Association association = AssociationFactory.connect(remoteHost, remotePort, rq, new CStoreRQHandler(storeFolder));
 
             association.cget(
                     UID.PatientRootQueryRetrieveInformationModelGet,
                     0,
                     attr,
                     UID.ExplicitVRLittleEndian,
-                    new DimseRSPHandler(this.nextMessageID())
+                    new DimseRSPHandlerH(this.nextMessageID(), DimseType.C_GET, this)
             );
 
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void download(QueryRetrieveLevel qrl, int tag,  String value, String storeFolder) {
+        Attributes attr = new Attributes() {{
+            setString(Tag.QueryRetrieveLevel, VR.CS, qrl.toString());
+            setString(tag, VR.UI, value);
+        }};
+        cget(attr, storeFolder);
     }
 
 }

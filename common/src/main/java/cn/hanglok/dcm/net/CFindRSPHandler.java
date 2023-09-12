@@ -1,15 +1,6 @@
 package cn.hanglok.dcm.net;
 
 import lombok.extern.slf4j.Slf4j;
-import org.dcm4che3.data.Attributes;
-import org.dcm4che3.data.Tag;
-import org.dcm4che3.net.Association;
-import org.dcm4che3.net.DimseRSPHandler;
-import org.dcm4che3.net.Status;
-
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.CountDownLatch;
 
 /**
  * @author Allen

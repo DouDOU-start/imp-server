@@ -18,7 +18,7 @@ public class AttributesH {
         try {
             DicomInputStream dis = new DicomInputStream(file);
             dis.setIncludeBulkData(DicomInputStream.IncludeBulkData.URI);
-            org.dcm4che3.data.Attributes attr = dis.readDataset();
+            Attributes attr = dis.readDataset();
             dis.close();
             return attr;
         } catch (IOException e) {

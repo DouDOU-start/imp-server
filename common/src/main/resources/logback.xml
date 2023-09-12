@@ -30,9 +30,10 @@
         </triggeringPolicy>
     </appender>
 
-    <!-- 日志输出级别 INFO、DEBUG -->
-    <root level="DEBUG">
+    <!-- 日志输出级别 INFO、DEBUG、TRACE -->
+    <root level="TRACE">
         <appender-ref ref="STDOUT" />
         <appender-ref ref="FILE"/>
     </root>
+
 </configuration>

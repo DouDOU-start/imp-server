@@ -1,9 +1,9 @@
 import cn.hanglok.dcm.net.*;
 import cn.hanglok.dcm.utils.FileUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.dcm4che3.data.Tag;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.List;
@@ -46,4 +46,16 @@ public class SCUTest {
         });
 
     }
+
+    class download {
+        public static void main(String[] args) {
+
+            SCU scu = SCUConstructor.createSCU(remoteAet, remoteHost, remotePort);
+
+            scu.download(QueryRetrieveLevel.Series, Tag.SeriesInstanceUID, "1.2.840.113704.1.111.5152.1384997683.18", "/Users/allen/imp-fileDir/cget");
+        }
+    }
+
+
+
 }

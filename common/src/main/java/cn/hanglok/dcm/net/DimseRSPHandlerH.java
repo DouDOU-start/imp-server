@@ -37,11 +37,11 @@ public class DimseRSPHandlerH extends DimseRSPHandler {
     @Override
     public void onDimseRSP(Association as, Attributes cmd, Attributes data) {
         super.onDimseRSP(as, cmd, data);
-        int findStatus = cmd.getInt(Tag.Status, -1);
-        if (findStatus == Status.Success) {
+        int status = cmd.getInt(Tag.Status, -1);
+        if (status == Status.Success) {
             this.isRunning = false;
             log.debug("On {} RSP Success[msgId={}]", dimseType, super.getMessageID());
-        } else if ((findStatus & 0xB000) == 0xB000) {
+        } else if ((status & 0xB000) == 0xB000) {
             scu.attrList.add(data);
             return;
         } else {
