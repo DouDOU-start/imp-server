@@ -16,7 +16,8 @@ public enum SCUPresentationContext {
 
     C_GET(0x01, UID.PatientRootQueryRetrieveInformationModelGet),
     C_FIND(0x02, UID.PatientRootQueryRetrieveInformationModelFind),
-    C_STORE(0x03, UID.CTImageStorage);
+    C_STORE(0x03, UID.CTImageStorage),
+    C_ECHO(0x04, UID.Verification);
 
     private final PresentationContext pc;
     private final String as;

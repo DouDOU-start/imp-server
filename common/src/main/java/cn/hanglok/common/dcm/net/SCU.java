@@ -170,4 +170,24 @@ public class SCU {
         cget(attr, storeFolder);
     }
 
+    public boolean cecho() {
+        try {
+            AAssociateRQ rq = new AAssociateRQ() {{
+                setCalledAET(remoteAet); // Remote dicom Server applicationEntity Title (Aet)
+                setCallingAET(SCUAet); // SCU Aet
+                addPresentationContext(SCUPresentationContext.C_ECHO.getPc());
+            }};
+
+            Association association = AssociationFactory.connect(remoteHost, remotePort, rq);
+            DimseRSP cecho = association.cecho();
+            while (cecho.next()) {
+                if (cecho.getCommand().getInt(Tag.Status, -1) == Status.Success) {
+                    return true;
+                }
+            }
+            return false;
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

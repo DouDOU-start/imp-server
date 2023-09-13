@@ -49,6 +49,14 @@ public class SCUTest {
 
     }
 
+    @Test
+    @Disabled
+    public void cecho() {
+        SCU scu = SCUConstructor.createSCU(remoteAet, remoteHost, remotePort);
+        boolean status = scu.cecho();
+        log.info("echo rsp: {}",  status ? "success": "false");
+    }
+
     class download {
         public static void main(String[] args) {
 
@@ -57,7 +65,6 @@ public class SCUTest {
             scu.download(QueryRetrieveLevel.Series, Tag.SeriesInstanceUID, "1.2.840.113704.1.111.5152.1384997683.18", "/Users/allen/imp-fileDir/cget");
         }
     }
-
 
 
 }
