@@ -13,6 +13,7 @@
         <module>pacs-service</module>
         <module>common</module>
         <module>auth-server</module>
+        <module>algorithm-scheduling-server</module>
     </modules>
 
     <properties>
