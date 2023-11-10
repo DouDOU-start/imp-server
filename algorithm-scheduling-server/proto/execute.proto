@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+message ExecuteAlgorithmRequest {
+//  string param1 = 1;
+//  string param2 = 2;
+  bytes upload_file_content = 3;
+}
+
+message ExecuteAlgorithmResponse {
+  string download_file_content = 4;
+}

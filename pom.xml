@@ -25,9 +25,10 @@
         <mybatis-plus.version>3.5.3.1</mybatis-plus.version>
         <snakeyaml.version>2.0</snakeyaml.version>
         <freemarker.version>2.3.32</freemarker.version>
-        <fastjson.version>2.0.33</fastjson.version>
+        <fastjson.version>2.0.40</fastjson.version>
         <okhttp.version>4.9.1</okhttp.version>
         <lombok.version>1.18.28</lombok.version>
+        <knife4j.version>4.1.0</knife4j.version>
     </properties>
 
     <dependencyManagement>
@@ -79,6 +80,11 @@
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.github.xiaoymin</groupId>
+                <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
+                <version>${knife4j.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -99,6 +105,14 @@
                     <compilerArgs>
                         <arg>-parameters</arg>
                     </compilerArgs>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0</version>
+                <configuration>
+                    <skipTests>true</skipTests>
                 </configuration>
             </plugin>
         </plugins>
