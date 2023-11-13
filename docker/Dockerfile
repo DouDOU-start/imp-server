@@ -15,5 +15,9 @@ RUN cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && echo 'Asia/Shanghai' 
 
 ADD rootfs /
 
-RUN chmod +x /etc/imp/pacs/imp-pacs && \
-ln -s /etc/imp/pacs/imp-pacs /etc/init.d/imp-pacs
+RUN chmod +x /run.sh && \
+chmod +x /usr/share/imp/pacs.sh && \
+chmod +x /etc/imp/pacs/pacs && \
+ln -s /etc/imp/pacs/pacs /etc/init.d/pacs
+
+CMD /run.sh
