@@ -1,0 +1,34 @@
+{
+  "single": {
+    "1": {
+      "name": "lungsegmentation",
+      "version": "0.1.3",
+      "output": "lungsegmentation.nii.gz"
+    },
+    "2": {
+      "name": "centerline_datastructure",
+      "version": "1023",
+      "output": "Centerline_polyline.txt",
+      "depend": {
+        "22": {
+          "name": "airwaysegmentation",
+          "version": "0.1.3",
+          "output": "airwaysegmentation.nii.gz"
+        }
+      }
+    },
+    "3": {
+      "name": "bodyinference",
+      "version": "0.1.3",
+      "output": "body_inference.nii.gz"
+    },
+    "4": {
+      "name": "nodule_detection",
+      "version": "2023_12_6",
+      "output": "nodule_det.json"
+    }
+  },
+  "merge": {
+    "queue": [1, 22, 3]
+  }
+}

@@ -12,10 +12,11 @@ algorithm:
     port: 9999
 
 minio:
-  endpoint: http://127.0.0.1:9000
-  accessKey: minio
-  secretKey: minio@8888
-  nginxHost: http://127.0.0.1:9000
+#  url: http://192.168.5.164:9000
+  url: http://10.8.0.17:9000
+  access-key: afK2BE5BSWvayIw546b2
+  secret-key: ZRITpJds2V3lQyDb3T3t3GyA383G7npr32p9zk9x
+  bucket-name: algorithm
 
 # knife4j的增强配置，不需要增强可以不配
 knife4j:

@@ -1,6 +1,5 @@
 package cn.hanglok.algoSched.component;
 
-import cn.hanglok.algoSched.socket.SchedulingSocket;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
@@ -18,6 +17,6 @@ import java.io.IOException;
 public class InitRunner implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws IOException {
-        SchedulingSocket.start();
+//        SchedulingSocket.start();
     }
 }

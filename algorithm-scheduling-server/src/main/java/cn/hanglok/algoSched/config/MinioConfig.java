@@ -1,9 +1,7 @@
 package cn.hanglok.algoSched.config;
 
-import cn.hanglok.algoSched.component.MinioProperties;
 import io.minio.MinioClient;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -15,17 +13,22 @@ import org.springframework.context.annotation.Configuration;
  * @date 2023/9/20
  */
 @Configuration
-@EnableConfigurationProperties(MinioProperties.class)
 public class MinioConfig {
 
-    @Autowired
-    private MinioProperties minioProperties;
+    @Value("${minio.url}")
+    private String url;
+
+    @Value("${minio.access-key}")
+    private String accessKey;
+
+    @Value("${minio.secret-key}")
+    private String secretKey;
 
     @Bean
-    public MinioClient minioClient(){
+    public MinioClient minioClient() {
         return MinioClient.builder()
-                .endpoint(minioProperties.getEndpoint())
-                .credentials(minioProperties.getAccessKey(),minioProperties.getSecretKey())
+                .endpoint(url)
+                .credentials(accessKey, secretKey)
                 .build();
     }
 }
