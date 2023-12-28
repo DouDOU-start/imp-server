@@ -12,15 +12,17 @@
 # Description:       Image Manager Platform PACS Service
 ### END INIT INFO
 
-NAME=imp-pacs
-USER=root
-PIDFILE=/var/run/imp-pacs.pid
-LOGFILE=/var/log/imp/imp-pacs.log
+. /lib/lsb/init-functions
 
-mainClass="cn.hanglok.pacs.ImpApplication"
-cp=/etc/imp/pacs/dependency/*:/etc/imp/pacs/pacs-service.jar
-SPRING_CONFIG_PARAM=-Dspring.config.location=classpath:application.yml,/etc/imp/pacs/pacs.yml
-EXEC="/usr/bin/java -cp $cp $SPRING_CONFIG_PARAM $mainClass"
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+DAEMON=/usr/share/imp/pacs.sh
+NAME=pacs
+PIDFILE=/var/run/pacs.pid
+
+if [ ! -x $DAEMON ] ;then
+  echo "Daemon not executable: $DAEMON"
+  exit 1
+fi
 
 set -e
 
@@ -44,8 +46,7 @@ start() {
         exit 1
     fi
     echo -n "Starting $NAME: "
-    start-stop-daemon --start --quiet --background --chuid $USER --make-pidfile --pidfile $PIDFILE \
-        --exec /bin/bash -- -c "exec $EXEC < /dev/null >> $LOGFILE 2>&1"
+    start-stop-daemon --start --quiet --background --make-pidfile --pidfile $PIDFILE --exec $DAEMON
     echo "$NAME started."
 }
 

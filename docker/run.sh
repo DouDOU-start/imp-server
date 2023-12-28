@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker run -it --name imp hanglok/imp:v1.0.0
+docker run -itd --name pacs --net=host hanglok/pacs:v1.0.0
