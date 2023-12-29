@@ -36,8 +36,8 @@ public class DockerServiceImpl implements DockerService {
     @Autowired
     MinioService minioService;
 
-//    private static final String dockerHost = "tcp://192.168.5.164:2375";
-    private static final String dockerHost = "tcp://10.8.0.17:2375";
+   private static final String dockerHost = "tcp://192.168.5.164:2375";
+    // private static final String dockerHost = "tcp://10.8.0.17:2375";
 
     public DockerClient getDockerClient() {
         DockerClientConfig config = DefaultDockerClientConfig.createDefaultConfigBuilder()
