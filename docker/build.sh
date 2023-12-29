@@ -4,7 +4,7 @@ VERSION="v1.0.0"
 IMAGE_NAME="pacs"
 
 SCRIPT_DIR=$(dirname "$0")
-PACS_SCRIPT_DIR=$SCRIPT_DIR/../resources
+PACS_SCRIPT_DIR=$SCRIPT_DIR/../resources/pacs
 
 pushd $PACS_SCRIPT_DIR > /dev/null
     ./build_pacs.sh

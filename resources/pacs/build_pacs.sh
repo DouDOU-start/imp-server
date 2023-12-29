@@ -5,7 +5,7 @@ echo "   Building pacs packages...   "
 echo "==================================================================="
 
 SCRIPT_DIR=$(dirname "$0")
-ROOT_DIR=$SCRIPT_DIR/..
+ROOT_DIR=$SCRIPT_DIR/../..
 ZIP_DIR=$SCRIPT_DIR/rootfs
 
 set -e
@@ -22,20 +22,20 @@ pushd $ROOT_DIR > /dev/null
     
     # jar依赖
     # -r 递归复制，-f 强制复制
-    cp -r -f pacs-service/target/dependency resources/rootfs/etc/imp/pacs/
-    cp -f pacs-service/target/pacs-service-*.jar resources/rootfs/etc/imp/pacs/pacs-service.jar
+    cp -r -f pacs-service/target/dependency resources/pacs/rootfs/etc/imp/pacs/
+    cp -f pacs-service/target/pacs-service-*.jar resources/pacs/rootfs/etc/imp/pacs/pacs-service.jar
     
     # SQL
-    rsync -av --include='/*.sql' --exclude '*' doc/sql/ resources/rootfs/etc/imp/pacs/sql/
+    rsync -av --include='/*.sql' --exclude '*' doc/sql/ resources/pacs/rootfs/etc/imp/pacs/sql/
 popd
 
 pushd $ZIP_DIR > /dev/null
     # 创建package包
-    if [ ! -d "../../docker/package" ]; then
-        mkdir -p ../../docker/package
+    if [ ! -d "../../../docker/package" ]; then
+        mkdir -p ../../../docker/package
     fi
     # 压缩
-    zip -r ../../docker/package/pacs_package.zip ./
+    zip -r ../../../docker/package/pacs_package.zip ./
 popd
 
 # 清理垃圾文件
