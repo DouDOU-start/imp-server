@@ -7,13 +7,11 @@ spring:
       max-file-size: 500MB
       max-request-size: 500MB
 
-algorithm:
-  socket:
-    port: 9999
+docker:
+  host: tcp://192.168.5.164:2375
 
 minio:
   url: http://192.168.5.164:9000
-  # url: http://10.8.0.17:9000
   access-key: afK2BE5BSWvayIw546b2
   secret-key: ZRITpJds2V3lQyDb3T3t3GyA383G7npr32p9zk9x
   bucket-name: algorithm
@@ -32,10 +30,6 @@ knife4j:
     enable-filter-multipart-api-method-type: POST
     enable-filter-multipart-apis: false
     enable-request-cache: true
-    #    enable-host: false
-    #    enable-host-text: 192.168.0.193:8000
-#    enable-home-custom: true
-#    home-custom-path: classpath:md/home.md
     enable-search: true
     enable-footer: false
     enable-footer-custom: true

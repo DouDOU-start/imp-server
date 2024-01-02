@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Allen
  * @version 1.0
  * @className DockerConfig
- * @description TODO
+ * @description 远程 Docker配置
  * @date 2024/1/2
  */
 @Data
