@@ -1,6 +1,7 @@
 package cn.hanglok.algoSched.config;
 
 import io.minio.MinioClient;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
  * @description TODO
  * @date 2023/9/20
  */
+@Data
 @Configuration
 public class MinioConfig {
 

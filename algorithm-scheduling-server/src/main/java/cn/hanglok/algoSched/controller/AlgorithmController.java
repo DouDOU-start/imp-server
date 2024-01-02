@@ -33,7 +33,6 @@ public class AlgorithmController {
     /**
      * 上传影像文件并执行对应分割算法
      * @param file 影像文件
-     * @throws Exception 异常
      */
     @PostMapping("/execute")
     @Operation(summary = "执行算法分割")

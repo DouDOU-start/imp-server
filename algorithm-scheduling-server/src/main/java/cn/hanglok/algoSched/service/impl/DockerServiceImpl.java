@@ -1,5 +1,7 @@
 package cn.hanglok.algoSched.service.impl;
 
+import cn.hanglok.algoSched.config.DockerConfig;
+import cn.hanglok.algoSched.config.MinioConfig;
 import cn.hanglok.algoSched.entity.TaskQueue;
 import cn.hanglok.algoSched.service.DockerService;
 import cn.hanglok.algoSched.service.MinioService;
@@ -36,12 +38,15 @@ public class DockerServiceImpl implements DockerService {
     @Autowired
     MinioService minioService;
 
-   private static final String dockerHost = "tcp://192.168.5.164:2375";
-    // private static final String dockerHost = "tcp://10.8.0.17:2375";
+    @Autowired
+    MinioConfig minioConfig;
+
+    @Autowired
+    DockerConfig dockerConfig;
 
     public DockerClient getDockerClient() {
         DockerClientConfig config = DefaultDockerClientConfig.createDefaultConfigBuilder()
-                .withDockerHost(dockerHost)
+                .withDockerHost(dockerConfig.getHost())
                 .withDockerTlsVerify(false)
                 .build();
 
@@ -72,10 +77,9 @@ public class DockerServiceImpl implements DockerService {
 
         String execEnv = String.format("EXEC_ENV=%s", execEnvJson);
         String minioEnv = String.format("MINIO_ENV=%s", new JSONObject() {{
-//            put("url", "192.168.5.164:9000");
-            put("url", "10.8.0.17:9000");
-            put("access_key", "afK2BE5BSWvayIw546b2");
-            put("secret_key", "ZRITpJds2V3lQyDb3T3t3GyA383G7npr32p9zk9x");
+            put("url", minioConfig.getUrl().replace("http://", ""));
+            put("access_key", minioConfig.getAccessKey());
+            put("secret_key", minioConfig.getSecretKey());
         }});
 
         DeviceRequest deviceRequest = new DeviceRequest();
@@ -184,7 +188,7 @@ public class DockerServiceImpl implements DockerService {
                 taskId,
                 "completed",
                 minioService.getObjectUrl(String.format("output/%s/result.zip", taskId), 60 * 30),
-                String.format("%s s", executionTime)));
+                String.format("%s s", executionTime / 1000)));
     }
 
     @SneakyThrows
@@ -219,9 +223,9 @@ public class DockerServiceImpl implements DockerService {
         String execEnv = String.format("EXEC_ENV=%s", execEnvJson);
 
         String minioEnv = String.format("MINIO_ENV=%s", new JSONObject() {{
-            put("url", "192.168.5.164:9000");
-            put("access_key", "afK2BE5BSWvayIw546b2");
-            put("secret_key", "ZRITpJds2V3lQyDb3T3t3GyA383G7npr32p9zk9x");
+            put("url", minioConfig.getUrl().replace("http://", ""));
+            put("access_key", minioConfig.getAccessKey());
+            put("secret_key", minioConfig.getSecretKey());
         }});
 
         // 创建容器

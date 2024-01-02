@@ -5,19 +5,18 @@ import io.minio.GetObjectArgs;
 import io.minio.GetPresignedObjectUrlArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
-import io.minio.errors.MinioException;
+import io.minio.errors.*;
 import io.minio.http.Method;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.InputStream;
-import java.util.List;
+import java.io.*;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -28,6 +27,7 @@ import java.util.zip.ZipOutputStream;
  * @description TODO
  * @date 2023/12/26
  */
+@Slf4j
 @Service
 public class MinioServiceImpl implements MinioService {
     @Autowired
@@ -37,19 +37,25 @@ public class MinioServiceImpl implements MinioService {
     private String bucketName;
 
     @Override
-    @SneakyThrows
     public void uploadFile(MultipartFile file, String uploadDir) {
 
         String objectName = uploadDir + file.getOriginalFilename();
 
-        minioClient.putObject(
-                PutObjectArgs.builder()
-                        .bucket(bucketName)
-                        .object(objectName)
-                        .stream(file.getInputStream(), file.getSize(), -1)
-                        .contentType(file.getContentType())
-                        .build()
-        );
+        try {
+            minioClient.putObject(
+                    PutObjectArgs.builder()
+                            .bucket(bucketName)
+                            .object(objectName)
+                            .stream(file.getInputStream(), file.getSize(), -1)
+                            .contentType(file.getContentType())
+                            .build()
+            );
+        } catch (IOException | ErrorResponseException | InsufficientDataException | InternalException |
+                 InvalidKeyException | InvalidResponseException | NoSuchAlgorithmException | ServerException |
+                 XmlParserException e) {
+            log.error(e.toString());
+        }
+
     }
 
     /**
@@ -114,13 +120,13 @@ public class MinioServiceImpl implements MinioService {
                                 .stream(bais, bais.available(), -1)
                                 .build());
 
-                System.out.println("ZIP文件上传成功");
+                log.info("ZIP file upload success");
             }
 
         } catch (MinioException e) {
-            System.out.println("错误发生: " + e);
+            log.error("minio error: " + e);
         } catch (Exception e) {
-            System.out.println("其他错误: " + e);
+            log.error("other error: " + e);
         }
     }
 
