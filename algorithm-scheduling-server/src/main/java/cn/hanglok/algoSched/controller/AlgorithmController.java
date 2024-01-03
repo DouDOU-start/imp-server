@@ -57,5 +57,10 @@ public class AlgorithmController {
         return Res.ok(TaskQueue.value.get(taskId));
     }
 
+    @GetMapping
+    @Operation(summary = "查询任务列表")
+    public Res getTaskList() {
+        return Res.ok(TaskQueue.value);
+    }
 
 }
