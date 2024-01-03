@@ -13,10 +13,10 @@ cp=/etc/imp/algorithm-scheduling/dependency/*:/etc/imp/algorithm-scheduling/algo
 SPRING_CONFIG_PARAM=-Dspring.config.location=classpath:application.yml,/etc/imp/algorithm-scheduling/algorithm-scheduling.yml
 logging_config=/etc/imp/algorithm-scheduling/logback.xml
 
- if there is a logging config file in lib folder use it (running from source)
- if [ -f $logging_config ]; then
+# if there is a logging config file in lib folder use it (running from source)
+if [ -f $logging_config ]; then
      LOGGING_CONFIG_PARAM="-Dlogging.config=$logging_config"
- fi
+fi
 
 if [ -z "$PACS_MAX_MEMORY" ]; then PACS_MAX_MEMORY=3072m; fi
 

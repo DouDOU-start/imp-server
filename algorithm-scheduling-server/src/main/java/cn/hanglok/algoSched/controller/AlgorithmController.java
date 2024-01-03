@@ -1,5 +1,6 @@
 package cn.hanglok.algoSched.controller;
 
+import cn.hanglok.algoSched.entity.TaskLog;
 import cn.hanglok.algoSched.entity.res.Res;
 import cn.hanglok.algoSched.entity.TaskQueue;
 import cn.hanglok.algoSched.service.DockerService;
@@ -61,6 +62,12 @@ public class AlgorithmController {
     @Operation(summary = "查询任务列表")
     public Res getTaskList() {
         return Res.ok(TaskQueue.value);
+    }
+
+    @GetMapping("/log/{taskId}")
+    @Operation(summary = "查询任务日志")
+    public Res getTaskLog(@PathVariable String taskId) {
+        return Res.ok(TaskLog.value.get(taskId));
     }
 
 }

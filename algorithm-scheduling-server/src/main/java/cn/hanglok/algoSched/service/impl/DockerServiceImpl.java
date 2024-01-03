@@ -2,6 +2,7 @@ package cn.hanglok.algoSched.service.impl;
 
 import cn.hanglok.algoSched.config.DockerConfig;
 import cn.hanglok.algoSched.config.MinioConfig;
+import cn.hanglok.algoSched.entity.TaskLog;
 import cn.hanglok.algoSched.entity.TaskQueue;
 import cn.hanglok.algoSched.service.DockerService;
 import cn.hanglok.algoSched.service.MinioService;
@@ -18,6 +19,7 @@ import com.github.dockerjava.core.DockerClientImpl;
 import com.github.dockerjava.httpclient5.ApacheDockerHttpClient;
 import com.github.dockerjava.transport.DockerHttpClient;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -32,6 +34,7 @@ import java.util.*;
  * @description TODO
  * @date 2023/12/26
  */
+@Slf4j
 @Service
 public class DockerServiceImpl implements DockerService {
 
@@ -65,8 +68,6 @@ public class DockerServiceImpl implements DockerService {
     @Override
     public void execute(String taskId, String image, String singleGpu, String url, String output) {
 
-        System.out.println("taskId: " + taskId + ", image: " + image);
-
         DockerClient dockerClient = getDockerClient();
 
         String execEnvJson = new JSONObject() {{
@@ -74,6 +75,11 @@ public class DockerServiceImpl implements DockerService {
             put("input", Map.of("url", url).entrySet().stream().toList());
             put("output", output);
         }}.toString();
+
+        log.info("execute algorithm: " + new HashMap<>() {{
+            put("image", image);
+            put("execEnvJson", execEnvJson);
+        }});
 
         String execEnv = String.format("EXEC_ENV=%s", execEnvJson);
         String minioEnv = String.format("MINIO_ENV=%s", new JSONObject() {{
@@ -117,7 +123,12 @@ public class DockerServiceImpl implements DockerService {
                 .exec(new ResultCallback.Adapter<Frame>() {
                     @Override
                     public void onNext(Frame frame) {
-                        System.out.println(new String(frame.getPayload()));
+                        Map<String, StringBuilder> algorithmMap = TaskLog.value.getOrDefault(taskId, new HashMap<>());
+                        StringBuilder logg = algorithmMap.getOrDefault(image, new StringBuilder());
+                        logg.append(new String(frame.getPayload()));
+                        algorithmMap.put(image, logg);
+                        TaskLog.value.put(taskId, algorithmMap);
+                        log.debug(new String(frame.getPayload()));
                     }
                 })
                 .awaitCompletion();
@@ -188,14 +199,12 @@ public class DockerServiceImpl implements DockerService {
                 taskId,
                 "completed",
                 minioService.getObjectUrl(String.format("output/%s/result.zip", taskId), 60 * 30),
-                String.format("%s s", executionTime / 1000)));
+                String.format("%s ms", executionTime)));
     }
 
     @SneakyThrows
     @Override
     public void mergeLungSegmentation(String taskId) {
-
-        System.out.printf("taskId: %s, image: merge", taskId);
 
         DockerClient dockerClient = getDockerClient();
 
@@ -218,7 +227,10 @@ public class DockerServiceImpl implements DockerService {
             put("output", "segmentation.mha");
         }}.toString();
 
-        System.out.println(execEnvJson);
+        log.info("execute algorithm: " + new HashMap<>() {{
+            put("image", "hanglok/fusion:0.0.1");
+            put("execEnvJson", execEnvJson);
+        }});
 
         String execEnv = String.format("EXEC_ENV=%s", execEnvJson);
 
@@ -244,7 +256,12 @@ public class DockerServiceImpl implements DockerService {
                 .exec(new ResultCallback.Adapter<Frame>() {
                     @Override
                     public void onNext(Frame frame) {
-                        System.out.println(new String(frame.getPayload()));
+                        Map<String, StringBuilder> algorithmMap = TaskLog.value.getOrDefault(taskId, new HashMap<>());
+                        StringBuilder logg = algorithmMap.getOrDefault("hanglok/fusion:0.0.1", new StringBuilder());
+                        logg.append(new String(frame.getPayload()));
+                        algorithmMap.put("hanglok/fusion:0.0.1", logg);
+                        TaskLog.value.put(taskId, algorithmMap);
+                        log.debug(new String(frame.getPayload()));
                     }
                 })
                 .awaitCompletion();
