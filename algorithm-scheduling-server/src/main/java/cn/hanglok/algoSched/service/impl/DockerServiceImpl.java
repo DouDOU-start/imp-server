@@ -58,7 +58,7 @@ public class DockerServiceImpl implements DockerService {
                 .sslConfig(config.getSSLConfig())
                 .maxConnections(100)
                 .connectionTimeout(Duration.ofSeconds(30))
-                .responseTimeout(Duration.ofSeconds(45))
+                .responseTimeout(Duration.ofSeconds(300))
                 .build();
 
         return DockerClientImpl.getInstance(config, httpClient);
