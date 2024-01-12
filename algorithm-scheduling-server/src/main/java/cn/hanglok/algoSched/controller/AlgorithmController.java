@@ -45,9 +45,9 @@ public class AlgorithmController {
 
         minioService.uploadFile(file, String.format("/input/%s/", taskId));
 
-        String objectUrl = minioService.getObjectUrl(String.format("/input/%s/", taskId) + file.getOriginalFilename(), 60 * 30);
+//        String objectUrl = minioService.getObjectUrl(String.format("/input/%s/", taskId) + file.getOriginalFilename(), 60 * 30);
 
-        dockerService.executeLungSegmentation(taskId, objectUrl);
+        dockerService.executeLungSegmentation(taskId, String.format("input/%s/%s", taskId, file.getOriginalFilename()));
 
         return Res.ok(TaskQueue.value.get(taskId));
     }

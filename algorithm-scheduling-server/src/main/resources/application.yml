@@ -8,11 +8,12 @@ spring:
       max-request-size: 500MB
 
 docker:
-  host: tcp://192.168.5.164:2375
+  host: tcp://192.168.31.213:2375
 #  host: tcp://10.8.0.17:2375
 
 minio:
-  url: http://192.168.5.164:9000
+  inner-url: 192.168.31.213:9000
+  url: http://192.168.31.213:9000
 #  url: http://10.8.0.17:9000
   access-key: afK2BE5BSWvayIw546b2
   secret-key: ZRITpJds2V3lQyDb3T3t3GyA383G7npr32p9zk9x

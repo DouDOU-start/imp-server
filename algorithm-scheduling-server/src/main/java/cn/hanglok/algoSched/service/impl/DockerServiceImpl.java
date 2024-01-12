@@ -66,15 +66,26 @@ public class DockerServiceImpl implements DockerService {
 
     @SneakyThrows
     @Override
-    public void execute(String taskId, String image, String singleGpu, String url, String output) {
+    public void execute(String taskId, String image, String singleGpu, String inputFile, String output) {
 
         DockerClient dockerClient = getDockerClient();
 
+
         String execEnvJson = new JSONObject() {{
             put("task_id", taskId);
-            put("input", Map.of("url", url).entrySet().stream().toList());
+            put("input", new ArrayList<>() {{
+                add(new HashMap<>() {{
+                    put("object_name", inputFile);
+                }});
+            }});
             put("output", output);
         }}.toString();
+
+//        String execEnvJson = new JSONObject() {{
+//            put("task_id", taskId);
+//            put("input", Map.of("url", url).entrySet().stream().toList());
+//            put("output", output);
+//        }}.toString();
 
         log.info("execute algorithm: " + new HashMap<>() {{
             put("image", image);
@@ -83,7 +94,7 @@ public class DockerServiceImpl implements DockerService {
 
         String execEnv = String.format("EXEC_ENV=%s", execEnvJson);
         String minioEnv = String.format("MINIO_ENV=%s", new JSONObject() {{
-            put("url", minioConfig.getUrl().replace("http://", ""));
+            put("url", minioConfig.getInnerUrl());
             put("access_key", minioConfig.getAccessKey());
             put("secret_key", minioConfig.getSecretKey());
         }});
@@ -141,7 +152,7 @@ public class DockerServiceImpl implements DockerService {
 
     @Async
     @Override
-    public void executeLungSegmentation(String taskId, String objectUrl) {
+    public void executeLungSegmentation(String taskId, String inputFile) {
 
         long startTime = System.currentTimeMillis();
 
@@ -149,36 +160,35 @@ public class DockerServiceImpl implements DockerService {
                 taskId,
                 "hanglok/lungsegmentation:0.1.3",
                 "0",
-                objectUrl,
+                inputFile,
                 "lungsegmentation.nii.gz"
         );
         execute(
                 taskId,
                 "hanglok/airwaysegmentation:0.1.3-jcxiong",
                 "0",
-                objectUrl,
+                inputFile,
                 "airwaysegmentation.nii.gz"
         );
         execute(
                 taskId,
                 "hanglok/centerline_datastructure:1023",
                 "0",
-                minioService.getObjectUrl(String.format("/output/%s/AirwaySegmentation-0.1.3-jcxiong/airwaysegmentation.nii.gz",
-                        taskId), 60 * 30),
+                String.format("output/%s/AirwaySegmentation-0.1.3-jcxiong/airwaysegmentation.nii.gz", taskId),
                 "centerline.txt"
         );
         execute(
                 taskId,
                 "hanglok/bodyinference:0.1.3",
                 "0",
-                objectUrl,
+                inputFile,
                 "body_inference.nii.gz"
         );
         execute(
                 taskId,
                 "hanglok/nodule_detection:2023_12_6",
                 "0",
-                objectUrl,
+                inputFile,
                 "target.json"
         );
 

@@ -9,6 +9,6 @@ package cn.hanglok.algoSched.service;
  */
 public interface DockerService {
     void execute(String taskId, String image, String singleGpu, String url, String output);
-    void executeLungSegmentation(String taskId, String objectUrl);
+    void executeLungSegmentation(String taskId, String inputFile);
     void mergeLungSegmentation(String taskId);
 }

@@ -17,6 +17,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class MinioConfig {
 
+    @Value("${minio.inner-url}")
+    private String innerUrl;
+
     @Value("${minio.url}")
     private String url;
 
