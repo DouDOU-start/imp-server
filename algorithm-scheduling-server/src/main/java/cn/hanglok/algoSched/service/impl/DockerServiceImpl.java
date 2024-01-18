@@ -4,9 +4,11 @@ import cn.hanglok.algoSched.config.DockerConfig;
 import cn.hanglok.algoSched.config.MinioConfig;
 import cn.hanglok.algoSched.entity.TaskLog;
 import cn.hanglok.algoSched.entity.TaskQueue;
+import cn.hanglok.algoSched.entity.Template;
 import cn.hanglok.algoSched.service.DockerService;
 import cn.hanglok.algoSched.service.MinioService;
 import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.async.ResultCallback;
 import com.github.dockerjava.api.command.CreateContainerResponse;
@@ -24,6 +26,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.Duration;
 import java.util.*;
 
@@ -66,26 +70,9 @@ public class DockerServiceImpl implements DockerService {
 
     @SneakyThrows
     @Override
-    public void execute(String taskId, String image, String singleGpu, String inputFile, String output) {
+    public void execute(String taskId, String image, String execEnvJson, String singleGpu) {
 
         DockerClient dockerClient = getDockerClient();
-
-
-        String execEnvJson = new JSONObject() {{
-            put("task_id", taskId);
-            put("input", new ArrayList<>() {{
-                add(new HashMap<>() {{
-                    put("object_name", inputFile);
-                }});
-            }});
-            put("output", output);
-        }}.toString();
-
-//        String execEnvJson = new JSONObject() {{
-//            put("task_id", taskId);
-//            put("input", Map.of("url", url).entrySet().stream().toList());
-//            put("output", output);
-//        }}.toString();
 
         log.info("execute algorithm: " + new HashMap<>() {{
             put("image", image);
@@ -99,23 +86,29 @@ public class DockerServiceImpl implements DockerService {
             put("secret_key", minioConfig.getSecretKey());
         }});
 
-        DeviceRequest deviceRequest = new DeviceRequest();
 
-        List<List<String>> capabilities = new ArrayList<>() {{
-            add(new ArrayList<>() {{
-                add("gpu");
-            }});
-        }};
+        // TODO 融合算法暂时使用GPU模版
+        HostConfig hostConfig = null;
 
-        HostConfig hostConfig = new HostConfig().withDeviceRequests(
-                new ArrayList<>() {{
-                    add(deviceRequest.withDriver("")
-                            .withCount(0)
-                            .withDeviceIds(Collections.singletonList(singleGpu))
-                            .withOptions(new HashMap<>())
-                            .withCapabilities(capabilities));
-                }}
-        ).withShmSize(1024L * 1024L * 1024L);;
+        if (! "-1".equals(singleGpu)) {
+            DeviceRequest deviceRequest = new DeviceRequest();
+
+            List<List<String>> capabilities = new ArrayList<>() {{
+                add(new ArrayList<>() {{
+                    add("gpu");
+                }});
+            }};
+
+            hostConfig = new HostConfig().withDeviceRequests(
+                    new ArrayList<>() {{
+                        add(deviceRequest.withDriver("")
+                                .withCount(0)
+                                .withDeviceIds(Collections.singletonList(singleGpu))
+                                .withOptions(new HashMap<>())
+                                .withCapabilities(capabilities));
+                    }}
+            ).withShmSize(1024L * 1024L * 1024L);
+        }
 
         // 创建容器
         CreateContainerResponse container = dockerClient.createContainerCmd(image)
@@ -152,47 +145,31 @@ public class DockerServiceImpl implements DockerService {
 
     @Async
     @Override
-    public void executeLungSegmentation(String taskId, String inputFile) {
+    public void executeLungSegmentation(String taskId, String inputFile) throws IOException {
 
         long startTime = System.currentTimeMillis();
 
-        execute(
-                taskId,
-                "hanglok/lungsegmentation:0.1.3",
-                "0",
-                inputFile,
-                "lungsegmentation.nii.gz"
-        );
-        execute(
-                taskId,
-                "hanglok/airwaysegmentation:0.1.3-jcxiong",
-                "0",
-                inputFile,
-                "airwaysegmentation.nii.gz"
-        );
-        execute(
-                taskId,
-                "hanglok/centerline_datastructure:1023",
-                "0",
-                String.format("output/%s/AirwaySegmentation-0.1.3-jcxiong/airwaysegmentation.nii.gz", taskId),
-                "centerline.txt"
-        );
-        execute(
-                taskId,
-                "hanglok/bodyinference:0.1.3",
-                "0",
-                inputFile,
-                "body_inference.nii.gz"
-        );
-        execute(
-                taskId,
-                "hanglok/nodule_detection:2023_12_6",
-                "0",
-                inputFile,
-                "target.json"
-        );
+        ObjectMapper objectMapper = new ObjectMapper();
+        Template template = objectMapper.readValue(new File("/Users/allen/code/imp-server/algorithm-scheduling-server/src/main/resources/template.json"), Template.class);
 
-        mergeLungSegmentation(taskId);
+        template.getAlgorithms().forEach(algorithmModel -> {
+
+            execute(
+                    taskId,
+                    "hanglok/" +  algorithmModel.getImage() + ":" + algorithmModel.getVersion(),
+                    Template.createExecEnvJson(taskId, inputFile, algorithmModel),
+                    algorithmModel.getGpu()
+            );
+
+            if (null != algorithmModel.getChild()) {
+                execute(
+                        taskId,
+                        "hanglok/" +  algorithmModel.getChild().getImage() + ":" + algorithmModel.getChild().getVersion(),
+                        Template.createExecEnvJson(taskId, inputFile, algorithmModel.getChild()),
+                        algorithmModel.getChild().getGpu()
+                );
+            }
+        });
 
         String[] objects = {
                 String.format("output/%s/Fusion-0.0.1/segmentation.mha", taskId),
@@ -214,6 +191,7 @@ public class DockerServiceImpl implements DockerService {
 
     @SneakyThrows
     @Override
+    @Deprecated
     public void mergeLungSegmentation(String taskId) {
 
         DockerClient dockerClient = getDockerClient();
@@ -245,7 +223,7 @@ public class DockerServiceImpl implements DockerService {
         String execEnv = String.format("EXEC_ENV=%s", execEnvJson);
 
         String minioEnv = String.format("MINIO_ENV=%s", new JSONObject() {{
-            put("url", minioConfig.getUrl().replace("http://", ""));
+            put("url", minioConfig.getInnerUrl());
             put("access_key", minioConfig.getAccessKey());
             put("secret_key", minioConfig.getSecretKey());
         }});
