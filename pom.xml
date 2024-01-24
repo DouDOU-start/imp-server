@@ -20,7 +20,7 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring-boot.version>3.2.1</spring-boot.version>
+        <spring-boot.version>3.1.5</spring-boot.version>
         <mysql.version>8.0.33</mysql.version>
         <mybatis-plus.version>3.5.3.1</mybatis-plus.version>
         <logback.version>1.4.14</logback.version>
