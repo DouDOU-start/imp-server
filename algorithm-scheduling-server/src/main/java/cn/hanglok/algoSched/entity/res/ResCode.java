@@ -13,12 +13,13 @@ import lombok.Getter;
 public enum ResCode {
 
     OK(200, "ok"),
-    ERROR(400, "error");
+    ERROR(400, "error"),
+    BUSY(50001, "Algorithm Resource is busy...");
 
     private final int code;
     private final String msg;
 
-    ResCode(int code, String msg) {
+     ResCode(int code, String msg) {
         this.code = code;
         this.msg = msg;
     }

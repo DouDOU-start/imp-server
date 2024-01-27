@@ -1,17 +1,16 @@
 package cn.hanglok.algoSched.controller;
 
+import cn.hanglok.algoSched.component.AlgorithmTaskExecutor;
 import cn.hanglok.algoSched.entity.TaskLog;
 import cn.hanglok.algoSched.entity.res.Res;
 import cn.hanglok.algoSched.entity.TaskQueue;
-import cn.hanglok.algoSched.service.DockerService;
-import cn.hanglok.algoSched.service.MinioService;
+import cn.hanglok.algoSched.entity.res.ResCode;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.UUID;
 
 /**
@@ -27,10 +26,7 @@ import java.util.UUID;
 public class AlgorithmController {
 
     @Autowired
-    MinioService minioService;
-
-    @Autowired
-    DockerService dockerService;
+    AlgorithmTaskExecutor algorithmTaskExecutor;
 
     /**
      * 上传影像文件并执行对应分割算法
@@ -38,17 +34,11 @@ public class AlgorithmController {
      */
     @PostMapping("/execute")
     @Operation(summary = "执行算法分割")
-    public Res executeAlgorithm(@RequestParam(value = "file") MultipartFile file) throws IOException {
+    public Res executeAlgorithm(@RequestParam(value = "file") MultipartFile file) {
 
         String taskId = UUID.randomUUID().toString();
 
-        TaskQueue.value.put(taskId, new TaskQueue.Field(taskId,"running", null, null));
-
-        minioService.uploadFile(file, String.format("/input/%s/", taskId));
-
-        dockerService.executeLungSegmentation(taskId, String.format("input/%s/%s", taskId, file.getOriginalFilename()));
-
-        return Res.ok(TaskQueue.value.get(taskId));
+        return algorithmTaskExecutor.execute(taskId, file) ? Res.ok(TaskQueue.value.get(taskId)) : Res.error(ResCode.BUSY);
     }
 
     @GetMapping("/{taskId}")
