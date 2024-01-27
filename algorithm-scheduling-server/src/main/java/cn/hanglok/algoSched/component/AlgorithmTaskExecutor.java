@@ -48,12 +48,6 @@ public class AlgorithmTaskExecutor {
 
             Runnable task = () -> {
 
-                try {
-                    Thread.sleep(30000);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-
                 log.info(taskId + ": Algorithm is running...");
 
                 TaskQueue.value.put(taskId, new TaskQueue.Field(taskId,"running", null, null));

@@ -12,5 +12,4 @@ import java.io.IOException;
 public interface DockerService {
     void execute(String taskId, String image, String execEnvJson, String singleGpu);
     void executeLungSegmentation(String taskId, String inputFile) throws IOException;
-//    void mergeLungSegmentation(String taskId);
 }

@@ -9,8 +9,6 @@ import cn.hanglok.algoSched.entity.Template;
 import cn.hanglok.algoSched.service.DockerService;
 import cn.hanglok.algoSched.service.MinioService;
 import com.alibaba.fastjson.JSONObject;
-import com.fasterxml.jackson.core.exc.StreamReadException;
-import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.async.ResultCallback;
@@ -185,73 +183,4 @@ public class DockerServiceImpl implements DockerService {
                 String.format("%s ms", System.currentTimeMillis() - startTime)));
     }
 
-//    @SneakyThrows
-//    @Override
-//    @Deprecated
-//    public void mergeLungSegmentation(String taskId) {
-//
-//        DockerClient dockerClient = getDockerClient();
-//
-//        String execEnvJson = new JSONObject() {{
-//            put("task_id", taskId);
-//            put("input", new ArrayList<>() {{
-//                add(new HashMap<>() {{
-//                    put("object_name", String.format("output/%s/BodyInference-0.1.3/body_inference.nii.gz", taskId));
-//                    put("label", Map.of("Skin", 3, "Bone", 2).entrySet().stream().toList());
-//                }});
-//                add(new HashMap<>() {{
-//                    put("object_name", String.format("output/%s/LungSegmentation-0.1.3/lungsegmentation.nii.gz", taskId));
-//                    put("label", Map.of("Lung", true).entrySet().stream().toList());
-//                }});
-//                add(new HashMap<>() {{
-//                    put("object_name", String.format("output/%s/AirwaySegmentation-0.1.3-jcxiong/airwaysegmentation.nii.gz", taskId));
-//                    put("label", Map.of("Airway", 1).entrySet().stream().toList());
-//                }});
-//            }});
-//            put("output", "segmentation.mha");
-//        }}.toString();
-//
-//        log.info("execute algorithm: " + new HashMap<>() {{
-//            put("image", "hanglok/fusion:0.0.1");
-//            put("execEnvJson", execEnvJson);
-//        }});
-//
-//        String execEnv = String.format("EXEC_ENV=%s", execEnvJson);
-//
-//        String minioEnv = String.format("MINIO_ENV=%s", new JSONObject() {{
-//            put("url", minioConfig.getInnerUrl());
-//            put("access_key", minioConfig.getAccessKey());
-//            put("secret_key", minioConfig.getSecretKey());
-//        }});
-//
-//        // 创建容器
-//        CreateContainerResponse container = dockerClient.createContainerCmd("hanglok/fusion:0.0.1")
-//                .withEnv(execEnv, minioEnv)
-//                .exec();
-//
-//        // 启动容器
-//        dockerClient.startContainerCmd(container.getId()).exec();
-//
-//        // Retrieve and print logs
-//        dockerClient.logContainerCmd(container.getId())
-//                .withStdOut(true)
-//                .withStdErr(true)
-//                .withFollowStream(true)
-//                .exec(new ResultCallback.Adapter<Frame>() {
-//                    @Override
-//                    public void onNext(Frame frame) {
-//                        Map<String, StringBuilder> algorithmMap = TaskLog.value.getOrDefault(taskId, new HashMap<>());
-//                        StringBuilder logg = algorithmMap.getOrDefault("hanglok/fusion:0.0.1", new StringBuilder());
-//                        logg.append(new String(frame.getPayload()));
-//                        algorithmMap.put("hanglok/fusion:0.0.1", logg);
-//                        TaskLog.value.put(taskId, algorithmMap);
-//                        log.debug(new String(frame.getPayload()));
-//                    }
-//                })
-//                .awaitCompletion();
-//
-//        dockerClient.removeContainerCmd(container.getId()).exec();
-//
-//        dockerClient.close();
-//    }
 }
