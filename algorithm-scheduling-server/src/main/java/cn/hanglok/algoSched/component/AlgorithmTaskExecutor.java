@@ -57,6 +57,9 @@ public class AlgorithmTaskExecutor {
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
+                synchronized (lock) {
+                    isTaskWaiting = false; // 更新等待标志
+                }
             };
 
             minioService.uploadFile(file, String.format("/input/%s/", taskId));

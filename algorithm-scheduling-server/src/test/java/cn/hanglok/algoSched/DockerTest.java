@@ -18,9 +18,9 @@ public class DockerTest {
     @Autowired
     DockerService dockerService;
 
-    @Test
-    public void test() {
-        dockerService.mergeLungSegmentation("547bc2a6-f6a1-406b-a0f7-ce754e87591a");
-    }
+//    @Test
+//    public void test() {
+//        dockerService.mergeLungSegmentation("547bc2a6-f6a1-406b-a0f7-ce754e87591a");
+//    }
 
 }

@@ -20,6 +20,8 @@ minio:
 template:
   path: algorithm-scheduling-server/src/main/resources/template.json
 
+token: a9c6af52-d8af-4933-884a-79fddd3519c9
+
 # knife4j的增强配置，不需要增强可以不配
 knife4j:
   enable: true

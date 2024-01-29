@@ -1,5 +1,6 @@
 package cn.hanglok.algoSched.service.impl;
 
+import cn.hanglok.algoSched.exception.MinioErrorException;
 import cn.hanglok.algoSched.service.MinioService;
 import io.minio.GetObjectArgs;
 import io.minio.GetPresignedObjectUrlArgs;
@@ -54,6 +55,7 @@ public class MinioServiceImpl implements MinioService {
                  InvalidKeyException | InvalidResponseException | NoSuchAlgorithmException | ServerException |
                  XmlParserException e) {
             log.error(e.toString());
+            throw new MinioErrorException("Minio service error, please contact the administrator.");
         }
 
     }
