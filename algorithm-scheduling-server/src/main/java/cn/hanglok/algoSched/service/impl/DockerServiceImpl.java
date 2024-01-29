@@ -147,7 +147,7 @@ public class DockerServiceImpl implements DockerService {
 
     }
 
-    @Async
+//    @Async
     @Override
     public void executeLungSegmentation(String taskId, String inputFile) throws IOException {
 
