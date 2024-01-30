@@ -1,5 +1,6 @@
 package cn.hanglok.algoSched.service.impl;
 
+import cn.hanglok.algoSched.config.MinioConfig;
 import cn.hanglok.algoSched.exception.MinioErrorException;
 import cn.hanglok.algoSched.service.MinioService;
 import io.minio.GetObjectArgs;
@@ -33,6 +34,9 @@ import java.util.zip.ZipOutputStream;
 public class MinioServiceImpl implements MinioService {
     @Autowired
     private MinioClient minioClient;
+
+    @Autowired
+    private MinioConfig minioConfig;
 
     @Value("${minio.bucket-name}")
     private String bucketName;
@@ -70,7 +74,9 @@ public class MinioServiceImpl implements MinioService {
     @Override
     @SneakyThrows
     public String getObjectUrl(String objectName, Integer expires) {
-        return minioClient.getPresignedObjectUrl(
+        MinioClient client = minioConfig.getEnablePublicNetwork() ? minioConfig.publicMinioClient() : minioClient;
+
+        return client.getPresignedObjectUrl(
                 GetPresignedObjectUrlArgs.builder()
                         .method(Method.GET)
                         .bucket(bucketName)

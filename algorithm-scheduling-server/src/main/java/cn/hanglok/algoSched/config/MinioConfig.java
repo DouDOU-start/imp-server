@@ -29,6 +29,12 @@ public class MinioConfig {
     @Value("${minio.secret-key}")
     private String secretKey;
 
+    @Value("${minio.enable-public-network}")
+    private Boolean enablePublicNetwork;
+
+    @Value("${minio.public-url}")
+    private String publicUrl;
+
     @Bean
     public MinioClient minioClient() {
         return MinioClient.builder()
@@ -36,4 +42,12 @@ public class MinioConfig {
                 .credentials(accessKey, secretKey)
                 .build();
     }
+
+    public MinioClient publicMinioClient() {
+        return enablePublicNetwork ? MinioClient.builder()
+                .endpoint(publicUrl)
+                .credentials(accessKey, secretKey)
+                .build() : null;
+    }
+
 }
