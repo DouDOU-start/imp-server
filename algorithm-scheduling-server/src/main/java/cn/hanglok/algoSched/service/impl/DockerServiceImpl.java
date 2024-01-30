@@ -180,6 +180,9 @@ public class DockerServiceImpl implements DockerService {
                 "completed",
                 minioService.getObjectUrl(String.format("output/%s/result.zip", taskId), 60 * 30),
                 String.format("%s ms", System.currentTimeMillis() - startTime)));
+
+        log.info(taskId, ": completed execute.");
+
     }
 
 }

@@ -72,6 +72,8 @@ public class AlgorithmTaskExecutor {
             // 设置超时时间为5分钟
             timeoutScheduler.schedule(() -> {
 
+                log.error(taskId, ": timeout error.");
+
                 synchronized (lock) {
                     if (! currentTaskFuture.isDone()) {
                         currentTaskFuture.cancel(true); // 如果任务还在运行，则取消它
