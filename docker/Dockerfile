@@ -5,7 +5,7 @@ LABEL author="Allen" email="allen.huang@hanglok-tech.cn" descripton="Image Manag
 RUN sed -i "s@http://deb.debian.org@http://mirrors.aliyun.com@g" /etc/apt/sources.list
 
 RUN apt-get update && \
-	apt-get install -y net-tools vim openssh-server \
+	apt-get install -y net-tools inetutils-ping vim openssh-server \
     nginx openjdk-17-jdk && \
     apt-get clean && \
     rm -Rf /var/lib/apt/lists/*
