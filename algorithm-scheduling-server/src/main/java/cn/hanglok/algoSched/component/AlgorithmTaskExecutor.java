@@ -47,7 +47,6 @@ public class AlgorithmTaskExecutor {
             }
 
             Runnable task = () -> {
-
                 log.info(taskId + ": Algorithm is running...");
 
                 TaskQueue.value.put(taskId, new TaskQueue.Field(taskId,"running", null, null));
@@ -57,6 +56,7 @@ public class AlgorithmTaskExecutor {
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
+
                 synchronized (lock) {
                     isTaskWaiting = false; // 更新等待标志
                 }
@@ -71,11 +71,12 @@ public class AlgorithmTaskExecutor {
 
             // 设置超时时间为5分钟
             timeoutScheduler.schedule(() -> {
-                if (! currentTaskFuture.isDone()) {
-                    currentTaskFuture.cancel(true); // 如果任务还在运行，则取消它
-                    TaskQueue.value.put(taskId, new TaskQueue.Field(taskId,"failed", null, null));
-                }
+
                 synchronized (lock) {
+                    if (! currentTaskFuture.isDone()) {
+                        currentTaskFuture.cancel(true); // 如果任务还在运行，则取消它
+                        TaskQueue.value.put(taskId, new TaskQueue.Field(taskId,"failed", null, null));
+                    }
                     isTaskWaiting = false; // 更新等待标志
                 }
             }, 5, TimeUnit.MINUTES);

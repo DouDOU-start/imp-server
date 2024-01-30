@@ -3,8 +3,8 @@ package cn.hanglok.algoSched.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Allen
@@ -16,7 +16,7 @@ import java.util.Map;
 @Data
 public class TaskQueue {
 
-    public static Map<String, Field> value = new HashMap<>();
+    public static Map<String, Field> value = new ConcurrentHashMap<>();
 
     @Data
     @AllArgsConstructor
