@@ -72,8 +72,7 @@ public class MinioServiceImpl implements MinioService {
      * @return url
      */
     @Override
-    @SneakyThrows
-    public String getObjectUrl(String objectName, Integer expires) {
+    public String getObjectUrl(String objectName, Integer expires) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
         MinioClient client = minioConfig.getEnablePublicNetwork() ? minioConfig.publicMinioClient() : minioClient;
 
         return client.getPresignedObjectUrl(

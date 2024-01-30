@@ -21,6 +21,7 @@ import com.github.dockerjava.core.DockerClientConfig;
 import com.github.dockerjava.core.DockerClientImpl;
 import com.github.dockerjava.httpclient5.ApacheDockerHttpClient;
 import com.github.dockerjava.transport.DockerHttpClient;
+import io.minio.errors.*;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,8 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 import java.util.*;
 
@@ -175,11 +178,17 @@ public class DockerServiceImpl implements DockerService {
 
         minioService.zipObject(objects, String.format("output/%s/result.zip", taskId));
 
-        TaskQueue.value.put(taskId, new TaskQueue.Field(
-                taskId,
-                "completed",
-                minioService.getObjectUrl(String.format("output/%s/result.zip", taskId), 60 * 30),
-                String.format("%s ms", System.currentTimeMillis() - startTime)));
+        try {
+            TaskQueue.value.put(taskId, new TaskQueue.Field(
+                    taskId,
+                    "completed",
+                    minioService.getObjectUrl(String.format("output/%s/result.zip", taskId), 60 * 30),
+                    String.format("%s ms", System.currentTimeMillis() - startTime)));
+        } catch (ServerException | InsufficientDataException | ErrorResponseException | NoSuchAlgorithmException |
+                 InvalidKeyException | InvalidResponseException | XmlParserException | InternalException e) {
+            throw new RuntimeException(e);
+        }
+
 
         log.info(taskId, ": completed execute.");
 
