@@ -1,5 +1,10 @@
 server:
-  port: 8001
+  port: 8443
+  ssl:
+    key-store: classpath:mykeystore.p12
+    key-store-password: hanglok
+    keyStoreType: PKCS12
+    keyAlias: myalias
 
 spring:
   servlet:
@@ -16,13 +21,27 @@ minio:
   access-key: afK2BE5BSWvayIw546b2
   secret-key: ZRITpJds2V3lQyDb3T3t3GyA383G7npr32p9zk9x
   bucket-name: algorithm
-  enable-public-network: false
-  public-url: http://163.179.121.34:19000
+  enable-public-network: true
+  public-url: http://163.179.121.34:18000/minio
 
 template:
   path: algorithm-scheduling-server/src/main/resources/template.json
 
 token: a9c6af52-d8af-4933-884a-79fddd3519c9
+
+# springdoc-openapi项目配置
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+  api-docs:
+    path: /v3/api-docs
+  group-configs:
+    - group: 'v1.0.0'
+      paths-to-match: '/**'
+      packages-to-scan: cn.hanglok.algoSched.controller
+      display-name: v1.0.0
 
 # knife4j的增强配置，不需要增强可以不配
 knife4j:

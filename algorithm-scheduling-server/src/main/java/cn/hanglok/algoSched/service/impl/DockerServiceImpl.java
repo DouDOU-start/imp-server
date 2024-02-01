@@ -190,7 +190,7 @@ public class DockerServiceImpl implements DockerService {
         }
 
 
-        log.info(taskId, ": completed execute.");
+        log.info(taskId + ": completed execute.");
 
     }
 

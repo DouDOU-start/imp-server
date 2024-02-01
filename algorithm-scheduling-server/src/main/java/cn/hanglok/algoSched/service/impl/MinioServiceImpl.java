@@ -73,9 +73,9 @@ public class MinioServiceImpl implements MinioService {
      */
     @Override
     public String getObjectUrl(String objectName, Integer expires) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
-        MinioClient client = minioConfig.getEnablePublicNetwork() ? minioConfig.publicMinioClient() : minioClient;
+//        MinioClient client = minioConfig.getEnablePublicNetwork() ? minioConfig.publicMinioClient() : minioClient;
 
-        return client.getPresignedObjectUrl(
+        String objectUrl = minioClient.getPresignedObjectUrl(
                 GetPresignedObjectUrlArgs.builder()
                         .method(Method.GET)
                         .bucket(bucketName)
@@ -83,6 +83,10 @@ public class MinioServiceImpl implements MinioService {
                         .expiry(expires)
                         .build()
         );
+
+
+        return minioConfig.getEnablePublicNetwork() ?
+                objectUrl.replace(minioConfig.getUrl(), minioConfig.getPublicUrl()) : objectUrl;
     }
 
     @Override

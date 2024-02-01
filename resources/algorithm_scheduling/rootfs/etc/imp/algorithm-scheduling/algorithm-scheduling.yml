@@ -17,7 +17,7 @@ minio:
   secret-key: ZRITpJds2V3lQyDb3T3t3GyA383G7npr32p9zk9x
   bucket-name: algorithm
   enable-public-network: true
-  public-url: http://163.179.121.34:19000
+  public-url: http://163.179.121.34:18000/minio
 
 template:
   path: /etc/imp/algorithm-scheduling/template.json
