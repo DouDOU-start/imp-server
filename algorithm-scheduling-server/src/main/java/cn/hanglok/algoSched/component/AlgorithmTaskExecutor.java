@@ -69,10 +69,10 @@ public class AlgorithmTaskExecutor {
             // 提交新任务
             currentTaskFuture = taskExecutor.submit(task);
 
-            // 设置超时时间为5分钟
+            // 设置超时时间为10分钟
             timeoutScheduler.schedule(() -> {
 
-                log.error(taskId, ": timeout error.");
+                log.error(taskId + ": timeout error.");
 
                 synchronized (lock) {
                     if (! currentTaskFuture.isDone()) {
@@ -81,7 +81,7 @@ public class AlgorithmTaskExecutor {
                     }
                     isTaskWaiting = false; // 更新等待标志
                 }
-            }, 5, TimeUnit.MINUTES);
+            }, 10, TimeUnit.MINUTES);
 
             return true;
 
