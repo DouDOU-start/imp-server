@@ -1,5 +1,7 @@
 package cn.hanglok.algoSched.service;
 
+import cn.hanglok.algoSched.entity.Template;
+
 import java.io.IOException;
 
 /**
@@ -10,6 +12,6 @@ import java.io.IOException;
  * @date 2023/12/26
  */
 public interface DockerService {
-    void execute(String taskId, String image, String execEnvJson, String singleGpu);
-    void executeLungSegmentation(String taskId, String inputFile) throws IOException;
+    void execute(String taskId, Template.AlgorithmModel algorithmModel, String singleGpu);
+    void executeLungSegmentation(String taskId) throws IOException;
 }

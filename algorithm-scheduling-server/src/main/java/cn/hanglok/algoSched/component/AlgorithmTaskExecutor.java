@@ -52,7 +52,7 @@ public class AlgorithmTaskExecutor {
                 TaskQueue.value.put(taskId, new TaskQueue.Field(taskId,"running", null, null));
 
                 try {
-                    dockerService.executeLungSegmentation(taskId, String.format("input/%s/%s", taskId, file.getOriginalFilename()));
+                    dockerService.executeLungSegmentation(taskId);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -62,7 +62,7 @@ public class AlgorithmTaskExecutor {
                 }
             };
 
-            minioService.uploadFile(file, String.format("/input/%s/", taskId));
+            minioService.uploadFile(file, String.format("/%s/", taskId));
 
             TaskQueue.value.put(taskId, new TaskQueue.Field(taskId,"waiting", null, null));
 

@@ -76,12 +76,14 @@ public class DockerServiceImpl implements DockerService {
 
     @SneakyThrows
     @Override
-    public void execute(String taskId, String image, String execEnvJson, String singleGpu) {
+    public void execute(String taskId, Template.AlgorithmModel algorithmModel, String singleGpu) {
 
         DockerClient dockerClient = getDockerClient();
 
+        String execEnvJson = Template.createExecEnvJson(taskId, algorithmModel);
+
         log.info("execute algorithm: " + new HashMap<>() {{
-            put("image", image);
+            put("image", algorithmModel.getImage());
             put("execEnvJson", execEnvJson);
         }});
 
@@ -91,7 +93,6 @@ public class DockerServiceImpl implements DockerService {
             put("access_key", minioConfig.getAccessKey());
             put("secret_key", minioConfig.getSecretKey());
         }});
-
 
         // TODO 融合算法暂时使用GPU模版
         HostConfig hostConfig = null;
@@ -117,7 +118,7 @@ public class DockerServiceImpl implements DockerService {
         }
 
         // 创建容器
-        CreateContainerResponse container = dockerClient.createContainerCmd(image)
+        CreateContainerResponse container = dockerClient.createContainerCmd(algorithmModel.getImage())
                 .withEnv(execEnv, minioEnv)
                 .withHostConfig(hostConfig)
                 .exec();
@@ -134,9 +135,9 @@ public class DockerServiceImpl implements DockerService {
                     @Override
                     public void onNext(Frame frame) {
                         Map<String, StringBuilder> algorithmMap = TaskLog.value.getOrDefault(taskId, new HashMap<>());
-                        StringBuilder logg = algorithmMap.getOrDefault(image, new StringBuilder());
+                        StringBuilder logg = algorithmMap.getOrDefault(algorithmModel.getImage(), new StringBuilder());
                         logg.append(new String(frame.getPayload()));
-                        algorithmMap.put(image, logg);
+                        algorithmMap.put(algorithmModel.getImage(), logg);
                         TaskLog.value.put(taskId, algorithmMap);
                         log.debug(new String(frame.getPayload()));
                     }
@@ -147,42 +148,37 @@ public class DockerServiceImpl implements DockerService {
 
         dockerClient.close();
 
+        if (null != algorithmModel.getChild()) {
+            execute(
+                    taskId,
+                    algorithmModel.getChild(),
+                    singleGpu
+            );
+        }
+
     }
 
 //    @Async
     @Override
-    public void executeLungSegmentation(String taskId, String inputFile) throws IOException {
+    public void executeLungSegmentation(String taskId) throws IOException {
 
         long startTime = System.currentTimeMillis();
 
         ObjectMapper objectMapper = new ObjectMapper();
         Template template = objectMapper.readValue(new File(templateConfig.getPath()), Template.class);
         template.getAlgorithms().forEach(algorithmModel -> {
-            execute(
-                    taskId,
-                    "hanglok/" +  algorithmModel.getImage() + ":" + algorithmModel.getVersion(),
-                    Template.createExecEnvJson(taskId, inputFile, algorithmModel),
-                    algorithmModel.getGpu()
-            );
-            if (null != algorithmModel.getChild()) {
-                execute(
-                        taskId,
-                        "hanglok/" +  algorithmModel.getChild().getImage() + ":" + algorithmModel.getChild().getVersion(),
-                        Template.createExecEnvJson(taskId, inputFile, algorithmModel.getChild()),
-                        algorithmModel.getChild().getGpu()
-                );
-            }
+            execute(taskId, algorithmModel, "0");
         });
 
-        String[] objects = template.getResult().stream().map(r -> r.replace("%s", taskId)).toArray(String[]::new);
+        String[] objects = template.getResult().stream().map(r -> taskId + "/" + r).toArray(String[]::new);
 
-        minioService.zipObject(objects, String.format("output/%s/result.zip", taskId));
+        minioService.zipObject(objects, String.format("%s/result.zip", taskId));
 
         try {
             TaskQueue.value.put(taskId, new TaskQueue.Field(
                     taskId,
                     "completed",
-                    minioService.getObjectUrl(String.format("output/%s/result.zip", taskId), 60 * 30),
+                    minioService.getObjectUrl(String.format("%s/result.zip", taskId), 60 * 30),
                     String.format("%s ms", System.currentTimeMillis() - startTime)));
         } catch (ServerException | InsufficientDataException | ErrorResponseException | NoSuchAlgorithmException |
                  InvalidKeyException | InvalidResponseException | XmlParserException | InternalException e) {

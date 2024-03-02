@@ -11,9 +11,14 @@ spring:
     multipart:
       max-file-size: 3000MB
       max-request-size: 3000MB
+  datasource:
+    url: jdbc:mysql://10.8.6.34:3366/algorithm_scheduling_dev
+    username: root
+    password: hanglok8888
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
 docker:
-  host: tcp://10.8.6.60:2375
+  host: tcp://10.8.6.34:2375
 
 minio:
   inner-url: 10.8.6.60:9000
@@ -21,11 +26,11 @@ minio:
   access-key: afK2BE5BSWvayIw546b2
   secret-key: ZRITpJds2V3lQyDb3T3t3GyA383G7npr32p9zk9x
   bucket-name: algorithm
-  enable-public-network: true
+  enable-public-network: false
   public-url: http://163.179.121.34:18000/minio
 
 template:
-  path: algorithm-scheduling-server/src/main/resources/template.json
+  path: algorithm-scheduling-server/src/main/resources/template1.json
 
 token: a9c6af52-d8af-4933-884a-79fddd3519c9
 
