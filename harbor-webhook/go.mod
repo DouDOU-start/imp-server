@@ -1,4 +1,4 @@
-module gotest
+module harbor-webhook
 
 go 1.22.0
 
