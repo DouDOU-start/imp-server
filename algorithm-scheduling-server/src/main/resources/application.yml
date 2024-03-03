@@ -29,8 +29,8 @@ minio:
   enable-public-network: false
   public-url: http://163.179.121.34:18000/minio
 
-template:
-  path: algorithm-scheduling-server/src/main/resources/template1.json
+#template:
+#  path: algorithm-scheduling-server/src/main/resources/template1.json
 
 token: a9c6af52-d8af-4933-884a-79fddd3519c9
 

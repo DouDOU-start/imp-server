@@ -13,5 +13,5 @@ import java.io.IOException;
  */
 public interface DockerService {
     void execute(String taskId, Template.AlgorithmModel algorithmModel, String singleGpu);
-    void executeLungSegmentation(String taskId) throws IOException;
+    void execute(String taskId, Template template) throws IOException;
 }

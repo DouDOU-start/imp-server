@@ -2,14 +2,12 @@ package cn.hanglok.algoSched.service.impl;
 
 import cn.hanglok.algoSched.config.DockerConfig;
 import cn.hanglok.algoSched.config.MinioConfig;
-import cn.hanglok.algoSched.config.TemplateConfig;
 import cn.hanglok.algoSched.entity.TaskLog;
 import cn.hanglok.algoSched.entity.TaskQueue;
 import cn.hanglok.algoSched.entity.Template;
 import cn.hanglok.algoSched.service.DockerService;
 import cn.hanglok.algoSched.service.MinioService;
 import com.alibaba.fastjson.JSONObject;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.async.ResultCallback;
 import com.github.dockerjava.api.command.CreateContainerResponse;
@@ -27,7 +25,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -50,9 +47,6 @@ public class DockerServiceImpl implements DockerService {
 
     @Autowired
     MinioConfig minioConfig;
-
-    @Autowired
-    TemplateConfig templateConfig;
 
     @Autowired
     DockerConfig dockerConfig;
@@ -160,12 +154,10 @@ public class DockerServiceImpl implements DockerService {
 
 //    @Async
     @Override
-    public void executeLungSegmentation(String taskId) throws IOException {
+    public void execute(String taskId, Template template) throws IOException {
 
         long startTime = System.currentTimeMillis();
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        Template template = objectMapper.readValue(new File(templateConfig.getPath()), Template.class);
         template.getAlgorithms().forEach(algorithmModel -> {
             execute(taskId, algorithmModel, "0");
         });

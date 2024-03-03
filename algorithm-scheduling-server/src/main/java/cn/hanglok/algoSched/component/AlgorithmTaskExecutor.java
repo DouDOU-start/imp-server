@@ -1,8 +1,15 @@
 package cn.hanglok.algoSched.component;
 
+import cn.hanglok.algoSched.entity.Assembles;
 import cn.hanglok.algoSched.entity.TaskQueue;
+import cn.hanglok.algoSched.entity.Template;
+import cn.hanglok.algoSched.exception.TemplateErrorException;
 import cn.hanglok.algoSched.service.DockerService;
+import cn.hanglok.algoSched.service.IAssemblesService;
 import cn.hanglok.algoSched.service.MinioService;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,13 +35,16 @@ public class AlgorithmTaskExecutor {
     MinioService minioService;
     @Autowired
     DockerService dockerService;
+    @Autowired
+    IAssemblesService assemblesService;
+
     private final ExecutorService taskExecutor = Executors.newSingleThreadExecutor();
     private final ScheduledExecutorService timeoutScheduler = Executors.newScheduledThreadPool(1);
     private Future<?> currentTaskFuture = null;
     private boolean isTaskWaiting = false;
     private final Object lock = new Object();
 
-    public boolean execute(String taskId, MultipartFile file) {
+    public boolean execute(String taskId, String assembleName, MultipartFile file) throws JsonProcessingException {
 
         synchronized (lock) {
             if (currentTaskFuture != null && ! currentTaskFuture.isDone()) {
@@ -46,13 +56,26 @@ public class AlgorithmTaskExecutor {
                 isTaskWaiting = true; // 标记有一个任务在等待
             }
 
+            Assembles as = assemblesService.getOne(new QueryWrapper<>() {{
+                eq("name", assembleName);
+            }});
+
+            if (null == as) {
+                throw new TemplateErrorException("Not found the corresponding template: " + assembleName);
+            }
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            Template template = objectMapper.readValue(as.getData(), Template.class);
+
+            minioService.uploadFile(file, String.format("/%s/", taskId));
+
             Runnable task = () -> {
                 log.info(taskId + ": Algorithm is running...");
 
                 TaskQueue.value.put(taskId, new TaskQueue.Field(taskId,"running", null, null));
 
                 try {
-                    dockerService.executeLungSegmentation(taskId);
+                    dockerService.execute(taskId, template);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -62,14 +85,12 @@ public class AlgorithmTaskExecutor {
                 }
             };
 
-            minioService.uploadFile(file, String.format("/%s/", taskId));
-
             TaskQueue.value.put(taskId, new TaskQueue.Field(taskId,"waiting", null, null));
 
             // 提交新任务
             currentTaskFuture = taskExecutor.submit(task);
 
-            // 设置超时时间为10分钟
+            // 设置超时时间为30分钟
             timeoutScheduler.schedule(() -> {
 
                 log.error(taskId + ": timeout error.");
@@ -81,7 +102,7 @@ public class AlgorithmTaskExecutor {
                     }
                     isTaskWaiting = false; // 更新等待标志
                 }
-            }, 10, TimeUnit.MINUTES);
+            }, 30, TimeUnit.MINUTES);
 
             return true;
 

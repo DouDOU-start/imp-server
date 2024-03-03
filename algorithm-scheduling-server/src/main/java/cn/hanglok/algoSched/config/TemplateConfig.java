@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
  * @date 2024/1/24
  */
 @Data
+@Deprecated
 @Configuration
 public class TemplateConfig {
     @Value("${template.path}")

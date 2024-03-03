@@ -19,9 +19,6 @@ minio:
   enable-public-network: true
   public-url: http://163.179.121.34:18000/minio
 
-template:
-  path: /etc/imp/algorithm-scheduling/template.json
-
 token: a9c6af52-d8af-4933-884a-79fddd3519c9
 
 # knife4j的增强配置，不需要增强可以不配

@@ -6,6 +6,7 @@ import cn.hanglok.algoSched.entity.TaskLog;
 import cn.hanglok.algoSched.entity.res.Res;
 import cn.hanglok.algoSched.entity.TaskQueue;
 import cn.hanglok.algoSched.entity.res.ResCode;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,11 +37,11 @@ public class AlgorithmController {
     @PostMapping("/execute")
     @Operation(summary = "执行算法分割")
     @RequireValidToken
-    public Res executeAlgorithm(@RequestParam(value = "file") MultipartFile file) {
+    public Res executeAlgorithm(@RequestParam(value = "file") MultipartFile file) throws JsonProcessingException {
 
         String taskId = UUID.randomUUID().toString();
 
-        return algorithmTaskExecutor.execute(taskId, file) ? Res.ok(TaskQueue.value.get(taskId)) : Res.error(ResCode.BUSY);
+        return algorithmTaskExecutor.execute(taskId, "lungsegmentation", file) ? Res.ok(TaskQueue.value.get(taskId)) : Res.error(ResCode.BUSY);
     }
 
     @GetMapping("/{taskId}")
