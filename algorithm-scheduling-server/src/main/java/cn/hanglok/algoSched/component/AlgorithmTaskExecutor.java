@@ -1,15 +1,10 @@
 package cn.hanglok.algoSched.component;
 
-import cn.hanglok.algoSched.entity.Assembles;
 import cn.hanglok.algoSched.entity.TaskQueue;
 import cn.hanglok.algoSched.entity.Template;
-import cn.hanglok.algoSched.exception.TemplateErrorException;
 import cn.hanglok.algoSched.service.DockerService;
 import cn.hanglok.algoSched.service.IAssemblesService;
 import cn.hanglok.algoSched.service.MinioService;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +39,7 @@ public class AlgorithmTaskExecutor {
     private boolean isTaskWaiting = false;
     private final Object lock = new Object();
 
-    public boolean execute(String taskId, String assembleName, MultipartFile file) throws JsonProcessingException {
+    public boolean execute(String taskId, Template template, MultipartFile file) {
 
         synchronized (lock) {
             if (currentTaskFuture != null && ! currentTaskFuture.isDone()) {
@@ -55,17 +50,6 @@ public class AlgorithmTaskExecutor {
                 }
                 isTaskWaiting = true; // 标记有一个任务在等待
             }
-
-            Assembles as = assemblesService.getOne(new QueryWrapper<>() {{
-                eq("name", assembleName);
-            }});
-
-            if (null == as) {
-                throw new TemplateErrorException("Not found the corresponding template: " + assembleName);
-            }
-
-            ObjectMapper objectMapper = new ObjectMapper();
-            Template template = objectMapper.readValue(as.getData(), Template.class);
 
             minioService.uploadFile(file, String.format("/%s/", taskId));
 

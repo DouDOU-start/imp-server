@@ -2,11 +2,17 @@ package cn.hanglok.algoSched.controller;
 
 import cn.hanglok.algoSched.annotation.RequireValidToken;
 import cn.hanglok.algoSched.component.AlgorithmTaskExecutor;
+import cn.hanglok.algoSched.entity.Assembles;
 import cn.hanglok.algoSched.entity.TaskLog;
+import cn.hanglok.algoSched.entity.Template;
 import cn.hanglok.algoSched.entity.res.Res;
 import cn.hanglok.algoSched.entity.TaskQueue;
 import cn.hanglok.algoSched.entity.res.ResCode;
+import cn.hanglok.algoSched.exception.TemplateErrorException;
+import cn.hanglok.algoSched.service.IAssemblesService;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +36,9 @@ public class AlgorithmController {
     @Autowired
     AlgorithmTaskExecutor algorithmTaskExecutor;
 
+    @Autowired
+    IAssemblesService assemblesService;
+
     /**
      * 上传影像文件并执行对应分割算法
      * @param file 影像文件
@@ -41,7 +50,18 @@ public class AlgorithmController {
 
         String taskId = UUID.randomUUID().toString();
 
-        return algorithmTaskExecutor.execute(taskId, "lungsegmentation", file) ? Res.ok(TaskQueue.value.get(taskId)) : Res.error(ResCode.BUSY);
+        Assembles as = assemblesService.getOne(new QueryWrapper<>() {{
+            eq("name", "lungsegmentation");
+        }});
+
+        if (null == as) {
+            throw new TemplateErrorException("Not found the corresponding template: lungsegmentation");
+        }
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        Template template = objectMapper.readValue(as.getData(), Template.class);
+
+        return algorithmTaskExecutor.execute(taskId, template, file) ? Res.ok(TaskQueue.value.get(taskId)) : Res.error(ResCode.BUSY);
     }
 
     @GetMapping("/{taskId}")
