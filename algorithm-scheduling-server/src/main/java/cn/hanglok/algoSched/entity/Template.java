@@ -22,6 +22,7 @@ public class Template {
         private String image;
         private Map<String, Object> args;
         private Map<String, String> inputFile;
+        private Map<String, String> outputFile;
         private AlgorithmModel child;
     }
 
@@ -30,6 +31,7 @@ public class Template {
             put("task_id", taskId);
             put("args", algorithmModel.getArgs());
             put("inputFile", algorithmModel.getInputFile());
+            put("outputFile", algorithmModel.getOutputFile());
         }}.toString();
     }
 }
