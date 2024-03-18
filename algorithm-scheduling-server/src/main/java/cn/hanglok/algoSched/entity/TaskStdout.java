@@ -11,6 +11,6 @@ import java.util.Map;
  * @description TODO
  * @date 2024/1/3
  */
-public class TaskLog {
-    public static Map<String, Map<String, StringBuilder>> value = new HashMap<>();
+public class TaskStdout {
+    public static Map<String, Map<String, String>> value = new HashMap<>();
 }

@@ -56,7 +56,7 @@ public class AlgorithmTaskExecutor {
             Runnable task = () -> {
                 log.info(taskId + ": Algorithm is running...");
 
-                TaskQueue.value.put(taskId, new TaskQueue.Field(taskId,"running", null, null));
+                TaskQueue.value.put(taskId, new TaskQueue.Field(taskId,"running", null, null, null));
 
                 try {
                     dockerService.execute(taskId, template);
@@ -69,7 +69,7 @@ public class AlgorithmTaskExecutor {
                 }
             };
 
-            TaskQueue.value.put(taskId, new TaskQueue.Field(taskId,"waiting", null, null));
+            TaskQueue.value.put(taskId, new TaskQueue.Field(taskId,"waiting", null, null, null));
 
             // 提交新任务
             currentTaskFuture = taskExecutor.submit(task);
@@ -82,7 +82,7 @@ public class AlgorithmTaskExecutor {
                 synchronized (lock) {
                     if (! currentTaskFuture.isDone()) {
                         currentTaskFuture.cancel(true); // 如果任务还在运行，则取消它
-                        TaskQueue.value.put(taskId, new TaskQueue.Field(taskId,"failed", null, null));
+                        TaskQueue.value.put(taskId, new TaskQueue.Field(taskId,"failed", null, null, null));
                     }
                     isTaskWaiting = false; // 更新等待标志
                 }

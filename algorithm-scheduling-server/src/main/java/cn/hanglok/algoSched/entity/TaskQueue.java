@@ -25,6 +25,7 @@ public class TaskQueue {
         private String status;
         private String objectShareUrl;
         private String executionTime;
+        private String errMsg;
     }
 
 }
