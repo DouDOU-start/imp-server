@@ -5,12 +5,10 @@ import cn.hanglok.algoSched.component.AlgorithmExecutor;
 import cn.hanglok.algoSched.component.HanglokAlgorithm;
 import cn.hanglok.algoSched.dto.AlgorithmCallback;
 import cn.hanglok.algoSched.entity.res.Res;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
-import java.util.UUID;
 
 /**
  * @author Allen
@@ -32,10 +30,10 @@ public class TestController {
     HanglokAlgorithm hanglokAlgorithm;
 
     @PostMapping("/execute")
-    public Res execute() throws InterruptedException, IOException {
+    public Res execute(@RequestParam(value = "assembleName") String assembleName) throws JsonProcessingException {
 //        String taskId = UUID.randomUUID().toString();
         String taskId = "888888";
-        algorithmExecutor.execute(taskId);
+        algorithmExecutor.execute(taskId, assembleName);
         return Res.ok(taskId);
     }
 

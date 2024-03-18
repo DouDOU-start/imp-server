@@ -1,15 +1,16 @@
 package cn.hanglok.algoSched.component;
 
-import cn.hanglok.algoSched.entity.TaskQueue;
+import cn.hanglok.algoSched.entity.Assembles;
 import cn.hanglok.algoSched.entity.Template;
+import cn.hanglok.algoSched.exception.TemplateErrorException;
 import cn.hanglok.algoSched.service.DockerService;
+import cn.hanglok.algoSched.service.IAssemblesService;
 import cn.hanglok.algoSched.service.MinioService;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.io.File;
-import java.io.IOException;
 
 /**
  * @author Allen
@@ -30,15 +31,29 @@ public class AlgorithmExecutor {
     @Autowired
     MinioService minioService;
 
-    public void execute(String taskId) {
+    @Autowired
+    IAssemblesService assemblesService;
+
+    public void execute(String taskId, String assembleName) throws JsonProcessingException {
+
+        Assembles as = assemblesService.getOne(new QueryWrapper<>() {{
+            eq("name", assembleName);
+        }});
+
+        if (null == as) {
+            throw new TemplateErrorException("Not found the corresponding template: " + assembleName);
+        }
 
         ObjectMapper objectMapper = new ObjectMapper();
-        Template template;
-        try {
-            template = objectMapper.readValue(new File("/Users/allen/code/imp-server/algorithm-scheduling-server/src/main/resources/template1.json"), Template.class);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        Template template = objectMapper.readValue(as.getData(), Template.class);
+
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        Template template;
+//        try {
+//            template = objectMapper.readValue(new File("/Users/allen/code/imp-server/algorithm-scheduling-server/src/main/resources/template1.json"), Template.class);
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
 
         AlgorithmAssembleMonitor algorithmAssembleMonitor = new AlgorithmAssembleMonitor(taskId, template, hanglokAlgorithm, minioService);
 
