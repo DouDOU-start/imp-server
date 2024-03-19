@@ -52,6 +52,8 @@ public class AlgorithmTask implements Runnable {
             log.info("containerId: " + containerId);
 
             latch.await();
+
+            dockerService.getDockerClient().removeContainerCmd(containerId);
         } catch (CancellationException | InterruptedException e) {
             log.error("task was interrupted: " + taskId + "," +  algorithmModel.getImage());
         }

@@ -1,20 +1,20 @@
 package cn.hanglok.algoSched.controller;
 
-import cn.hanglok.algoSched.component.AlgorithmTaskExecutor;
+import cn.hanglok.algoSched.component.AlgorithmAssembleMonitor;
+import cn.hanglok.algoSched.component.AlgorithmExecutor;
+import cn.hanglok.algoSched.component.HanglokAlgorithm;
+import cn.hanglok.algoSched.dto.AlgorithmCallback;
 import cn.hanglok.algoSched.entity.Assembles;
 import cn.hanglok.algoSched.entity.Images;
 import cn.hanglok.algoSched.entity.TaskQueue;
 import cn.hanglok.algoSched.entity.Template;
 import cn.hanglok.algoSched.entity.res.Res;
-import cn.hanglok.algoSched.entity.res.ResCode;
-import cn.hanglok.algoSched.exception.TemplateErrorException;
 import cn.hanglok.algoSched.service.IAssemblesService;
 import cn.hanglok.algoSched.service.IImagesService;
 import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -46,7 +46,10 @@ public class TemplateController {
     IAssemblesService assemblesService;
 
     @Autowired
-    AlgorithmTaskExecutor algorithmTaskExecutor;
+    AlgorithmExecutor algorithmExecutor;
+
+    @Autowired
+    HanglokAlgorithm hanglokAlgorithm;
 
     @GetMapping("/images")
     @Operation(summary = "获取算法镜像列表")
@@ -108,26 +111,36 @@ public class TemplateController {
                        @RequestParam(value = "file") MultipartFile file) throws JsonProcessingException {
         String taskId = UUID.randomUUID().toString();
 
-        Assembles as = assemblesService.getOne(new QueryWrapper<>() {{
-            eq("name", assembleName);
-        }});
+//        Assembles as = assemblesService.getOne(new QueryWrapper<>() {{
+//            eq("name", assembleName);
+//        }});
+//
+//        if (null == as) {
+//            throw new TemplateErrorException("Not found the corresponding template: " + assembleName);
+//        }
+//
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        Template template = objectMapper.readValue(as.getData(), Template.class);
 
-        if (null == as) {
-            throw new TemplateErrorException("Not found the corresponding template: " + assembleName);
-        }
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        Template template = objectMapper.readValue(as.getData(), Template.class);
-
-        return algorithmTaskExecutor.execute(taskId, template, file) ? Res.ok(TaskQueue.value.get(taskId)) : Res.error(ResCode.BUSY);
+        algorithmExecutor.execute(taskId, assembleName, file);
+        
+        return Res.ok(TaskQueue.value.get(taskId));
     }
 
-    @PostMapping("/executeByJson")
-    @Operation(summary = "执行自定义算法模板")
-    public Res executeByJson(@RequestBody Template template, @RequestParam(value = "file") MultipartFile file) {
-        String taskId = UUID.randomUUID().toString();
+//    @PostMapping("/executeByJson")
+//    @Operation(summary = "执行自定义算法模板")
+//    public Res executeByJson(@RequestBody Template template, @RequestParam(value = "file") MultipartFile file) {
+//        String taskId = UUID.randomUUID().toString();
+//
+//        return algorithmTaskExecutor.execute(taskId, template, file) ? Res.ok(TaskQueue.value.get(taskId)) : Res.error(ResCode.BUSY);
+//    }
 
-        return algorithmTaskExecutor.execute(taskId, template, file) ? Res.ok(TaskQueue.value.get(taskId)) : Res.error(ResCode.BUSY);
+    @PostMapping("/callback")
+    @Operation(summary = "执行算法回调")
+    public void callback(@RequestBody AlgorithmCallback algorithmCallback) {
+        AlgorithmAssembleMonitor algorithmAssembleMonitor = hanglokAlgorithm.getAlgorithmAssembleMonitor(algorithmCallback.getTaskId());
+        algorithmAssembleMonitor.taskCallback(algorithmCallback);
     }
 
 }

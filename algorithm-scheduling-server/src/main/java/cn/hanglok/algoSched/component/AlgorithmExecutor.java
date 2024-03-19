@@ -1,6 +1,7 @@
 package cn.hanglok.algoSched.component;
 
 import cn.hanglok.algoSched.entity.Assembles;
+import cn.hanglok.algoSched.entity.TaskQueue;
 import cn.hanglok.algoSched.entity.Template;
 import cn.hanglok.algoSched.exception.TemplateErrorException;
 import cn.hanglok.algoSched.service.DockerService;
@@ -9,8 +10,13 @@ import cn.hanglok.algoSched.service.MinioService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @author Allen
@@ -19,6 +25,7 @@ import org.springframework.stereotype.Component;
  * @description TODO
  * @date 2024/3/14
  */
+@Slf4j
 @Component
 public class AlgorithmExecutor {
 
@@ -34,8 +41,9 @@ public class AlgorithmExecutor {
     @Autowired
     IAssemblesService assemblesService;
 
-    public void execute(String taskId, String assembleName) throws JsonProcessingException {
+    private final ExecutorService executorService = Executors.newFixedThreadPool(1);
 
+    public void execute(String taskId, String assembleName, MultipartFile file) {
         Assembles as = assemblesService.getOne(new QueryWrapper<>() {{
             eq("name", assembleName);
         }});
@@ -44,23 +52,28 @@ public class AlgorithmExecutor {
             throw new TemplateErrorException("Not found the corresponding template: " + assembleName);
         }
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        Template template = objectMapper.readValue(as.getData(), Template.class);
+        TaskQueue.value.put(taskId, new TaskQueue.Field(taskId,"waiting", null, null, null));
 
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        Template template;
-//        try {
-//            template = objectMapper.readValue(new File("/Users/allen/code/imp-server/algorithm-scheduling-server/src/main/resources/template1.json"), Template.class);
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
+        executorService.execute(() -> {
+            minioService.uploadFile(file, String.format("/%s/", taskId));
 
-        AlgorithmAssembleMonitor algorithmAssembleMonitor = new AlgorithmAssembleMonitor(taskId, template, hanglokAlgorithm, minioService);
+            TaskQueue.value.put(taskId, new TaskQueue.Field(taskId,"running", null, null, null));
 
-        template.execute(taskId, algorithmAssembleMonitor, dockerService);
+            ObjectMapper objectMapper = new ObjectMapper();
+            Template template;
+            try {
+                template = objectMapper.readValue(as.getData(), Template.class);
+            } catch (JsonProcessingException e) {
+                log.error("template parse error: " + e);
+                throw new RuntimeException(e);
+            }
 
-        algorithmAssembleMonitor.awaitCompletion();
-        algorithmAssembleMonitor.shutdown();
+            AlgorithmAssembleMonitor algorithmAssembleMonitor = new AlgorithmAssembleMonitor(taskId, template, hanglokAlgorithm, minioService);
 
+            template.execute(taskId, algorithmAssembleMonitor, dockerService);
+
+            algorithmAssembleMonitor.awaitCompletion();
+            algorithmAssembleMonitor.shutdown();
+        });
     }
 }

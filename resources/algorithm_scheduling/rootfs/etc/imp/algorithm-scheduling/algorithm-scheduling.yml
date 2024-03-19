@@ -11,7 +11,7 @@ docker:
   host: tcp://127.0.0.1:2375
 
 callback:
-  url: https://10.8.6.34:8088/test/callback
+  url: https://10.8.6.34:8088/assemble/callback
 
 minio:
   inner-url: 10.8.6.60:9000

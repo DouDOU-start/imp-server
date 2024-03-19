@@ -241,8 +241,6 @@ public class DockerServiceImpl implements DockerService {
         // 启动容器
         dockerClient.startContainerCmd(container.getId()).exec();
 
-//        dockerClient.removeContainerCmd(container.getId()).exec();
-
         return container.getId();
     }
 

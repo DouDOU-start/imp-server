@@ -18,7 +18,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
 
 callback:
-  url: https://10.8.6.34:8088/test/callback
+  url: https://10.8.6.34:8088/assemble/callback
 
 docker:
   host: tcp://10.8.6.34:2375

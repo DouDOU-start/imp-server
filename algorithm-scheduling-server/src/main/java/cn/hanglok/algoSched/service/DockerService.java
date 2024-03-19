@@ -1,6 +1,7 @@
 package cn.hanglok.algoSched.service;
 
 import cn.hanglok.algoSched.entity.Template;
+import com.github.dockerjava.api.DockerClient;
 
 import java.io.IOException;
 
@@ -12,6 +13,8 @@ import java.io.IOException;
  * @date 2023/12/26
  */
 public interface DockerService {
+
+    DockerClient getDockerClient();
     void execute(String taskId, Template.AlgorithmModel algorithmModel, String singleGpu);
     void execute(String taskId, Template template) throws IOException;
     String execute1(String taskId, Template.AlgorithmModel algorithmModel, String singleGpu);
