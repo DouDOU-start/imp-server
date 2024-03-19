@@ -1,18 +1,15 @@
 package cn.hanglok.algoSched.controller;
 
 import cn.hanglok.algoSched.annotation.RequireValidToken;
-import cn.hanglok.algoSched.component.AlgorithmTaskExecutor;
+import cn.hanglok.algoSched.component.AlgorithmExecutor;
 import cn.hanglok.algoSched.entity.Assembles;
 import cn.hanglok.algoSched.entity.TaskStdout;
 import cn.hanglok.algoSched.entity.Template;
 import cn.hanglok.algoSched.entity.res.Res;
 import cn.hanglok.algoSched.entity.TaskQueue;
-import cn.hanglok.algoSched.entity.res.ResCode;
 import cn.hanglok.algoSched.exception.TemplateErrorException;
 import cn.hanglok.algoSched.service.IAssemblesService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,10 +31,10 @@ import java.util.UUID;
 public class AlgorithmController {
 
     @Autowired
-    AlgorithmTaskExecutor algorithmTaskExecutor;
+    IAssemblesService assemblesService;
 
     @Autowired
-    IAssemblesService assemblesService;
+    AlgorithmExecutor algorithmExecutor;
 
     /**
      * 上传影像文件并执行对应分割算法
@@ -46,7 +43,7 @@ public class AlgorithmController {
     @PostMapping("/execute")
     @Operation(summary = "执行算法分割")
     @RequireValidToken
-    public Res executeAlgorithm(@RequestParam(value = "file") MultipartFile file) throws JsonProcessingException {
+    public Res executeAlgorithm(@RequestParam(value = "file") MultipartFile file) {
 
         String taskId = UUID.randomUUID().toString();
 
@@ -58,10 +55,9 @@ public class AlgorithmController {
             throw new TemplateErrorException("Not found the corresponding template: lungsegmentation");
         }
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        Template template = objectMapper.readValue(as.getData(), Template.class);
+        algorithmExecutor.execute(taskId, Template.load(as.getData()), file);
 
-        return algorithmTaskExecutor.execute(taskId, template, file) ? Res.ok(TaskQueue.value.get(taskId)) : Res.error(ResCode.BUSY);
+        return Res.ok(TaskQueue.value.get(taskId));
     }
 
     @GetMapping("/{taskId}")
