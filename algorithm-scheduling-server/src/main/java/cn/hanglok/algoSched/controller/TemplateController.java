@@ -9,6 +9,7 @@ import cn.hanglok.algoSched.entity.Images;
 import cn.hanglok.algoSched.entity.TaskQueue;
 import cn.hanglok.algoSched.entity.Template;
 import cn.hanglok.algoSched.entity.res.Res;
+import cn.hanglok.algoSched.exception.TemplateErrorException;
 import cn.hanglok.algoSched.service.IAssemblesService;
 import cn.hanglok.algoSched.service.IImagesService;
 import com.alibaba.fastjson2.JSON;
@@ -24,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -111,30 +113,29 @@ public class TemplateController {
                        @RequestParam(value = "file") MultipartFile file) throws JsonProcessingException {
         String taskId = UUID.randomUUID().toString();
 
-//        Assembles as = assemblesService.getOne(new QueryWrapper<>() {{
-//            eq("name", assembleName);
-//        }});
-//
-//        if (null == as) {
-//            throw new TemplateErrorException("Not found the corresponding template: " + assembleName);
-//        }
-//
-//        ObjectMapper objectMapper = new ObjectMapper();
-//        Template template = objectMapper.readValue(as.getData(), Template.class);
+        Assembles as = assemblesService.getOne(new QueryWrapper<>() {{
+            eq("name", assembleName);
+        }});
+
+        if (null == as) {
+            throw new TemplateErrorException("Not found the corresponding template: " + assembleName);
+        }
 
 
-        algorithmExecutor.execute(taskId, assembleName, file);
+        algorithmExecutor.execute(taskId, Template.load(as.getData()), file);
         
         return Res.ok(TaskQueue.value.get(taskId));
     }
 
-//    @PostMapping("/executeByJson")
-//    @Operation(summary = "执行自定义算法模板")
-//    public Res executeByJson(@RequestBody Template template, @RequestParam(value = "file") MultipartFile file) {
-//        String taskId = UUID.randomUUID().toString();
-//
-//        return algorithmTaskExecutor.execute(taskId, template, file) ? Res.ok(TaskQueue.value.get(taskId)) : Res.error(ResCode.BUSY);
-//    }
+    @PostMapping("/executeByJson")
+    @Operation(summary = "执行自定义算法模板")
+    public Res executeByJson(@RequestParam(value = "template") MultipartFile template, @RequestParam(value = "file") MultipartFile file) throws IOException {
+        String taskId = UUID.randomUUID().toString();
+
+        algorithmExecutor.execute(taskId, Template.load(template), file);
+
+        return Res.ok(TaskQueue.value.get(taskId));
+    }
 
     @PostMapping("/callback")
     @Operation(summary = "执行算法回调")

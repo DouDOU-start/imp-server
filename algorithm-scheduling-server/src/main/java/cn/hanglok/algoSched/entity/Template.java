@@ -4,7 +4,13 @@ import cn.hanglok.algoSched.component.AlgorithmAssembleMonitor;
 import cn.hanglok.algoSched.component.AlgorithmTask;
 import cn.hanglok.algoSched.service.DockerService;
 import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -16,6 +22,7 @@ import java.util.concurrent.CountDownLatch;
  * @description TODO
  * @date 2024/1/18
  */
+@Slf4j
 @Data
 public class Template {
     private List<AlgorithmModel> algorithms;
@@ -38,6 +45,25 @@ public class Template {
                 put("image", image);
                 put("callback", callback);
             }}.toString();
+        }
+    }
+
+    public static Template load(String as) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.readValue(as, Template.class);
+        } catch (JsonProcessingException e) {
+            log.error("template string parse error: " + e);
+            throw new RuntimeException(e);
+        }
+    }
+    public static Template load(MultipartFile file) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.readValue(file.getBytes(), Template.class);
+        } catch (IOException e) {
+            log.error("template file parse error: " + e);
+            throw new RuntimeException(e);
         }
     }
 
