@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -33,9 +34,9 @@ public class Template {
     @Data
     public static class AlgorithmModel {
         private String image;
-        private Map<String, Object> args;
-        private Map<String, String> inputFile;
-        private Map<String, String> outputFile;
+        private Map<String, Object> args = new HashMap<>();
+        private Map<String, String> inputFile = new HashMap<>();
+        private Map<String, String> outputFile = new HashMap<>();
         private AlgorithmModel child;
 
         public String createExecEnvJson(String taskId, String callback) {
