@@ -3,7 +3,9 @@ package cn.hanglok.algoSched.entity;
 import cn.hanglok.algoSched.component.AlgorithmAssembleMonitor;
 import cn.hanglok.algoSched.component.AlgorithmTask;
 import cn.hanglok.algoSched.service.DockerService;
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONException;
+import com.alibaba.fastjson2.JSONObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
@@ -58,11 +60,13 @@ public class Template {
         }
     }
     public static Template load(MultipartFile file) {
-        ObjectMapper objectMapper = new ObjectMapper();
         try {
-            return objectMapper.readValue(file.getBytes(), Template.class);
+            String jsonStr = new String(file.getBytes());
+            return JSON.parseObject(jsonStr, Template.class);
         } catch (IOException e) {
-            log.error("template file parse error: " + e);
+            throw new RuntimeException(e);
+        } catch (JSONException e) {
+            log.error("template file parse error.");
             throw new RuntimeException(e);
         }
     }

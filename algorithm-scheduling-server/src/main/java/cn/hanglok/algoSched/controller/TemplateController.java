@@ -129,7 +129,7 @@ public class TemplateController {
 
     @PostMapping("/executeByJson")
     @Operation(summary = "执行自定义算法模板")
-    public Res executeByJson(@RequestParam(value = "template") MultipartFile template, @RequestParam(value = "file") MultipartFile file) throws IOException {
+    public Res executeByJson(@RequestParam(value = "template") MultipartFile template, @RequestParam(value = "file") MultipartFile file) {
         String taskId = UUID.randomUUID().toString();
 
         algorithmExecutor.execute(taskId, Template.load(template), file);
