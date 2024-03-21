@@ -15,7 +15,7 @@ import java.security.NoSuchAlgorithmException;
  * @date 2023/12/26
  */
 public interface MinioService {
-    void uploadFile(MultipartFile file, String uploadDir);
+    void uploadFile(MultipartFile file, String taskId);
 
     String getObjectUrl(String objectName, Integer expires) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException;
 

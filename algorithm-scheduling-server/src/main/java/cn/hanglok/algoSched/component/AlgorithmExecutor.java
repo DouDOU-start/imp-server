@@ -39,7 +39,7 @@ public class AlgorithmExecutor {
         TaskQueue.value.put(taskId, new TaskQueue.Field(taskId,"waiting", null, null, null));
 
         executorService.execute(() -> {
-            minioService.uploadFile(file, String.format("/%s/", taskId));
+            minioService.uploadFile(file, taskId);
 
             TaskQueue.value.put(taskId, new TaskQueue.Field(taskId,"running", null, null, null));
 
