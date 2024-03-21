@@ -41,4 +41,6 @@ public class Images implements Serializable {
     private String repoType;
 
     private String dateCreate;
+
+    private String label;
 }
