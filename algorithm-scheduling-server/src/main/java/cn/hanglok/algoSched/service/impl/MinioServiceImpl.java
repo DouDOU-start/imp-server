@@ -1,6 +1,7 @@
 package cn.hanglok.algoSched.service.impl;
 
 import cn.hanglok.algoSched.config.MinioConfig;
+import cn.hanglok.algoSched.entity.TaskQueue;
 import cn.hanglok.algoSched.exception.MinioErrorException;
 import cn.hanglok.algoSched.service.MinioService;
 import io.minio.GetObjectArgs;
@@ -9,7 +10,6 @@ import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
 import io.minio.errors.*;
 import io.minio.http.Method;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.nio.file.NoSuchFileException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.zip.ZipEntry;
@@ -42,9 +43,9 @@ public class MinioServiceImpl implements MinioService {
     private String bucketName;
 
     @Override
-    public void uploadFile(MultipartFile file, String uploadDir) {
+    public void uploadFile(MultipartFile file, String taskId) {
 
-        String objectName = uploadDir + file.getOriginalFilename();
+        String objectName = String.format("/%s/", taskId) + file.getOriginalFilename();
 
         try {
             minioClient.putObject(
@@ -55,13 +56,16 @@ public class MinioServiceImpl implements MinioService {
                             .contentType(file.getContentType())
                             .build()
             );
+        } catch (NoSuchFileException e) {
+            log.error(e.toString());
+            TaskQueue.value.put(taskId, new TaskQueue.Field(taskId,"failed", null, null, "Upload file error."));
+            throw new RuntimeException("Upload file error.");
         } catch (IOException | ErrorResponseException | InsufficientDataException | InternalException |
                  InvalidKeyException | InvalidResponseException | NoSuchAlgorithmException | ServerException |
                  XmlParserException e) {
             log.error(e.toString());
             throw new MinioErrorException("Minio service error, please contact the administrator.");
         }
-
     }
 
     /**
