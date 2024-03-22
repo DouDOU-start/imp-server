@@ -12,4 +12,6 @@ type Images struct {
 	Digest       string      `gorm:"size:255"`
 	RepoType     string      `gorm:"type:char(255)"`
 	DateCreate   json.Number `gorm:"type:char(20)"`
+	Label   	 json.RawMessage     `gorm:"type:json"`
+	Type         string       `gorm:"type:char(20)`
 }

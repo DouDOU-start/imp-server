@@ -43,4 +43,6 @@ public class Images implements Serializable {
     private String dateCreate;
 
     private String label;
+
+    private String type;
 }
