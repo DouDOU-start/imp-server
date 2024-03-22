@@ -52,6 +52,11 @@ public class AlgorithmAssembleMonitor {
     public void submitTask(AlgorithmTask task) {
         executorService.execute(task);
         algorithmTaskMap.put(task.getAlgorithmModel().getImage(), task);
+
+        // 模板算法列表预记录
+        Map<String, String> algorithmStdoutMap = TaskStdout.value.getOrDefault(taskId, new HashMap<>());
+        algorithmStdoutMap.put(task.getAlgorithmModel().getImage(), "");
+        TaskStdout.value.put(taskId, algorithmStdoutMap);
     }
 
     public void shutdown() {
