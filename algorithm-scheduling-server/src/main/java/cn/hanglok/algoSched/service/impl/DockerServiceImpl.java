@@ -3,7 +3,6 @@ package cn.hanglok.algoSched.service.impl;
 import cn.hanglok.algoSched.config.CallbackConfig;
 import cn.hanglok.algoSched.config.DockerConfig;
 import cn.hanglok.algoSched.config.MinioConfig;
-import cn.hanglok.algoSched.entity.TaskQueue;
 import cn.hanglok.algoSched.entity.Template;
 import cn.hanglok.algoSched.service.DockerService;
 import cn.hanglok.algoSched.service.MinioService;
@@ -17,15 +16,11 @@ import com.github.dockerjava.core.DockerClientConfig;
 import com.github.dockerjava.core.DockerClientImpl;
 import com.github.dockerjava.httpclient5.ApacheDockerHttpClient;
 import com.github.dockerjava.transport.DockerHttpClient;
-import io.minio.errors.*;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 import java.util.*;
 
@@ -82,57 +77,57 @@ public class DockerServiceImpl implements DockerService {
         }
     }
 
-    @SneakyThrows
-    @Override
-    public void execute(String taskId, Template.AlgorithmModel algorithmModel, String singleGpu) {
-
-        DockerClient dockerClient = getDockerClient();
-
-        String execEnvJson = Template.createExecEnvJson(taskId, algorithmModel);
-
-        log.info("execute algorithm: " + new HashMap<>() {{
-            put("image", algorithmModel.getImage());
-            put("execEnvJson", execEnvJson);
-        }});
-
-        String execEnv = String.format("EXEC_ENV=%s", execEnvJson);
-        String minioEnv = String.format("MINIO_ENV=%s", new JSONObject() {{
-            put("url", minioConfig.getInnerUrl());
-            put("access_key", minioConfig.getAccessKey());
-            put("secret_key", minioConfig.getSecretKey());
-        }});
-
-        // TODO 融合算法暂时使用GPU模版
-        HostConfig hostConfig = null;
-
-        if (! "-1".equals(singleGpu)) {
-            DeviceRequest deviceRequest = new DeviceRequest();
-
-            List<List<String>> capabilities = new ArrayList<>() {{
-                add(new ArrayList<>() {{
-                    add("gpu");
-                }});
-            }};
-
-            hostConfig = new HostConfig().withDeviceRequests(
-                    new ArrayList<>() {{
-                        add(deviceRequest.withDriver("")
-                                .withCount(0)
-                                .withDeviceIds(Collections.singletonList(singleGpu))
-                                .withOptions(new HashMap<>())
-                                .withCapabilities(capabilities));
-                    }}
-            ).withShmSize(1024L * 1024L * 1024L);
-        }
+//    @SneakyThrows
+//    @Override
+//    public void execute(String taskId, Template.AlgorithmModel algorithmModel, String singleGpu) {
+//
+//        DockerClient dockerClient = getDockerClient();
+//
+//        String execEnvJson = Template.createExecEnvJson(taskId, algorithmModel);
+//
+//        log.info("execute algorithm: " + new HashMap<>() {{
+//            put("image", algorithmModel.getImage());
+//            put("execEnvJson", execEnvJson);
+//        }});
+//
+//        String execEnv = String.format("EXEC_ENV=%s", execEnvJson);
+//        String minioEnv = String.format("MINIO_ENV=%s", new JSONObject() {{
+//            put("url", minioConfig.getInnerUrl());
+//            put("access_key", minioConfig.getAccessKey());
+//            put("secret_key", minioConfig.getSecretKey());
+//        }});
+//
+//        // TODO 融合算法暂时使用GPU模版
+//        HostConfig hostConfig = null;
+//
+//        if (! "-1".equals(singleGpu)) {
+//            DeviceRequest deviceRequest = new DeviceRequest();
+//
+//            List<List<String>> capabilities = new ArrayList<>() {{
+//                add(new ArrayList<>() {{
+//                    add("gpu");
+//                }});
+//            }};
+//
+//            hostConfig = new HostConfig().withDeviceRequests(
+//                    new ArrayList<>() {{
+//                        add(deviceRequest.withDriver("")
+//                                .withCount(0)
+//                                .withDeviceIds(Collections.singletonList(singleGpu))
+//                                .withOptions(new HashMap<>())
+//                                .withCapabilities(capabilities));
+//                    }}
+//            ).withShmSize(1024L * 1024L * 1024L);
+//        }
 
         // 创建容器
-        CreateContainerResponse container = dockerClient.createContainerCmd(algorithmModel.getImage())
-                .withEnv(execEnv, minioEnv)
-                .withHostConfig(hostConfig)
-                .exec();
+//        CreateContainerResponse container = dockerClient.createContainerCmd(algorithmModel.getImage())
+//                .withEnv(execEnv, minioEnv)
+//                .withHostConfig(hostConfig)
+//                .exec();
 
         // 启动容器
-        dockerClient.startContainerCmd(container.getId()).exec();
+//        dockerClient.startContainerCmd(container.getId()).exec();
 
         // Retrieve and print logs
 //        dockerClient.logContainerCmd(container.getId())
@@ -151,50 +146,50 @@ public class DockerServiceImpl implements DockerService {
 //                    }
 //                })
 //                .awaitCompletion();
-
-        dockerClient.removeContainerCmd(container.getId()).exec();
-
-        dockerClient.close();
-
-        if (null != algorithmModel.getChild()) {
-            execute(
-                    taskId,
-                    algorithmModel.getChild(),
-                    singleGpu
-            );
-        }
-
-    }
+//
+//        dockerClient.removeContainerCmd(container.getId()).exec();
+//
+//        dockerClient.close();
+//
+//        if (null != algorithmModel.getChild()) {
+//            execute(
+//                    taskId,
+//                    algorithmModel.getChild(),
+//                    singleGpu
+//            );
+//        }
+//
+//    }
 
 //    @Async
-    @Override
-    public void execute(String taskId, Template template) throws IOException {
-
-        long startTime = System.currentTimeMillis();
-
-        template.getAlgorithms().forEach(algorithmModel -> {
-            execute(taskId, algorithmModel, "0");
-        });
-
-        String[] objects = template.getResult().stream().map(r -> taskId + "/" + r).toArray(String[]::new);
-
-        minioService.zipObject(objects, String.format("%s/result.zip", taskId));
-
-        try {
-            TaskQueue.value.put(taskId, new TaskQueue.Field(
-                    taskId,
-                    "completed",
-                    minioService.getObjectUrl(String.format("%s/result.zip", taskId), 60 * 30),
-                    String.format("%s ms", System.currentTimeMillis() - startTime), null));
-        } catch (ServerException | InsufficientDataException | ErrorResponseException | NoSuchAlgorithmException |
-                 InvalidKeyException | InvalidResponseException | XmlParserException | InternalException e) {
-            throw new RuntimeException(e);
-        }
-
-
-        log.info(taskId + ": completed execute.");
-
-    }
+//    @Override
+//    public void execute(String taskId, Template template) throws IOException {
+//
+//        long startTime = System.currentTimeMillis();
+//
+//        template.getAlgorithms().forEach(algorithmModel -> {
+//            execute(taskId, algorithmModel, "0");
+//        });
+//
+//        String[] objects = template.getResult().stream().map(r -> taskId + "/" + r).toArray(String[]::new);
+//
+//        minioService.zipObject(objects, String.format("%s/result.zip", taskId));
+//
+//        try {
+//            TaskQueue.value.put(taskId, new TaskQueue.Field(
+//                    taskId,
+//                    "completed",
+//                    minioService.getObjectUrl(String.format("%s/result.zip", taskId), 60 * 30),
+//                    String.format("%s ms", System.currentTimeMillis() - startTime), null));
+//        } catch (ServerException | InsufficientDataException | ErrorResponseException | NoSuchAlgorithmException |
+//                 InvalidKeyException | InvalidResponseException | XmlParserException | InternalException e) {
+//            throw new RuntimeException(e);
+//        }
+//
+//
+//        log.info(taskId + ": completed execute.");
+//
+//    }
 
     public String execute1(String taskId, Template.AlgorithmModel algorithmModel, String singleGpu) {
 

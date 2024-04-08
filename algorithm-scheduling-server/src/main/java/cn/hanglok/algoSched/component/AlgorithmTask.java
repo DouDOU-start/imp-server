@@ -39,23 +39,25 @@ public class AlgorithmTask implements Runnable {
     public void run() {
         if (null != preLatch) {
             try {
-                log.info("AlgorithmTask is waiting: " + taskId + "," +  algorithmModel.getImage());
+                log.info("AlgorithmTask is waiting: {},{}", taskId, algorithmModel.getImage());
                 preLatch.await();
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }
-        log.info("AlgorithmTask is running: " + taskId + "," +  algorithmModel.getImage());
+        log.info("AlgorithmTask is running: {},{}", taskId, algorithmModel.getImage());
 
         try {
             String containerId = dockerService.execute1(taskId, algorithmModel, "0");
-            log.info("containerId: " + containerId);
+            log.info("containerId: {}", containerId);
 
             latch.await();
 
+            Thread.sleep(3 * 1000);
+
             dockerService.getDockerClient().removeContainerCmd(containerId).exec();
         } catch (CancellationException | InterruptedException e) {
-            log.error("task was interrupted: " + taskId + "," +  algorithmModel.getImage());
+            log.error("task was interrupted: {},{}", taskId, algorithmModel.getImage());
         }
 
     }

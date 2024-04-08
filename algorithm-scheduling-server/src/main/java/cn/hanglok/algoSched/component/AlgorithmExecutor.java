@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Semaphore;
 
 /**
  * @author Allen
@@ -33,22 +34,31 @@ public class AlgorithmExecutor {
     MinioService minioService;
 
     private final ExecutorService executorService = Executors.newFixedThreadPool(1);
+    private final Semaphore semaphore = new Semaphore(2);
 
     public void execute(String taskId, Template template, MultipartFile file) {
 
         TaskQueue.value.put(taskId, new TaskQueue.Field(taskId,"waiting", null, null, null));
 
+        minioService.uploadFile(file, taskId);
+
         executorService.execute(() -> {
-            minioService.uploadFile(file, taskId);
 
-            TaskQueue.value.put(taskId, new TaskQueue.Field(taskId,"running", null, null, null));
+            try {
+                semaphore.acquire();
 
-            AlgorithmAssembleMonitor algorithmAssembleMonitor = new AlgorithmAssembleMonitor(taskId, template, hanglokAlgorithm, minioService);
+                TaskQueue.value.put(taskId, new TaskQueue.Field(taskId,"running", null, null, null));
 
-            template.execute(taskId, algorithmAssembleMonitor, dockerService);
+                AlgorithmAssembleMonitor algorithmAssembleMonitor = new AlgorithmAssembleMonitor(taskId, template, hanglokAlgorithm, minioService);
 
-            algorithmAssembleMonitor.awaitCompletion();
-            algorithmAssembleMonitor.shutdown();
+                template.execute(taskId, algorithmAssembleMonitor, dockerService);
+
+                algorithmAssembleMonitor.awaitCompletion(semaphore);
+                algorithmAssembleMonitor.shutdown();
+            } catch (InterruptedException e) {
+                log.error("semaphore acquire error: {}", e);
+            }
+
         });
     }
 }

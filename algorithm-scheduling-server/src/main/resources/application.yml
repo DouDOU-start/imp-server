@@ -1,5 +1,5 @@
 server:
-  port: 8443
+  port: 8080
 #  ssl:
 #    key-store: classpath:mykeystore.p12
 #    key-store-password: hanglok
@@ -18,7 +18,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
 
 callback:
-  url: http://10.8.6.34:${server.port}/assemble/callback
+  url: http://10.8.6.196:${server.port}/assemble/callback
 
 docker:
   host: tcp://10.8.6.34:2375

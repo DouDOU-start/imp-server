@@ -3,6 +3,7 @@ package cn.hanglok.algoSched;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 /**
  * @author Allen
@@ -11,6 +12,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @description 算法调度服务启动程序
  * @date 2023/9/18
  */
+@EnableAsync
 @SpringBootApplication
 @MapperScan("cn.hanglok.algoSched.mapper")
 public class AlgoSchedApplication {

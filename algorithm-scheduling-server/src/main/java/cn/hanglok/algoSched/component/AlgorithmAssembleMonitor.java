@@ -89,13 +89,15 @@ public class AlgorithmAssembleMonitor {
 
     }
 
-    public void awaitCompletion() {
+    public void awaitCompletion(Semaphore semaphore) {
 
         TaskQueue.value.put(taskId, new TaskQueue.Field(taskId,"running", null, null, null));
 
         new Thread(() -> {
             try {
                 latch.await();
+
+                semaphore.release();
 
                 if (anyTaskFailed.get()) {
                     TaskQueue.value.put(taskId, new TaskQueue.Field(
