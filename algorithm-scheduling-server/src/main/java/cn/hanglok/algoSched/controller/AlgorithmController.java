@@ -2,20 +2,22 @@ package cn.hanglok.algoSched.controller;
 
 import cn.hanglok.algoSched.annotation.RequireValidToken;
 import cn.hanglok.algoSched.component.AlgorithmExecutor;
-import cn.hanglok.algoSched.entity.Assembles;
 import cn.hanglok.algoSched.entity.TaskStdout;
 import cn.hanglok.algoSched.entity.Template;
 import cn.hanglok.algoSched.entity.res.Res;
 import cn.hanglok.algoSched.entity.TaskQueue;
-import cn.hanglok.algoSched.exception.TemplateErrorException;
 import cn.hanglok.algoSched.service.IAssemblesService;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.alibaba.fastjson2.JSON;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -43,19 +45,16 @@ public class AlgorithmController {
     @PostMapping("/execute")
     @Operation(summary = "执行算法分割")
     @RequireValidToken
-    public Res executeAlgorithm(@RequestParam(value = "file") MultipartFile file) {
+    public Res executeAlgorithm(@RequestParam(value = "file") MultipartFile file) throws IOException {
 
         String taskId = UUID.randomUUID().toString();
 
-        Assembles as = assemblesService.getOne(new QueryWrapper<>() {{
-            eq("name", "lungsegmentation");
-        }});
+        ClassPathResource classPathResource = new ClassPathResource("template.json");
+        InputStream inputStream = classPathResource.getInputStream();
+        String jsonStr = new String(inputStream.readAllBytes()).replace("$inputFile", Objects.requireNonNull(file.getOriginalFilename()));
+        Template template = JSON.parseObject(jsonStr, Template.class);
 
-        if (null == as) {
-            throw new TemplateErrorException("Not found the corresponding template: lungsegmentation");
-        }
-
-        algorithmExecutor.execute(taskId, Template.load(as.getData()), file);
+        algorithmExecutor.execute(taskId, template, file);
 
         return Res.ok(TaskQueue.value.get(taskId));
     }

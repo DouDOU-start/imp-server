@@ -34,7 +34,7 @@ public class AlgorithmExecutor {
     MinioService minioService;
 
     private final ExecutorService executorService = Executors.newFixedThreadPool(1);
-    private final Semaphore semaphore = new Semaphore(2);
+    private final Semaphore semaphore = new Semaphore(1);
 
     public void execute(String taskId, Template template, MultipartFile file) {
 

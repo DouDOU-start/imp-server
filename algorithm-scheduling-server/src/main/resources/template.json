@@ -1,80 +1,100 @@
 {
+  "result": [
+    "centerline.txt",
+    "target.json",
+    "segmentation.mha"
+  ],
   "algorithms": [
     {
-      "image": "bodyinference",
-      "version": "0.1.3",
-      "inputFile": [],
-      "outputFile": "body_inference.nii.gz",
-      "gpu": "0"
+      "image": "10.8.6.34:5000/algorithm/lungsegmentation:0.1.3",
+      "inputFile": {
+        "input": "$inputFile"
+      },
+      "outputFile": {
+        "output": "lungsegmentation.nii.gz"
+      }
     },
     {
-      "image": "lungsegmentation",
-      "version": "0.1.3",
-      "inputFile": [],
-      "outputFile": "lungsegmentation.nii.gz",
-      "gpu": "0"
+      "image": "10.8.6.34:5000/algorithm/liverboneskinsegmentation:wfz-240102",
+      "inputFile": {
+        "input": "$inputFile"
+      },
+      "outputFile": {
+        "output": "body_inference.nii.gz"
+      }
     },
     {
-      "image": "airwaysegmentation",
-      "version": "0.1.3-jcxiong",
-      "inputFile": [],
-      "outputFile": "airwaysegmentation.nii.gz",
-      "gpu": "0",
       "child": {
-        "image": "centerline_datastructure",
-        "version": "1023",
-        "inputFile": [
-          {
-            "file_name": "output/%s/AirwaySegmentation-0.1.3-jcxiong/airwaysegmentation.nii.gz"
-          }
-        ],
-        "outputFile": "centerline.txt",
-        "gpu": "0"
-      }
-    },
-    {
-      "image": "nodule_detection",
-      "version": "2023_12_6",
-      "inputFile": [],
-      "outputFile": "target.json",
-      "gpu": "0"
-    },
-    {
-      "image": "fusion",
-      "version": "0.0.1",
-      "inputFile": [
-        {
-          "file_name": "output/%s/BodyInference-0.1.3/body_inference.nii.gz",
-          "label": [
-            {
-              "Skin": 3
-            },{
-              "Bone": 2
-            }
-          ]
-        },{
-          "file_name": "output/%s/LungSegmentation-0.1.3/lungsegmentation.nii.gz",
-          "label": [
-            {
-              "Lung": true
-            }
-          ]
-        },{
-          "file_name": "output/%s/AirwaySegmentation-0.1.3-jcxiong/airwaysegmentation.nii.gz",
-          "label": [
-            {
-              "Airway": 1
-            }
-          ]
+        "image": "10.8.6.34:5000/algorithm/centerline_datastructure:1023",
+        "inputFile": {
+          "input": "airwaysegmentation.nii.gz"
+        },
+        "outputFile": {
+          "output": "centerline.txt"
         }
-      ],
-      "outputFile": "segmentation.mha",
-      "gpu": "1"
+      },
+      "image": "10.8.6.34:5000/algorithm/airwaysegmentation:jcx-240311",
+      "inputFile": {
+        "input": "$inputFile"
+      },
+      "outputFile": {
+        "output": "airwaysegmentation.nii.gz"
       }
-  ],
-  "result": [
-    "output/%s/Fusion-0.0.1/segmentation.mha",
-    "output/%s/nodule_detection-2023_12_6/target.json",
-    "output/%s/centerline_datastructure-1023/centerline.txt"
+    },
+    {
+      "image": "10.8.6.34:5000/algorithm/nodule_detection:2023_12_6",
+      "inputFile": {
+        "input": "$inputFile"
+      },
+      "outputFile": {
+        "output": "target.json"
+      }
+    },
+    {
+      "image": "10.8.6.34:5000/algorithm/lung_nodule_segmentation:2024_2_20",
+      "inputFile": {
+        "input": "$inputFile"
+      },
+      "outputFile": {
+        "output": "noduleseg.nii.gz"
+      }
+    },
+    {
+      "args": {
+        "label": [
+          {
+            "body_inference.nii.gz": {
+              "15000": "Bone",
+              "16000": "Skin"
+            }
+          },
+          {
+            "lungsegmentation.nii.gz": {
+              "1": "Lung"
+            }
+          },
+          {
+            "airwaysegmentation.nii.gz": {
+              "1": "Airway"
+            }
+          },
+          {
+            "noduleseg.nii.gz": {
+              "1": "AllTumor"
+            }
+          }
+        ]
+      },
+      "image": "10.8.6.34:5000/algorithm/fusion:0.0.1",
+      "inputFile": {
+        "noduleseg.nii.gz": "noduleseg.nii.gz",
+        "body_inference.nii.gz": "body_inference.nii.gz",
+        "lungsegmentation.nii.gz": "lungsegmentation.nii.gz",
+        "airwaysegmentation.nii.gz": "airwaysegmentation.nii.gz"
+      },
+      "outputFile": {
+        "output": "segmentation.mha"
+      }
+    }
   ]
 }
