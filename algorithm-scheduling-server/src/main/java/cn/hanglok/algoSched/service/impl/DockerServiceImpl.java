@@ -9,6 +9,7 @@ import cn.hanglok.algoSched.service.MinioService;
 import com.alibaba.fastjson.JSONObject;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.CreateContainerResponse;
+import com.github.dockerjava.api.command.PullImageResultCallback;
 import com.github.dockerjava.api.model.DeviceRequest;
 import com.github.dockerjava.api.model.HostConfig;
 import com.github.dockerjava.core.DefaultDockerClientConfig;
@@ -191,9 +192,18 @@ public class DockerServiceImpl implements DockerService {
 //
 //    }
 
-    public String execute1(String taskId, Template.AlgorithmModel algorithmModel, String singleGpu) {
+    public String execute(String taskId, Template.AlgorithmModel algorithmModel, String singleGpu) {
 
         DockerClient dockerClient = getDockerClient();
+
+        try {
+            dockerClient.pullImageCmd(algorithmModel.getImage())
+                    .exec(new PullImageResultCallback())
+                    .awaitCompletion();
+        } catch (InterruptedException e) {
+            log.error("Image does not exist:  {}", algorithmModel.getImage());
+            throw new RuntimeException(e);
+        }
 
         String execEnvJson = algorithmModel.createExecEnvJson(taskId, callbackConfig.getUrl());
 

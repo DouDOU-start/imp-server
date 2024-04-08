@@ -13,5 +13,5 @@ import com.github.dockerjava.api.DockerClient;
 public interface DockerService {
 
     DockerClient getDockerClient();
-    String execute1(String taskId, Template.AlgorithmModel algorithmModel, String singleGpu);
+    String execute(String taskId, Template.AlgorithmModel algorithmModel, String singleGpu);
 }

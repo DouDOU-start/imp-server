@@ -48,7 +48,7 @@ public class AlgorithmTask implements Runnable {
         log.info("AlgorithmTask is running: {},{}", taskId, algorithmModel.getImage());
 
         try {
-            String containerId = dockerService.execute1(taskId, algorithmModel, "0");
+            String containerId = dockerService.execute(taskId, algorithmModel, "0");
             log.info("containerId: {}", containerId);
 
             latch.await();
