@@ -1,0 +1,14 @@
+{
+  "name": "videobridge",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "keywords": [],
+  "author": "ej huang",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.2",
+    "http-proxy-middleware": "^3.0.0",
+    "ws": "^8.17.0"
+  }
+}

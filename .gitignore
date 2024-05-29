@@ -40,3 +40,5 @@ resources/*.zip
 
 docker/rootfs
 docker/package
+
+/videobridge/python/node_modules/
