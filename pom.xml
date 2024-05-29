@@ -14,6 +14,7 @@
         <module>common</module>
         <module>auth-server</module>
         <module>algorithm-scheduling-server</module>
+        <module>videobridge</module>
     </modules>
 
     <properties>
