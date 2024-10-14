@@ -85,7 +85,7 @@
           }
         ]
       },
-      "image": "10.8.6.34:5000/algorithm/fusion:0.0.1",
+      "image": "10.8.6.34:5000/algorithm/fusion:0.0.2",
       "inputFile": {
         "noduleseg.nii.gz": "noduleseg.nii.gz",
         "body_inference.nii.gz": "body_inference.nii.gz",

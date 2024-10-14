@@ -12,22 +12,22 @@ spring:
       max-file-size: 3000MB
       max-request-size: 3000MB
   datasource:
-    url: jdbc:mysql://10.8.6.34:3366/algorithm_scheduling_dev
+    url: jdbc:mysql://192.168.8.73:3306/algorithm_scheduling_dev
     username: root
     password: hanglok8888
     driver-class-name: com.mysql.cj.jdbc.Driver
 
 callback:
-  url: http://10.8.6.196:${server.port}/assemble/callback
+  url: http://192.168.8.51:${server.port}/assemble/callback
 
 docker:
-  host: tcp://10.8.6.34:2375
+  host: tcp://192.168.8.73:2375
 
 minio:
-  inner-url: 10.8.6.60:9000
-  url: http://10.8.6.60:9000
-  access-key: afK2BE5BSWvayIw546b2
-  secret-key: ZRITpJds2V3lQyDb3T3t3GyA383G7npr32p9zk9x
+  inner-url: 127.0.0.1:9000
+  url: http://192.168.8.73:9000
+  access-key: gt9gjmPVWQsTIiOpQkn7
+  secret-key: xXr1UvnlNrYsE3Q89JxOPSzBhkFrvoefAVvgi3aw
   bucket-name: algorithm
   enable-public-network: false
   public-url: http://163.179.121.34:18000/minio
