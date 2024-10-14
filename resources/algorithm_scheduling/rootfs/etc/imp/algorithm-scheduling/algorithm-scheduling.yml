@@ -4,22 +4,27 @@ server:
 spring:
   servlet:
     multipart:
-      max-file-size: 500MB
-      max-request-size: 500MB
+      max-file-size: 3000MB
+      max-request-size: 3000MB
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/algorithm_scheduling_dev
+    username: root
+    password: hanglok8888
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+callback:
+  url: http://127.0.0.1:${server.port}/assemble/callback
 
 docker:
   host: tcp://127.0.0.1:2375
 
-callback:
-  url: http://10.8.6.34:${server.port}/assemble/callback
-
 minio:
-  inner-url: 10.8.6.60:9000
-  url: http://10.8.6.60:9000
-  access-key: afK2BE5BSWvayIw546b2
-  secret-key: ZRITpJds2V3lQyDb3T3t3GyA383G7npr32p9zk9x
+  inner-url: 127.0.0.1:9000
+  url: http://127.0.0.1:9000
+  access-key: gt9gjmPVWQsTIiOpQkn7
+  secret-key: xXr1UvnlNrYsE3Q89JxOPSzBhkFrvoefAVvgi3aw
   bucket-name: algorithm
-  enable-public-network: true
+  enable-public-network: false
   public-url: http://163.179.121.34:18000/minio
 
 token: a9c6af52-d8af-4933-884a-79fddd3519c9
