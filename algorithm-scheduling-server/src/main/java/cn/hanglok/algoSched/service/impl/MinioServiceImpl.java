@@ -4,10 +4,7 @@ import cn.hanglok.algoSched.config.MinioConfig;
 import cn.hanglok.algoSched.entity.TaskQueue;
 import cn.hanglok.algoSched.exception.MinioErrorException;
 import cn.hanglok.algoSched.service.MinioService;
-import io.minio.GetObjectArgs;
-import io.minio.GetPresignedObjectUrlArgs;
-import io.minio.MinioClient;
-import io.minio.PutObjectArgs;
+import io.minio.*;
 import io.minio.errors.*;
 import io.minio.http.Method;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +17,7 @@ import java.io.*;
 import java.nio.file.NoSuchFileException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -145,4 +143,21 @@ public class MinioServiceImpl implements MinioService {
         }
     }
 
+    @Override
+    public String generatePreSignedUrl(String objectName) {
+        try {
+            // 生成预签名 URL，有效期设为 1 小时
+            return minioClient.getPresignedObjectUrl(
+                    GetPresignedObjectUrlArgs.builder()
+                            .method(Method.PUT)
+                            .bucket(bucketName)
+                            .object(objectName)
+                            .expiry(5, TimeUnit.MINUTES)
+                            .build()
+            );
+        } catch (Exception e) {
+            log.error(e.toString());
+            throw new MinioErrorException("Failed to generate pre-signed URL：" + e.getMessage());
+        }
+    }
 }

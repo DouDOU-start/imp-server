@@ -20,4 +20,6 @@ public interface MinioService {
     String getObjectUrl(String objectName, Integer expires) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException;
 
     void zipObject(String[] objects, String zipPath);
+
+    String generatePreSignedUrl(String objectName);
 }
