@@ -1,5 +1,6 @@
 package cn.hanglok.algoSched.controller;
 
+import cn.hanglok.algoSched.annotation.RequireValidToken;
 import cn.hanglok.algoSched.component.AlgorithmAssembleMonitor;
 import cn.hanglok.algoSched.component.AlgorithmExecutor;
 import cn.hanglok.algoSched.component.HanglokAlgorithm;
@@ -12,6 +13,7 @@ import cn.hanglok.algoSched.entity.res.Res;
 import cn.hanglok.algoSched.exception.TemplateErrorException;
 import cn.hanglok.algoSched.service.IAssemblesService;
 import cn.hanglok.algoSched.service.IImagesService;
+import cn.hanglok.algoSched.service.MinioService;
 import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -24,7 +26,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.util.List;
 import java.util.UUID;
 
@@ -51,6 +52,9 @@ public class TemplateController {
 
     @Autowired
     HanglokAlgorithm hanglokAlgorithm;
+
+    @Autowired
+    MinioService minioService;
 
     @GetMapping("/images")
     @Operation(summary = "获取算法镜像列表")
@@ -120,8 +124,9 @@ public class TemplateController {
             throw new TemplateErrorException("Not found the corresponding template: " + assembleName);
         }
 
+        minioService.uploadFile(file, taskId);
 
-        algorithmExecutor.execute(taskId, Template.load(as.getData()), file);
+        algorithmExecutor.execute(taskId, Template.load(as.getData()));
         
         return Res.ok(TaskQueue.value.get(taskId));
     }
@@ -131,7 +136,37 @@ public class TemplateController {
     public Res executeByJson(@RequestParam(value = "template") MultipartFile template, @RequestParam(value = "file") MultipartFile file) {
         String taskId = UUID.randomUUID().toString();
 
-        algorithmExecutor.execute(taskId, Template.load(template), file);
+        minioService.uploadFile(file, taskId);
+
+        algorithmExecutor.execute(taskId, Template.load(template));
+
+        return Res.ok(TaskQueue.value.get(taskId));
+    }
+
+    /**
+     * 根据id执行算法
+     */
+    @PostMapping("/execute/{taskId}")
+    @Parameters({
+            @Parameter(name = "taskId", description = "id", in = ParameterIn.PATH),
+            @Parameter(name = "assembleName", description = "模板名", in = ParameterIn.QUERY),
+            @Parameter(name = "fileName", description = "文件名", in = ParameterIn.QUERY),
+    })
+    @Operation(summary = "根据id执行算法分割")
+    @RequireValidToken
+    public Res executeAlgorithmById(@PathVariable String taskId,
+                                    @RequestParam(value = "assembleName", defaultValue = "puncture") String assembleName,
+                                    @RequestParam(value = "fileName") String fileName) {
+
+        Assembles as = assemblesService.getOne(new QueryWrapper<>() {{
+            eq("name", assembleName);
+        }});
+
+        if (null == as) {
+            throw new TemplateErrorException("Not found the corresponding template: " + assembleName);
+        }
+
+        algorithmExecutor.execute(taskId, Template.load(as.getData().replace("$inputFile", fileName)));
 
         return Res.ok(TaskQueue.value.get(taskId));
     }

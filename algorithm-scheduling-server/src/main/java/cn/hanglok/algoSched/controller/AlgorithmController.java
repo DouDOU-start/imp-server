@@ -7,6 +7,7 @@ import cn.hanglok.algoSched.entity.Template;
 import cn.hanglok.algoSched.entity.res.Res;
 import cn.hanglok.algoSched.entity.TaskQueue;
 import cn.hanglok.algoSched.service.IAssemblesService;
+import cn.hanglok.algoSched.service.MinioService;
 import com.alibaba.fastjson2.JSON;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -38,6 +39,9 @@ public class AlgorithmController {
     @Autowired
     AlgorithmExecutor algorithmExecutor;
 
+    @Autowired
+    MinioService minioService;
+
     /**
      * 上传影像文件并执行对应分割算法
      * @param file 影像文件
@@ -54,7 +58,9 @@ public class AlgorithmController {
         String jsonStr = new String(inputStream.readAllBytes()).replace("$inputFile", Objects.requireNonNull(file.getOriginalFilename()));
         Template template = JSON.parseObject(jsonStr, Template.class);
 
-        algorithmExecutor.execute(taskId, template, file);
+        minioService.uploadFile(file, taskId);
+
+        algorithmExecutor.execute(taskId, template);
 
         return Res.ok(TaskQueue.value.get(taskId));
     }

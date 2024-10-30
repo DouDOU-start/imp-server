@@ -12,7 +12,7 @@ spring:
       max-file-size: 3000MB
       max-request-size: 3000MB
   datasource:
-    url: jdbc:mysql://192.168.8.73:3306/algorithm_scheduling_dev
+    url: jdbc:mysql://192.168.8.60:3366/algorithm_scheduling_dev
     username: root
     password: hanglok8888
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -25,9 +25,9 @@ docker:
 
 minio:
   inner-url: 127.0.0.1:9000
-  url: http://192.168.8.73:9000
-  access-key: gt9gjmPVWQsTIiOpQkn7
-  secret-key: xXr1UvnlNrYsE3Q89JxOPSzBhkFrvoefAVvgi3aw
+  url: http://192.168.8.60:19000
+  access-key: ZEsR4v9y9193pID4iNVQ
+  secret-key: zmmH1ceZKol8wMmldpAID6gXlSkALMvhzPrJjXDm
   bucket-name: algorithm
   enable-public-network: false
   public-url: http://163.179.121.34:18000/minio

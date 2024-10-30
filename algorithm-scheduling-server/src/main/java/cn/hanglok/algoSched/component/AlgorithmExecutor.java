@@ -36,11 +36,9 @@ public class AlgorithmExecutor {
     private final ExecutorService executorService = Executors.newFixedThreadPool(1);
     private final Semaphore semaphore = new Semaphore(1);
 
-    public void execute(String taskId, Template template, MultipartFile file) {
+    public void execute(String taskId, Template template) {
 
         TaskQueue.value.put(taskId, new TaskQueue.Field(taskId,"waiting", null, null, null));
-
-        minioService.uploadFile(file, taskId);
 
         executorService.execute(() -> {
 
